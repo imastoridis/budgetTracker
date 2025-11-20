@@ -29,4 +29,4 @@ EXPOSE 8080
 # Ensure the JAR name matches the artifactId-version in your pom.xml
 COPY --from=build /app/target/budget-tracker-1.0-SNAPSHOT.jar /app/app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker"]

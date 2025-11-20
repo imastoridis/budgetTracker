@@ -116,6 +116,12 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
+
+        <!-- H2 Database -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,6 +133,7 @@
                 <configuration>
                     <excludeDevtools>false</excludeDevtools>
                     <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                    <mainClass>com.budgetTracker.BudgetTrackerApplication</mainClass>
                 </configuration>
             </plugin>
 

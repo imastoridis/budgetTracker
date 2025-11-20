@@ -68,8 +68,8 @@ services:
       - backend_network
 
     # Uses the wait script before starting the application via mvn
-    command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn spring-boot:run"
-
+   # command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn spring-boot:run"
+    command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn spring-boot:run -Dspring-boot.run.profiles=docker"
   # 2. Spring Boot API Service (PRODUCTION Mode)
   # Optimized for small size and security, runs the pre-built JAR.
   app-prod: # NEW Service
