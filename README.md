@@ -26,7 +26,6 @@ You need the following installed on your machine:
 -	***(Optional)* Docker** (for containerized deployment)
 
 # 2\. Setup and Run Locally (Recommended)
----------------------------------------
 
 This is the easiest way to get the application running, as the default configuration uses an **in-memory H2 database** (`src/main/resources/application.properties`).
 
