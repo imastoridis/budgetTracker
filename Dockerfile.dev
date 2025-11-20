@@ -22,4 +22,4 @@ RUN chmod +x wait-for-it.sh
 # The container will now be started by the 'command' in docker-compose.yml
 # The app is run via 'mvn spring-boot:run' command, leveraging the mounted volume.
 # *** NEW: Activate 'dev' profile for H2 database ***
-CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=docker"]
+#CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=docker"]
