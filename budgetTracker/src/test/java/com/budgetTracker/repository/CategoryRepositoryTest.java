@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Unit tests
  */
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Use real database config, or keep default H2
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) 
 class CategoryRepositoryTest {
 
     @Autowired
