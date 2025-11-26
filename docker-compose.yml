@@ -1,0 +1,136 @@
+services:
+  # ---------------------------------------------
+  # 1. FRONTEND (Angular Application)
+  # ---------------------------------------------
+  frontend:
+    build:
+      # FIX: Point to the front folder you described
+      context: ./budgetTracker_front
+      dockerfile: DockerFile
+      target: production-stage
+    
+    ports:
+      - "80:80"
+    
+    networks:
+      - backend_network
+      
+    depends_on:
+      app-dev:
+        condition: service_started
+      app-prod:
+        condition: service_started
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # PostgreSQL Database Service
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: budget_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d budget_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Caching Service
+  redis:
+    image: redis:7-alpine
+    container_name: budget-tracker-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  # 1. Spring Boot API Service (DEVELOPMENT Mode)
+  app-dev:
+    build:
+      # FIX: Point to the 'backend' folder
+      context: ./budgetTracker
+      dockerfile: Dockerfile.dev
+    container_name: budget-tracker-api-dev
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Debugger enabled
+      MAVEN_OPTS: "-Dspring-boot.run.fork=false -Dspring.devtools.restart.enabled=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    volumes:
+      # FIX: Mount the 'backend' folder to /app container path
+      - ./budgetTracker:/app
+      - ~/.m2:/root/.m2
+    networks:
+      - backend_network
+
+    # FIX: Use fully qualified maven goal
+    #command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
+    command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
+
+  # 2. Spring Boot API Service (PRODUCTION Mode)
+  app-prod:
+    build:
+      # FIX: Point to the 'backend' folder
+      context: ./budgetTracker
+      dockerfile: Dockerfile
+    container_name: budget-tracker-api-prod
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
