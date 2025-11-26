@@ -10,12 +10,12 @@
     <name>budgetTracker</name>
     <description>Budget Tracking Backend API</description>
 
-    <!-- CRITICAL FIX: Ensure Parent POM is up-to-date for security and compatibility -->
+    <!-- CRITICAL FIX: Ensure Parent POM is up to date for security and compatibility -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <properties>
@@ -121,6 +121,13 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+        </dependency>
+
+        <!-- SpringDoc OpenAPI/Swagger UI Dependency -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version> <!-- Use a recent, stable version -->
         </dependency>
     </dependencies>
 
