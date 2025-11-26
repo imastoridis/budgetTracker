@@ -1,0 +1,28 @@
+# Use a base image with Java 21 and Maven (for consistency with production)
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
+
+# Install netcat (nc) for the wait-for-it script
+RUN apk add --no-cache netcat-openbsd
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the pom.xml file to download dependencies first (for build cache optimization)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy the source code
+COPY src ./src
+
+# --- Custom Wait-For-It Setup ---
+# Copy the wait script and make it executable
+#COPY wait-for-it.sh .
+#RUN chmod +x wait-for-it.sh
+
+COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
+# The container will now be started by the 'command' in docker-compose.yml
+# The app is run via 'mvn spring-boot:run' command, leveraging the mounted volume.
+# *** NEW: Activate 'dev' profile for H2 database ***
+#CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=docker"]
