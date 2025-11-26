@@ -1,0 +1,38 @@
+# --- STAGE 1: Build the Angular application ---
+FROM node:21-alpine AS build-stage
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to leverage Docker layer caching
+COPY package*.json ./
+
+# Install dependencies (only run if package.json changes)
+RUN npm install
+
+# Copy the rest of the source code
+COPY . .
+
+# Build the Angular application in production mode
+# NOTE: Replace 'your-project-name' with the actual project name from your angular.json
+RUN npm run build -- --output-path=./dist/budget-tracker-front --configuration production
+
+# --- STAGE 2: Serve the application (Production Stage) ---
+# Use a lightweight web server (like Nginx or a simple static file server) to serve the built files
+FROM nginx:alpine AS production-stage
+
+# Copy the built Angular files from the build stage to the Nginx static folder
+# The path must match the output-path defined in the build stage above
+COPY --from=build-stage /app/dist/budget-tracker-front /usr/share/nginx/html
+
+# Remove the default Nginx configuration
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy a custom Nginx configuration to handle Angular routing (necessary for history mode)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# The default Nginx port
+EXPOSE 80
+
+# The container will run Nginx to serve the site
+CMD ["nginx", "-g", "daemon off;"]
