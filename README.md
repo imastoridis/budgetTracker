@@ -3,17 +3,25 @@
 Welcome to my Budget Tracker application! This is a secure, multi-user RESTful API built with Spring Boot, Spring Security, and Spring Data JPA. It uses Angular 21 for the frontend.
 
 **Technology stack**
+
+***Backend***
 - Java 21
 - Spring Boot
 - Maven
 - Spring security/JWT
 - JPA and Spring Boot Test
 - Lombok
-- Angular 21
-- TypeScript
 - PostgreSQL
 - Redis
+
+***FrontEnd***
+- Angular 21
+- TypeScript
+- Tailwind CSS
+- Angular Material
+
 - Docker
+- Swagger
 
 ## Table of Contents
 
