@@ -1,0 +1,107 @@
+services:
+  # PostgreSQL Database Service
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: budget_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d budget_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Caching Service
+  redis:
+    image: redis:7-alpine
+    container_name: budget-tracker-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  # 1. Spring Boot API Service (DEVELOPMENT Mode)
+  # Optimized for fast iteration with code volume mounting and remote debugger.
+  app-dev: # Renamed from 'app'
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: budget-tracker-api-dev
+    ports:
+      - "8080:8080" # Application port
+      - "5005:5005" # Debugger port
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Safe for development
+      MAVEN_OPTS: "-Dspring-boot.run.fork=false -Dspring.devtools.restart.enabled=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    volumes:
+      - .:/app # Code volume mounted
+      - ~/.m2:/root/.m2
+    networks:
+      - backend_network
+
+    # Uses the wait script before starting the application via mvn
+   # command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn spring-boot:run"
+    command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn spring-boot:run -Dspring-boot.run.profiles=docker"
+  # 2. Spring Boot API Service (PRODUCTION Mode)
+  # Optimized for small size and security, runs the pre-built JAR.
+  app-prod: # NEW Service
+    build:
+      context: .
+      dockerfile: Dockerfile # Uses the multi-stage production Dockerfile
+    container_name: budget-tracker-api-prod
+    ports:
+      - "8081:8080" # Runs on 8081 locally to avoid conflict with dev
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate # Safer for production
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    # NOTE: No volumes and no MAVEN_OPTS/debugger, relying on the built image
+    networks:
+      - backend_network
+
+# 3. Network and Volume definitions
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
