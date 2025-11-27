@@ -1,8 +1,11 @@
-# Budget Tracker Backend (Spring Boot)
+# Budget Tracker Application (Spring Boot)
 
 Welcome to my Budget Tracker application! This is a secure, multi-user RESTful API built with Spring Boot, Spring Security, and Spring Data JPA. It uses Angular 21 for the frontend.
 
-**Technology stack**
+## Technology stack
+
+- Docker
+- Swagger
 
 ***Backend***
 - Java 21
@@ -20,42 +23,31 @@ Welcome to my Budget Tracker application! This is a secure, multi-user RESTful A
 - Tailwind CSS
 - Angular Material
 
-- Docker
-- Swagger
-
 ## Table of Contents
 
 1.  Prerequisites
-
 2.  Project Structure
-
 3.  Setup and Run Locally
-
 4.  Setup and run with Docker
-
 5.  API Endpoints
-
 6.  Documentation
 
 ## 1\. Prerequisites
 
 You need the following installed on your machine:
 
--	**Java Development Kit (JDK) 21 or higher**
+-	**Java Development Kit (JDK)** 21 or higher
 
 -	**Apache Maven** (for building the project) 
 
 -	**Git**
 
--	**Angular 21**
-
 -	***(Optional)* Docker** (for containerized deployment)
 
 ## 2\. Project Structure
 
-The project is structured into three main directories:
-
-.
+The project is structured into two main directories:
+```
 ├── budgetTracker/            # Spring Boot API code (Java/Maven)
 │   ├── Dockerfile            # Production multi-stage build (creates final JAR)
 │   └── Dockerfile.dev        # Development build (prepares environment for volume mount)
@@ -63,8 +55,8 @@ The project is structured into three main directories:
 │   └── DockerFile            # Angular build and Nginx serving
 ├── docker-compose.yml        # Defines all services and networking
 └── README.md                 # This file
-
-Unit, Integration and End-to-end tests are available in budgetTracker/test/java
+```
+Unit, Integration and End-to-end tests are available in ```budgetTracker/test/java```
 
 ## 3\. Setup and Run Locally 
 
@@ -122,13 +114,10 @@ docker build -f Dockerfile.dev -t budget-tracker-dev .
 
 **What this command does:**
 
-Builds all necessary images (app-dev, app-prod, frontend).
-
-Starts the db (PostgreSQL) and redis services.
-
-Starts the app-dev (Backend) service, waiting for the database and Redis to be healthy.
-
-Starts the frontend (Angular) service.
+- Builds all necessary images (app-dev, app-prod, frontend).
+- Starts the db (PostgreSQL) and redis services.
+- Starts the app-dev (Backend) service, waiting for the database and Redis to be healthy.
+- Starts the frontend (Angular) service.
 
 ### 2. Production Mode (For Testing the Final Build)
 
@@ -138,7 +127,7 @@ While the full docker compose up -d command starts both the development (app-dev
 docker compose up -d db redis app-prod frontend
 ```
 
-### Step 2: Run the Development Container
+#### Run the Development Container
 
 This command maps both the application port (8080) and the default remote debugging port (5005), allowing you to connect your IDE.
 
@@ -153,13 +142,14 @@ The application will be accessible at `http://localhost:8080`.
 ### 1. Services 
 Once all services are running, you can access the application components via your local machine's ports:
 
+```
 | Service             | Method | Local Port |  Access URL             | Description                                                   | 
 | ------------------- | ------ | ---------------------------------------------------------------------------------------------------- |
 | FrontEnd            | HTTP   | 80         | http://localhost/       | The Angular web application.                                  |
 | Dev API (Backend)   | HTTP   | 8080       | http://localhost:8080/  | Spring Boot API with volume mounting (use for development)    |
 | Prod API (Backend)  | HTTP   | 8081       | http://localhost:8081/  | Spring Boot API running the built JAR (use for final testing) |
 | PostgreSQL          | TCP    | 5432       | localhost:5432          | Accessible for external DB tools.                             |
-
+```
 
 ### 2. Endpoints 
 
@@ -181,17 +171,17 @@ The API requires a registered user to access most resources. Registration/Authen
 
 To stop all running containers, remove them, and delete the associated volumes (which contain your database and Redis data):
 
-# Stops and removes all containers, networks, and images
+#### Stops and removes all containers, networks, and images
 ```
 docker compose down
 ```
 
-# Stops, removes containers, networks, images, AND deletes database/redis data volumes
+#### Stops, removes containers, networks, images, AND deletes database/redis data volumes
 ```
 docker compose down --volumes
 ```
 
-## 5\. API Endpoints
+## 6\. Documentation
 
 Documentation is accessible here:
 ```
