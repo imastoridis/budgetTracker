@@ -2,6 +2,8 @@
 
 Welcome to my Budget Tracker application! This is a secure, multi-user RESTful API built with Spring Boot, Spring Security, and Spring Data JPA. It uses Angular 21 for the frontend.
 
+The application is live at https://imastoridis/budgetTracker
+
 ## Technology stack
 
 - Docker
@@ -109,22 +111,22 @@ This mode is optimized for rapid iteration. The app-dev service mounts your loca
 
 Command:
 ```
-docker build -f Dockerfile.dev -t budget-tracker-dev .
+docker compose up --build app-dev frontend-dev
 ```
 
 **What this command does:**
 
-- Builds all necessary images (app-dev, app-prod, frontend).
+- Builds all necessary images (app-dev, frontend-dev).
 - Starts the db (PostgreSQL) and redis services.
 - Starts the app-dev (Backend) service, waiting for the database and Redis to be healthy.
-- Starts the frontend (Angular) service.
+- Starts the frontend (Angular) service with live reloading.
 
 ### 2. Production Mode (For Testing the Final Build)
 
 While the full docker compose up -d command starts both the development (app-dev) and production (app-prod) APIs, you can run only the production environment components if needed:
 
 ```
-docker compose up -d db redis app-prod frontend
+docker compose up --build app-prod frontend-prod
 ```
 
 #### Run the Development Container
@@ -145,26 +147,26 @@ Once all services are running, you can access the application components via you
 ```
 | Service             | Method | Local Port |  Access URL             | Description                                                   | 
 | ------------------- | ------ | ---------------------------------------------------------------------------------------------------- |
-| FrontEnd            | HTTP   | 80         | http://localhost/       | The Angular web application.                                  |
+| FrontEnd            | HTTP   | 4200       | http://localhost:4200/  | The Angular web application.                                  |
 | Dev API (Backend)   | HTTP   | 8080       | http://localhost:8080/  | Spring Boot API with volume mounting (use for development)    |
 | Prod API (Backend)  | HTTP   | 8081       | http://localhost:8081/  | Spring Boot API running the built JAR (use for final testing) |
 | PostgreSQL          | TCP    | 5432       | localhost:5432          | Accessible for external DB tools.                             |
 ```
 
-### 2. Endpoints 
+### 2. BackEnd Endpoints 
 
 The API requires a registered user to access most resources. Registration/Authentication endpoints should be accessible first.
 
-| Endpoint            | Method | Description                                           | Authentication |
-| ------------------- | ------ | ----------------------------------------------------- | -------------- |
-| `/api/register`     | `POST` | Registers a new user.                                 | None           |
-| `/login`            | `POST` | Authenticates a user and issues a session cookie.     | None           |
-| `/api/categories`   | `GET`  | Retrieve all categories for the authenticated user.   | Required       |
-| `/api/categories`   | `POST` | Create a new category.                                | Required       |
-| `/api/transactions` | `GET`  | Retrieve all transactions for the authenticated user. | Required       |
-| `/api/transactions` | `POST` | Create a new transaction.                             | Required       |
-| `/api/transactions` | `PUT`  | Update an existing transaction.                       | Required       |
-| `/api/transactions` | `DELETE` | Delete a transaction.                               | Required       |
+| Endpoint             | Method | Description                                           | Authentication |
+|----------------------| ------ | ----------------------------------------------------- | -------------- |
+| `/api/auth/register` | `POST` | Registers a new user.                                 | None           |
+| `/api/auth/login`    | `POST` | Authenticates a user and issues a session cookie.     | None           |
+| `/api/categories`    | `GET`  | Retrieve all categories for the authenticated user.   | Required       |
+| `/api/categories`    | `POST` | Create a new category.                                | Required       |
+| `/api/transactions`  | `GET`  | Retrieve all transactions for the authenticated user. | Required       |
+| `/api/transactions`  | `POST` | Create a new transaction.                             | Required       |
+| `/api/transactions`  | `PUT`  | Update an existing transaction.                       | Required       |
+| `/api/transactions`  | `DELETE` | Delete a transaction.                               | Required       |
 
 
 ### 3. Cleanup
@@ -185,5 +187,5 @@ docker compose down --volumes
 
 Documentation is accessible here:
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/documentation/swagger-ui.html
 ```
