@@ -7,20 +7,21 @@ services:
       # FIX: Point to the front folder you described
       context: ./budgetTracker_front
       dockerfile: DockerFile
-      target: production-stage
-    
+      #target: production-stage
+    container_name: frontend
     ports:
-      - "80:80"
-    
+      #- "80:80"
+      - "8088:80"
+
     networks:
       - backend_network
-      
+
     depends_on:
       app-dev:
         condition: service_started
-      app-prod:
-        condition: service_started
-    
+      #app-prod:
+      # condition: service_started
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s

@@ -71,6 +71,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // PUBLIC ENDPOINTS: Allow access to all authentication paths
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         // All other requests MUST be authenticated (require a valid JWT)
                         .anyRequest().authenticated()
                 )

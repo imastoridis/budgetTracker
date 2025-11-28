@@ -25,15 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/custom-theme.scss",
-              "src/styles.css"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            },
+            "styles": ["src/custom-theme.scss", "src/styles.css"],
             "polyfills": ["@angular/localize/init"]
           },
           "configurations": {
@@ -50,7 +42,9 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "ssr": false,
+              "prerender": false
             },
             "development": {
               "optimization": false,

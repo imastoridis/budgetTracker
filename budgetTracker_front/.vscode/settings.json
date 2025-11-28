@@ -1,0 +1,36 @@
+{
+  // 1. Set Prettier as the default formatter for all languages
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // 2. Format the file on save (using Prettier)
+  "editor.formatOnSave": true,
+
+  // 3. Enable formatting for TypeScript, JavaScript, HTML, CSS, and JSON
+  "prettier.enable": true,
+  "prettier.documentSelectors": [
+    "**/*.ts",
+    "**/*.js",
+    "**/*.json",
+    "**/*.html",
+    "**/*.scss",
+    "**/*.css"
+  ],
+
+  // 4. Use ESLint to automatically fix formatting errors that Prettier missed or that violate linting rules
+  // This executes ESLint's 'fix' command when saving a file.
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // 5. Tell the ESLint extension to use your flat configuration file
+  "eslint.useFlatConfig": true,
+
+  // 6. Ensure ESLint validation runs on TypeScript and HTML files
+  "eslint.validate": [
+    "typescript",
+    "javascript",
+    "json",
+    "html", // For Angular inline templates via the processor
+    "markdown"
+  ]
+}
