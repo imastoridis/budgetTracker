@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --proxy-config proxy.conf.json --poll 1000",
+    "build": "ng build --output-path=./dist/budget-tracker-front --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:budgetTracker_front": "node dist/budgetTracker_front/server/server.mjs",
@@ -28,7 +28,8 @@
     "@popperjs/core": "^2.11.8",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.0"
   },
   "devDependencies": {
     "@angular/build": "^21.0.0",

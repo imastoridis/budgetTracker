@@ -1,6 +1,6 @@
 services:
   # ---------------------------------------------
-  # 1. FRONTEND (Angular Application)
+  # FRONTEND (Angular Application)
   # ---------------------------------------------
   frontend:
     build:
@@ -28,7 +28,41 @@ services:
       timeout: 10s
       retries: 5
 
+  # ---------------------------------------------
+  # FRONTEND (Development Mode with Live Reload)
+  # ---------------------------------------------
+  frontend-dev:
+    # Use the 'build-stage' from your DockerFile, which has Node and NPM
+    build:
+      context: ./budgetTracker_front
+      dockerfile: DockerFile
+      target: build-stage # Use the Node image for ng serve
+    container_name: frontend-dev
+
+    # 1. Volume Mount: Mount local source code to container's working directory
+    # This enables instant sync and hot reloading
+    volumes:
+      - ./budgetTracker_front:/app
+      - /app/node_modules
+
+    # 2. Port: Expose the Angular development server's default port (4200)
+    ports:
+      - "4200:4200"
+
+    networks:
+      - backend_network
+
+    # 3. Command: Run the Angular Development Server
+    # The --host 0.0.0.0 is crucial for Docker networking
+    command: npm run start -- --host 0.0.0.0
+
+    depends_on:
+      app-dev:
+        condition: service_started
+
+  # ---------------------------------------------
   # PostgreSQL Database Service
+  # ---------------------------------------------
   db:
     image: postgres:16-alpine
     environment:
@@ -47,7 +81,9 @@ services:
       timeout: 5s
       retries: 5
 
+  # ---------------------------------------------
   # Redis Caching Service
+  # ---------------------------------------------
   redis:
     image: redis:7-alpine
     container_name: budget-tracker-redis
@@ -65,7 +101,9 @@ services:
       retries: 5
       start_period: 2s
 
-  # 1. Spring Boot API Service (DEVELOPMENT Mode)
+  # ---------------------------------------------
+  # Spring Boot API Service (DEVELOPMENT Mode)
+  # ---------------------------------------------
   app-dev:
     build:
       # FIX: Point to the 'backend' folder
@@ -92,17 +130,18 @@ services:
         condition: service_healthy
 
     volumes:
-      # FIX: Mount the 'backend' folder to /app container path
+      # Mount the 'backend' folder to /app container path
       - ./budgetTracker:/app
       - ~/.m2:/root/.m2
     networks:
       - backend_network
 
-    # FIX: Use fully qualified maven goal
-    #command: sh -c "./wait-for-it.sh db 5432 -- ./wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
+    # Use fully qualified maven goal
     command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
 
-  # 2. Spring Boot API Service (PRODUCTION Mode)
+  # ---------------------------------------------
+  # Spring Boot API Service (PRODUCTION Mode)
+  # ---------------------------------------------
   app-prod:
     build:
       # FIX: Point to the 'backend' folder

@@ -29,7 +29,7 @@ import { Credentials } from '../../../../core/models/auth.models';
         id="login-header"
         class="text-3xl font-bold text-gray-800 mb-6 text-center"
       >
-        User Login 🔑
+        User Logins 🔑
       </h1>
 
       @if (loginError()) {
