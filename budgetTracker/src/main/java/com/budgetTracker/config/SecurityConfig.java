@@ -69,9 +69,19 @@ public class SecurityConfig {
 
                 // 3. Configure Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize
+                        //DOC endpoints
+                        .requestMatchers(
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                // 2. Swagger UI Resources (Webjars, custom path, and default path)
+                                "/webjars/**",
+                                "/swagger-ui/**",
+                                "/documentation/**" // custom path
+                        ).permitAll()
+
                         // PUBLIC ENDPOINTS: Allow access to all authentication paths
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/documentation/**").permitAll()
+
                         // All other requests MUST be authenticated (require a valid JWT)
                         .anyRequest().authenticated()
                 )

@@ -22,8 +22,7 @@ public class OpenApiConfig {
                         .version("1.0.0")
                         .description("REST API documentation for the Budget Tracker application, covering financial data, transactions, and user management.")
                         .contact(new Contact()
-                                .name("Budget Tracker Team")
-                                .email("support@budgettracker.com"))
+                                .name("Budget Tracker Team"))
                         .license(new License()
                                 .name("Apache 2.0")
                                 .url("http://springdoc.org")));
