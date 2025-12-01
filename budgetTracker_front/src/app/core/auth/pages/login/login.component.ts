@@ -13,8 +13,8 @@ import {
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { AuthService } from '../../../../core/services/auth.service';
-import { Credentials } from '../../../../core/models/auth.models';
+import { AuthService } from '../../../../core/auth/services/auth.service';
+import { Credentials } from '../../models/auth.models';
 
 @Component({
   selector: 'app-login',
