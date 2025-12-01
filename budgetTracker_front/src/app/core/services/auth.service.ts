@@ -16,7 +16,6 @@ export class AuthService {
   );
 
   // Public readonly signal for component access.
-  // Derived state: Computed signal for simple boolean check.
   readonly isAuthenticated = this.jwtToken.asReadonly();
 
   // Dependency Injection:
