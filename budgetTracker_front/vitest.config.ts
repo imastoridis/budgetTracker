@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitest/config';
+import angular from '@vitejs/plugin-angular';
 
 export default defineConfig({
+  plugins: [angular()],
   test: {
     // 1. Enable globals (vi, describe, it, etc.) for a familiar Jest/Jasmine syntax
     globals: true,

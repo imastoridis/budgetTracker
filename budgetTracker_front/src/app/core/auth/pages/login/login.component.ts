@@ -26,7 +26,6 @@ import { MaterialModule } from '../../../../shared/modules/material/material.mod
 export class LoginComponent {
   private authService = inject(AuthService);
   readonly loginError = signal<string | null>(null);
-  // Spinner control
   spinnerDisabled = signal(false);
 
   readonly loginForm = new FormGroup({

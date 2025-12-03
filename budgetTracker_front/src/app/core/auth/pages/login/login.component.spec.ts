@@ -1,10 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { of, throwError } from 'rxjs';
+import { throwError, Subject } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
-
+import { RouterTestingModule } from '@angular/router/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 // Create a mock implementation for the AuthService
 const mockAuthService = {
   login: vi.fn(),
@@ -20,6 +26,13 @@ describe('LoginComponent', () => {
       imports: [
         LoginComponent, // Standalone component
         ReactiveFormsModule,
+        RouterTestingModule,
+        NoopAnimationsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        MatButtonModule,
       ],
       providers: [
         // Provide the mock object instead of the real service
@@ -56,21 +69,27 @@ describe('LoginComponent', () => {
   // --- Submission/Service Interaction Tests ---
   // ------------------------------------------
   it('should call AuthService.login and reset spinner on success', () => {
-    // Set up the mock to return a successful Observable
-    (authService.login as Mock).mockReturnValue(of({ token: 'fake-token' }));
+    // Create a Subject to control the response flow.
+    const successSubject = new Subject<{ token: string }>();
+
+    // The Observable will not complete until successSubject.complete() is called.
+    (authService.login as Mock).mockReturnValue(successSubject.asObservable());
 
     component.loginForm.controls.username.setValue('user');
     component.loginForm.controls.password.setValue('pass');
 
+    // Submit the form
     component.submitForm();
-
-    // Check pre-submission state changes
     expect(component.spinnerDisabled()).toBe(true);
+
     // Check service call
     expect(authService.login).toHaveBeenCalledWith({
       username: 'user',
       password: 'pass',
     });
+
+    // This triggers the 'complete' callback in submitForm, setting the spinner to false.
+    successSubject.complete();
 
     // Check post-submission state changes (in the 'complete' block)
     // The spinner should be disabled after the observable completes
