@@ -1,3 +1,79 @@
-<p>
-  registration works!
-</p>
+<div class="max-w-md mx-auto mt-12 p-8 bg-white shadow-lg rounded-xl border border-gray-200">
+  <h1 id="login-header" class="text-3xl font-bold text-gray-800 mb-6 flex flex-row justify-center items-center gap-2">
+    <div>
+      Registration <mat-icon class="" aria-label="face icon" fontIcon="face"></mat-icon>
+    </div>
+    @if (spinnerDisabled()){<div><mat-spinner [diameter]="30"></mat-spinner></div>}
+  </h1>
+
+
+  <form [formGroup]="registrationForm" aria-labelledby="login-header">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Username</mat-label>
+      <input matInput placeholder="Username" [formControl]="registrationForm.controls.username" required />
+      @if (
+      registrationForm.controls.username.touched &&
+      registrationForm.controls.username.hasError('required')
+      ) {
+      <p class="mt-1 text-sm text-red-500" role="alert">
+        Username is required.
+      </p>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Password</mat-label>
+      <input matInput [formControl]="registrationForm.controls.password" required />
+      @if (
+      registrationForm.controls.password.touched &&
+      registrationForm.controls.password.hasError('required')
+      ) {
+      <p class="mt-1 text-sm text-red-500" role="alert">
+        Password is required.
+      </p>
+      }
+      @else if (
+      registrationForm.controls.password.hasError('pattern')
+      ) {
+      <p class="mt-1 text-sm text-red-500" role="alert">
+        Password must be at least 8 characters and include uppercase, lowercase, number, and a special character.
+      </p>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput [formControl]="registrationForm.controls.email" required />
+      @if (
+      registrationForm.controls.email.touched &&
+      registrationForm.controls.email.hasError('required')
+      ) {
+      <p class="mt-1 text-sm text-red-500" role="alert">
+        Email is required.
+      </p>
+      } @else if (registrationForm.controls.email.hasError('email')){
+      <p class="mt-1 text-sm text-red-500" role="alert">
+        Email is wrong.
+      </p>
+      }
+    </mat-form-field>
+
+
+    <button (click)="submitForm()" matButton="filled" [disabled]="registrationForm.invalid" class="w-full">
+      Register
+    </button>
+
+    <p class="mt-4 text-center text-sm text-gray-600">
+      Already have an account?
+      <a [routerLink]="['/auth/register']" class="font-medium text-indigo-600 hover:text-indigo-500">
+        Login here
+      </a>
+    </p>
+
+    @if (registrationError()) {
+    <p class="p-3  mt-4 bg-red-100 text-red-700 border border-red-400 rounded-lg" role="alert">
+      {{ registrationError() }}
+    </p>
+    }
+  </form>
+</div>

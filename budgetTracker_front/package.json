@@ -6,7 +6,8 @@
     "start": "ng serve --proxy-config proxy.conf.json --poll 1000",
     "build": "ng build --output-path=./dist/budget-tracker-front --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "vitest run -c vitest.config.ts",
+    "test:watch": "vitest -c vitest.config.ts",
     "serve:ssr:budgetTracker_front": "node dist/budgetTracker_front/server/server.mjs",
     "lint": "ng lint",
     "prettier": "prettier --write \"src/**/*.{ts,html,css,scss,js,json}\""
@@ -40,18 +41,19 @@
     "@tailwindcss/postcss": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
+    "@vitest/coverage-v8": "^4.0.15",
     "angular-eslint": "21.0.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsonc": "^2.16.1",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.5.0",
-    "jsdom": "^27.1.0",
+    "jsdom": "^27.2.0",
     "postcss": "^8.5.3",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.46.4",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.15"
   }
 }

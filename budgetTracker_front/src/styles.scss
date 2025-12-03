@@ -1,6 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
-
-/* @import 'tailwindcss';
+/*src/styles.scss*/
+@use './custom-theme.scss';
+@use 'tailwindcss';
 
 html,
 body {
@@ -12,7 +12,6 @@ body {
 }
 
 /* Style to fix the weird border with angular material */
-/*.mdc-notched-outline__notch {
+.mdc-notched-outline__notch {
   border-right: none !important;
 }
- */

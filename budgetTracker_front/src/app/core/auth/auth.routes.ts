@@ -2,15 +2,20 @@
 
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
+import { RegistrationComponent } from './pages/registration/registration.component';
 
-// Angular Best Practice: Define feature routes
+// Feature routes
 export const AUTH_ROUTES: Routes = [
   {
     path: 'login',
     component: LoginComponent,
     title: 'Login to Application',
   },
-  // Add other auth routes like 'register' or 'forgot-password' here
+  {
+    path: 'register',
+    component: RegistrationComponent,
+    title: 'Register New Account',
+  },
   {
     path: '',
     redirectTo: 'login',

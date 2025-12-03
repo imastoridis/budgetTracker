@@ -15,20 +15,19 @@ import { CommonModule } from '@angular/common';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Credentials } from '../../models/auth.models';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
 
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, MaterialModule],
   templateUrl: './login.component.html',
-  /*  host: {
-    '[class.active-counter]': 'false',
-    class: 'block',
-  }, */
 })
 export class LoginComponent {
   private authService = inject(AuthService);
   readonly loginError = signal<string | null>(null);
+  // Spinner control
+  spinnerDisabled = signal(false);
 
   readonly loginForm = new FormGroup({
     username: new FormControl('', {
@@ -41,7 +40,8 @@ export class LoginComponent {
     }),
   });
 
-  onSubmit(): void {
+  submitForm(): void {
+    this.spinnerDisabled.set(true);
     const credentials = this.loginForm.getRawValue() as Credentials;
     this.loginError.set(null);
 
@@ -51,7 +51,19 @@ export class LoginComponent {
         this.loginError.set(
           'Login failed. Please check your credentials and try again.',
         );
+        this.spinnerDisabled.set(false);
+      },
+      complete: () => {
+        console.log('Login successful');
+        this.spinnerDisabled.set(false);
       },
     });
+  }
+
+  // Password visibility toggle
+  hidePassword = signal(true);
+  clickEvent(event: MouseEvent) {
+    this.hidePassword.set(!this.hidePassword());
+    event.stopPropagation();
   }
 }

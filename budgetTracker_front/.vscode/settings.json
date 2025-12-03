@@ -32,5 +32,8 @@
     "json",
     "html", // For Angular inline templates via the processor
     "markdown"
-  ]
+  ],
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
