@@ -1,6 +1,17 @@
-/*src/styles.scss*/
+/* src/styles.scss */
+
+// Import Angular Material theming functions
+@use '@angular/material' as mat;
+
+// Load the custom theme definition file.
+// This file runs the mat.theme() mixin and defines the color variables (like 'primary').
 @use './custom-theme.scss';
+
+// Load Tailwind CSS (last, to minimize conflicts with Material's base styles)
 @use 'tailwindcss';
+
+// Include Angular Material Core styles
+@include mat.core();
 
 html,
 body {
@@ -9,9 +20,4 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-}
-
-/* Style to fix the weird border with angular material */
-.mdc-notched-outline__notch {
-  border-right: none !important;
 }

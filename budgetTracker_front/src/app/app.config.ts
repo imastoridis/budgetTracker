@@ -10,7 +10,8 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http'; // Import the provider function
+import { provideHttpClient, withInterceptors } from '@angular/common/http'; // Import the provider function
+import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     // Default providers (optional for Zone Change Detection)
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Register the authInterceptor globally
+    provideHttpClient(withInterceptors([authInterceptor])),
   ],
 };

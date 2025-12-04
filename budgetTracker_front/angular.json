@@ -25,11 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/custom-theme.scss",
-              "src/styles.css",
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "polyfills": ["@angular/localize/init"]
           },
           "configurations": {
