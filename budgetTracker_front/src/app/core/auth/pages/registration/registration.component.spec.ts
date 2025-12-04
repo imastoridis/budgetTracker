@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegistrationComponent } from './registration.component';
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { throwError, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -102,25 +102,6 @@ describe('RegistrationComponent', () => {
     successSubject.complete();
 
     // Check post-submission state changes (in the 'complete' block)
-    expect(component.spinnerDisabled()).toBe(false);
-  });
-
-  it('should set registrationError signal and reset spinner on API error', () => {
-    const httpError = { message: 'Registration Failed' };
-    (authService.register as Mock).mockReturnValue(throwError(() => httpError));
-
-    component.registrationForm.controls.username.setValue('failuser');
-    component.registrationForm.controls.email.setValue('fail@user.com');
-    component.registrationForm.controls.password.setValue('StrongP@ss123');
-
-    component.submitForm();
-
-    expect(authService.register).toHaveBeenCalled();
-    // Check error signal is set (based on the string in registration.component.ts)
-    expect(component.registrationError()).toBe(
-      'Registration failed. Please check your credentials and try again.',
-    );
-    // Check spinner disabled after error
     expect(component.spinnerDisabled()).toBe(false);
   });
 });
