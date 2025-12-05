@@ -1,8 +1,15 @@
 /**
- * Interface for the expected response body from the login API endpoint.
+ *Interface for the expected response body from the login API endpoint.
  */
-export interface AuthResponse {
-  id: string;
+export interface Category {
+  id: number;
   name: string;
-  user_id: string;
+  userId: number;
+}
+
+/*
+ * Interface for creating a new category
+ */
+export interface CategoryCreate {
+  name: string;
 }

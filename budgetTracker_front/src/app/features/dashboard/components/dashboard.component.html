@@ -13,14 +13,14 @@
   </header>
 
   <!-- Main -->
-  <section class=" w-[90%] flex gap-6">
+  <section class=" w-[90%] flex gap-6 ">
     <!-- LEft section -->
     <div class="p-4 w-1/6 bg-white shadow-xl rounded-xl flex flex-col gap-10">
-      <!-- Add -->
+      <!-- Add Transaction (Income/Expense)-->
       <div class="flex flex-col gap-4 text-xl font-semibold text-sky-700">
         <div class="flex border-b align-items-center">
           <mat-icon aria-label="face icon" fontIcon="add_circle"></mat-icon>
-          <h2> Quick Add </h2>
+          <h2> Transactions </h2>
         </div>
 
         <button (click)="addExpense()" mat-raised-button class="!bg-green-700 hover:!bg-green-800 !text-white">
@@ -66,20 +66,39 @@
           [Pie Chart Placeholder]
         </div>
       </div>
+
+      <!-- Add Category-->
+      <div class="flex flex-col">
+        <mat-accordion class="example-headers-align" multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title> Add Category </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="flex flex-row gap-2 items-start">
+              <mat-form-field appearance="outline">
+                <mat-label>Category name</mat-label>
+                <input matInput [formControl]="categoryForm.controls.name" required />
+              </mat-form-field>
+              <span class="material-symbols-outlined !text-4xl cursor-pointer mt-2 text-green-700"
+                (click)="addCategory()">
+                add_circle
+              </span>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
     </div>
+
     <!-- Right section -->
     <div class="p-4 flex flex-col w-full bg-white shadow-xl rounded-xl ">
       <div class="flex border-b align-items-center text-xl font-semibold text-sky-700">
         <mat-icon aria-label="face icon" fontIcon="business_center"></mat-icon>
         <h2>Monthly Summary</h2>
-
       </div>
 
       <div class="flex  mt-2">
         <mat-icon aria-label="face icon" fontIcon="category" class="!text-sm"></mat-icon>
-
         <p class="text-gray-600">Categories</p>
-
       </div>
       <div>
 
