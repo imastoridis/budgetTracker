@@ -46,4 +46,15 @@ export class CategoriesService {
         }),
       );
   }
+
+  /**
+   * Deletes an existing category in the backend.
+   * @param category
+   * @returns An Observable of the updated category response.
+   */
+  deleteCategory(category: Category): Observable<Category> {
+    return this.http.delete<Category>(
+      this.apiUrlCategories + '/' + category.id,
+    );
+  }
 }

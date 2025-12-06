@@ -5,12 +5,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -18,8 +13,9 @@ import { CategoriesService } from '../../../categories/services/categories.servi
 import { Category } from '../../../categories/models/categories.models';
 import { of } from 'rxjs';
 import { DialogUpdateCategory } from '../../../categories/components/category-update.component';
-import { MatDialog } from '@angular/material/dialog';
+import { DialogDeleteCategory } from '../../../categories/components/category-delete.component';
 import { AddCategory } from '../../../categories/components/category-add.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,13 +27,6 @@ export class DashboardComponent implements OnInit {
   readonly authService = inject(AuthService);
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
-
-  readonly categoryForm = new FormGroup({
-    name: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-  });
 
   /* Add expense */
   addExpense(): void {
@@ -80,6 +69,22 @@ export class DashboardComponent implements OnInit {
           }),
         );
       }
+    });
+  }
+
+  /* Open delete category dialog */
+  openDialogDeleteCategory(category: Category): void {
+    console.log('Opening delete dialog for category ID:', category);
+    const dialogRef = this.dialog.open(DialogDeleteCategory, {
+      data: category,
+    });
+
+    //After delete, update the signal
+    dialogRef.afterClosed().subscribe((result: Category) => {
+      console.log('Delete dialog closed with result:', result);
+      this.allCategories.update((categories) =>
+        categories.filter((cat) => cat.id !== category.id),
+      );
     });
   }
 
