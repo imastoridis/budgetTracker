@@ -2,7 +2,7 @@
 <div class="flex flex-col items-center ">
   <!-- Header -->
   <header
-    class="p-4 border-b border-gray-200 mb-6 flex flex-row justify-between items-center bg-white w-screen shadow-xl">
+    class="p-4 border-b border-gray-200 mb-6 flex flex-row justify-between items-center bg-white w-screen shadow-xl h-[10%]">
     <h1 class="text-xl font-extrabold text-cyan-800">
       Budget Tracker Dashboard
     </h1>
@@ -13,9 +13,9 @@
   </header>
 
   <!-- Main -->
-  <section class=" w-[90%] flex gap-6 ">
+  <section class=" w-[90%] flex gap-6 h-[90%]">
     <!-- LEft section -->
-    <div class="p-4 w-1/6 bg-white shadow-xl rounded-xl flex flex-col gap-10">
+    <div class="p-4 w-1/6 bg-white shadow-xl rounded-xl flex flex-col gap-10 h-[90vh]">
       <!-- Add Transaction (Income/Expense)-->
       <div class="flex flex-col gap-4 text-xl font-semibold text-sky-700">
         <div class="flex border-b align-items-center">
@@ -69,23 +69,8 @@
 
       <!-- Add Category-->
       <div class="flex flex-col">
-        <mat-accordion class="example-headers-align" multi>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title> Add Category </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="flex flex-row gap-2 items-start">
-              <mat-form-field appearance="outline">
-                <mat-label>Category name</mat-label>
-                <input matInput [formControl]="categoryForm.controls.name" required />
-              </mat-form-field>
-              <span class="material-symbols-outlined !text-4xl cursor-pointer mt-2 text-green-700"
-                (click)="addCategory()">
-                add_circle
-              </span>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
+        <!-- category-add.component -->
+        <app-add-category (categoryAdded)="onCategoryAdded($any($event))"></app-add-category>
       </div>
     </div>
 
@@ -96,12 +81,36 @@
         <h2>Monthly Summary</h2>
       </div>
 
-      <div class="flex  mt-2">
-        <mat-icon aria-label="face icon" fontIcon="category" class="!text-sm"></mat-icon>
-        <p class="text-gray-600">Categories</p>
+      <div class="flex my-4 gap-1">
+        <mat-icon aria-label="face icon" fontIcon="category"></mat-icon>
+        <div class="text-gray-600 text-xl">Categories</div>
       </div>
-      <div>
 
+      <div class="flex flex-wrap gap-10">
+        @for (category of allCategories(); track category.id) {
+
+        <div class="flex flex-col border p-4 rounded-lg shadow-md w-1/6 justify-between">
+          <div class="flex flex-row gap-4 justify-between items-center mb-2">
+            <span class="flex items-center gap-2">
+              <mat-icon aria-label="face icon" fontIcon="label" class="!text-cyan-700"></mat-icon>
+              <span class="text-cyan-700 text-xl">{{category.name}}</span>
+            </span>
+            <span class="flex ">
+              <button mat-icon-button aria-label="Update category" class="-me-2"
+                (click)="openDialogUpdateCategory(category)">
+                <mat-icon fontIcon="autorenew" class="!text-indigo-700"></mat-icon>
+              </button>
+              <button mat-icon-button aria-label="Delete category">
+                <mat-icon fontIcon="delete" class="!text-red-700"></mat-icon>
+              </button>
+            </span>
+          </div>
+          <div class="text-green-600 font-medium">$2,000</div>
+          <!-- (click)="deleteCategory(item.id)" -->
+          <div class="text-green-600 font-medium">%</div>
+        </div>
+
+        }
       </div>
     </div>
     <div>

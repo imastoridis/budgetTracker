@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { CategoryCreate, Category } from '../models/categories.models';
+import { Category } from '../models/categories.models';
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +14,8 @@ export class CategoriesService {
    * Gets categories from the backend.
    * @returns An Observable of the categories response.
    */
-  getCategories(): Observable<Category> {
-    return this.http.get<Category>(this.apiUrlCategories).pipe(
-      tap((response) => {
-        console.log('Categories fetched:', response);
-      }),
-    );
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(this.apiUrlCategories);
   }
 
   /**
@@ -27,11 +23,27 @@ export class CategoriesService {
    * @param category
    * @returns An Observable of the categories response.
    */
-  addCategory(category: CategoryCreate): Observable<Category> {
+  addCategory(category: Category): Observable<Category> {
+    console.log('Adding category:', category);
     return this.http.post<Category>(this.apiUrlCategories, category).pipe(
       tap((response) => {
         console.log('Categories fetched:', response);
       }),
     );
+  }
+
+  /**
+   * Updates an existing category in the backend.
+   * @param category
+   * @returns An Observable of the updated category response.
+   */
+  updateCategory(category: Category): Observable<Category> {
+    return this.http
+      .put<Category>(this.apiUrlCategories + '/' + category.id, category)
+      .pipe(
+        tap((response) => {
+          console.log('Categories fetched:', response);
+        }),
+      );
   }
 }
