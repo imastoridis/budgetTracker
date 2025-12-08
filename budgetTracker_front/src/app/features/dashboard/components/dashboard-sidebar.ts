@@ -70,6 +70,5 @@ export class DashboardSidebar {
   /* Handles the event emitted by the AddCategory component when a new category is added. */
   onCategoryAdded(newCategory: Category): void {
     this.categoryAdded.emit(newCategory);
-    // this.allCategories.update((categories) => [...categories, newCategory]);
   }
 }

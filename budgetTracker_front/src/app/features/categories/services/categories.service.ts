@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../models/categories.models';
 
@@ -25,12 +25,7 @@ export class CategoriesService {
    * @returns An Observable of the categories response.
    */
   addCategory(category: Category): Observable<Category> {
-    console.log('Adding category:', category);
-    return this.http.post<Category>(this.apiUrlCategories, category).pipe(
-      tap((response) => {
-        console.log('Categories fetched:', response);
-      }),
-    );
+    return this.http.post<Category>(this.apiUrlCategories, category);
   }
 
   /**
@@ -39,13 +34,10 @@ export class CategoriesService {
    * @returns An Observable of the updated category response.
    */
   updateCategory(category: Category): Observable<Category> {
-    return this.http
-      .put<Category>(this.apiUrlCategories + '/' + category.id, category)
-      .pipe(
-        tap((response) => {
-          console.log('Categories fetched:', response);
-        }),
-      );
+    return this.http.put<Category>(
+      this.apiUrlCategories + '/' + category.id,
+      category,
+    );
   }
 
   /**
