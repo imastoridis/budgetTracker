@@ -6,7 +6,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 import {} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-dashboard-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
   template: `
@@ -27,7 +27,7 @@ import {} from '@angular/material/dialog';
     </header>
   `,
 })
-export class Header {
+export class DashboardHeader {
   readonly authService = inject(AuthService);
 
   /* Calls the service's logout method to clear the token and redirect.   */

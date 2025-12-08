@@ -14,10 +14,11 @@ import { MaterialModule } from '../../shared/modules/material/material.module';
 import { CategoriesService } from '../categories/services/categories.service';
 /* Transactions */
 import { TransactionsService } from '../transactions/services/transactions.service';
-import { DashboardCategoriesService } from './services/dashboard-categories.service';
-
-import { Header } from './components/header';
+/* Dashboard children*/
+import { DashboardHeader } from './components/dashboard-header';
 import { DashboardSidebar } from './components/dashboard-sidebar';
+import { DashboardSummary } from './components/dashboard-summary';
+import { Utils } from '../../shared/utils/utils';
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,43 +26,51 @@ import { DashboardSidebar } from './components/dashboard-sidebar';
     CommonModule,
     MaterialModule,
     ReactiveFormsModule,
-
-    Header,
+    DashboardHeader,
     DashboardSidebar,
+    DashboardSummary,
   ],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
-  private dashboardCategoriesService = inject(DashboardCategoriesService);
-  errorMessage = signal<string>('');
-  /**
-   * Categories
-   */
+  errorMessage = signal<string>('Test');
+  utils = inject(Utils);
+
+  /* Categories */
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
 
-  /* Get all categories for user */ /* TO DO ALPHABETICALLY */
+  // Get all categories for user */ /* TO DO ALPHABETICALLY */
   getCategories(): void {
     this.categoriesService.getCategories().subscribe({
       next: (categories) => {
         this.allCategories.set(categories);
       },
-      error: () => {
+      error: (err) => {
+        this.utils.openSnackBar(err, '');
         this.allCategories.set([]);
         return of([]);
       },
     });
   }
 
-  /**
-   * Handler to update the signal when a new category is added from the sidebar
-   */
+  /* Handler to update the signal when a new category is added from the sidebar */
   onCategoryAdded(newCategory: Category): void {
     this.allCategories.update((categories) => [...categories, newCategory]);
   }
 
+  /* Handler to update the signal when a new category is udpated from the sidebar */
+  onCategoryUpdated(updatedCategory: Category): void {
+    this.allCategories.update((categories) =>
+      categories.map((category) => {
+        return category.id === updatedCategory.id ? updatedCategory : category;
+      }),
+    );
+  }
+
+  /* Handler to update the signal when a new category is deleted from the sidebar */
   /* Open update category dialog */
-  openUpdateCategory(category: Category): void {
+  /*   openUpdateCategory(category: Category): void {
     this.dashboardCategoriesService
       .openUpdateCategory(category)
       .subscribe((result: Category) => {
@@ -73,19 +82,19 @@ export class DashboardComponent implements OnInit {
           );
         }
       });
-  }
+  } */
 
   /* Open delete category dialog */
-  openDialogDeleteCategory(category: Category): void {
+  /*   openDeleteCategory(category: Category): void {
     this.dashboardCategoriesService
-      .openDialogDeleteCategory(category)
+      .openDeleteCategory(category)
       .subscribe((result: Category) => {
         console.log('Delete dialog closed with result:', result);
         this.allCategories.update((categories) =>
           categories.filter((cat) => cat.id !== category.id),
         );
       });
-  }
+  } */
 
   /**
    * Transactions

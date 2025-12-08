@@ -36,7 +36,7 @@ import { AddCategory } from '../../categories/components/category-add.component'
   ],
   template: `
     <div
-      class="p-4 bg-white shadow-xl rounded-xl flex flex-col gap-10 h-[90vh]"
+      class="p-4 bg-white shadow-xl rounded-xl flex flex-col gap-10 h-[90vh] "
     >
       <!-- Add Transaction (Income/Expense)-->
       <div class="flex flex-col gap-4 text-xl font-semibold text-sky-700">

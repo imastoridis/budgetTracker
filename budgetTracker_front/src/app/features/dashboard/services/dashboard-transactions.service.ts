@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateCategory } from '../../categories/components/category-update.component';
-import { DialogDeleteCategory } from '../../categories/components/category-delete.component';
+import { DeleteCategory } from '../../categories/components/category-delete.component';
 import { Category } from '../../categories/models/categories.models';
 @Injectable({
   providedIn: 'root',
@@ -30,7 +30,7 @@ export class DashboardTransactionsService {
    * @returns An Observable that emits the updated transaction object upon dialog close,
    */
   openDialogDeleteTransaction(transaction: Category): Observable<Category> {
-    const dialogRef = this.dialog.open(DialogDeleteCategory, {
+    const dialogRef = this.dialog.open(DeleteCategory, {
       data: transaction,
     });
 

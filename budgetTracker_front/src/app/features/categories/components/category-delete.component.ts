@@ -39,9 +39,9 @@ import {
       </mat-dialog-actions>
     </form>`,
 })
-export class DialogDeleteCategory {
+export class DeleteCategory {
   private categoriesService = inject(CategoriesService);
-  private dialogRef = inject(MatDialogRef<DialogDeleteCategory>);
+  private dialogRef = inject(MatDialogRef<DeleteCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
 
   // Initialize the form using the imported factory function

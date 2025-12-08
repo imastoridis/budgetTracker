@@ -1,6 +1,11 @@
 //src\app\features\categories\components\category-update.component.ts
 
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  output,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
@@ -63,6 +68,7 @@ export class UpdateCategory {
   private categoriesService = inject(CategoriesService);
   private dialogRef = inject(MatDialogRef<UpdateCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
+  categoryUpdated = output<Category>();
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -76,6 +82,7 @@ export class UpdateCategory {
       .subscribe({
         next: (response) => {
           this.dialogRef.close(response);
+          this.categoryUpdated.emit(updatedCategory);
         },
         error: (err) => {
           console.error('Error updating category:', err.error);
