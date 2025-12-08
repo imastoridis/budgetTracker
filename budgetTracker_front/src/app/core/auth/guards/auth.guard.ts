@@ -21,7 +21,6 @@ export const authGuard: CanActivateFn = () => {
   } else {
     // If not authenticated, redirect the user to the login page.
     console.log('Access denied. Redirecting to login.');
-    // TypeScript Best Practice: Explicitly return the UrlTree promise result.
-    return router.parseUrl('/auth/login');
+    return router.createUrlTree(['/auth/login']);
   }
 };

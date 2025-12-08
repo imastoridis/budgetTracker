@@ -1,22 +1,48 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+// src/app/core/auth/interceptors/auth.interceptor.ts
+
 import { inject } from '@angular/core';
+import {
+  HttpEvent,
+  HttpHandlerFn,
+  HttpRequest,
+  HttpErrorResponse,
+} from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+/**
+ * Interceptor to attach JWT and handle 401 errors from the server.
+ */
+export const authInterceptor = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+): Observable<HttpEvent<unknown>> => {
   const authService = inject(AuthService);
-  // Retrieve the token
-  const token = authService.isAuthenticated();
 
-  // If a token exists, clone the request and add the Authorization header
+  // 1. Attach the token to the outgoing request
+  const token = authService.isAuthenticated(); // The signal holds the token string or null
+
+  let authReq = req;
   if (token) {
-    const clonedRequest = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
+    authReq = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${token}`),
     });
-    return next(clonedRequest);
   }
 
-  // Otherwise, just pass the original request
-  return next(req);
+  // 2. Handle the response and check for 401
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        // Token was rejected by the server (invalid signature, revoked, etc.)
+        console.error('Server rejected token (401). Forcing logout.');
+
+        // This is the key: Force logout and redirect.
+        authService.logout();
+
+        // Important: Stop the error from continuing to the component's subscriber
+        return throwError(() => new Error('Session Expired or Unauthorized'));
+      }
+      return throwError(() => error);
+    }),
+  );
 };

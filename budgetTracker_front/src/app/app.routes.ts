@@ -2,7 +2,7 @@
 
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guards/auth.guard';
-
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 export const routes: Routes = [
   // Authentication Feature (Lazy Loaded)
   {
@@ -14,10 +14,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/dashboard/pages/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent,
-      ),
+    component: DashboardComponent,
   },
   // Default Redirect
   {

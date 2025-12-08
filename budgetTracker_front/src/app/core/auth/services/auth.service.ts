@@ -26,8 +26,46 @@ export class AuthService {
    * @returns The stored JWT string or null.
    */
   private getInitialToken(): string | null {
-    // Note: In a real app, you might want to validate the token's expiry here.
-    return localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken');
+
+    // Check if token exists AND if it is NOT expired
+    if (token && !this.isTokenExpired(token)) {
+      return token;
+    }
+
+    // If token is present but expired, or missing, remove it from storage.
+    if (token) {
+      console.log('Found token, but it is expired. Removing from storage.');
+      localStorage.removeItem('authToken');
+    }
+
+    return null;
+  }
+
+  // Helper function to decode a JWT and check its expiration
+  isTokenExpired(token: string): boolean {
+    try {
+      // JWT structure: Header.Payload.Signature. We only need the payload (index 1).
+      const payload = token.split('.')[1];
+      // Base64 decode the payload
+      const decodedPayload = JSON.parse(atob(payload));
+
+      if (!decodedPayload.exp) {
+        // If there's no expiration claim, treat as valid or adjust as per backend rules.
+        return false;
+      }
+
+      // exp is in seconds (Unix epoch time). Convert to milliseconds for Date.
+      const expirationTimeMs = decodedPayload.exp * 1000;
+      const currentTimeMs = new Date().getTime();
+
+      // The token is expired if the expiration time is in the past.
+      return expirationTimeMs < currentTimeMs;
+    } catch (error) {
+      // If decoding fails (malformed token), treat it as expired/invalid.
+      console.error('JWT decoding failed:', error);
+      return true;
+    }
   }
 
   /**
