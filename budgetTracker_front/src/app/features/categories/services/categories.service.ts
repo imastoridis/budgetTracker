@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../models/categories.models';
@@ -10,6 +10,7 @@ export class CategoriesService {
   private readonly apiUrlCategories = 'http://localhost:8080/api/categories';
   private http = inject(HttpClient);
 
+  readonly allCategories = signal<Category[]>([]);
   /**
    * Gets categories from the backend.
    * @returns An Observable of the categories response.

@@ -16,31 +16,35 @@ import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
   selector: 'app-add-category',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
-  template: ` <form [formGroup]="categoryForm">
-    <mat-accordion class="example-headers-align" multi>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title> Add Category </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="flex flex-row gap-2 items-start">
-          <mat-form-field appearance="outline">
-            <mat-label>Category name</mat-label>
-            <input
-              matInput
-              [formControl]="categoryForm.controls.name"
-              required
-            />
-          </mat-form-field>
-          <span
-            class="material-symbols-outlined !text-4xl cursor-pointer mt-2 text-green-700"
-            (click)="addCategory()"
-          >
-            add_circle
-          </span>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </form>`,
+  template: `
+    <div class="flex flex-col">
+      <form [formGroup]="categoryForm">
+        <mat-accordion class="example-headers-align" multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title> Add Category </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="flex flex-row gap-2 items-start">
+              <mat-form-field appearance="outline">
+                <mat-label>Category name</mat-label>
+                <input
+                  matInput
+                  [formControl]="categoryForm.controls.name"
+                  required
+                />
+              </mat-form-field>
+              <span
+                class="material-symbols-outlined !text-4xl cursor-pointer mt-2 text-green-700"
+                (click)="addCategory()"
+              >
+                add_circle
+              </span>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </form>
+    </div>
+  `,
 })
 export class AddCategory {
   private categoriesService = inject(CategoriesService);

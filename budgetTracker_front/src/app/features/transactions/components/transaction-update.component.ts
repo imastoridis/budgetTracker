@@ -1,10 +1,8 @@
-//src\app\features\categories\components\category-update.component.ts
-
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { CategoriesService } from '../services/categories.service';
-import { Category } from '../models/categories.models';
+import { TransactionsService } from '../services/transactions.service';
+import { Category } from '../models/transactions.models';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -17,10 +15,10 @@ import {} from '@angular/material/dialog';
 import {
   buildCategoryForm,
   CategoryForm,
-} from '../forms/category-form-builder';
+} from '../forms/transactions-form-builder';
 
 @Component({
-  selector: 'app-dialog-category-update',
+  selector: 'app-dialog-transaction-update',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MaterialModule,
@@ -60,7 +58,7 @@ import {
     </form>`,
 })
 export class UpdateCategory {
-  private categoriesService = inject(CategoriesService);
+  private categoriesService = inject(TransactionsService);
   private dialogRef = inject(MatDialogRef<UpdateCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
 
