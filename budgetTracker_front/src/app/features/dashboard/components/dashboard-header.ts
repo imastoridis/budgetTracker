@@ -3,8 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { AuthService } from '../../../core/auth/services/auth.service';
 
-import {} from '@angular/material/dialog';
-
 @Component({
   selector: 'app-dashboard-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +28,7 @@ import {} from '@angular/material/dialog';
 export class DashboardHeader {
   readonly authService = inject(AuthService);
 
-  /* Calls the service's logout method to clear the token and redirect.   */
+  /*Logout, clear the token and redirect.   */
   logout(): void {
     this.authService.logout();
   }

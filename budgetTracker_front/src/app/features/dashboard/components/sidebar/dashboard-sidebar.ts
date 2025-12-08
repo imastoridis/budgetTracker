@@ -1,26 +1,12 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../../transactions/services/transactions.service';
-import { Category } from '../../transactions/models/transactions.models';
-import { UpdateCategory } from '../../categories/components/category-update.component';
-
-import {} from '@angular/material/dialog';
-import {
-  initCategoryForm,
-  CategoryForm,
-} from '../../transactions/forms/transactions-form-builder';
-import { MatDialog } from '@angular/material/dialog';
-import { AddIncomeBtn } from '../components/add-income-btn';
-import { AddExpenseBtn } from '../components/add-expense-btn';
-import { TotalMonthDisplay } from '../components/total-month-display';
-import { PieChartDisplay } from '../components/pie-chart-display';
-import { AddCategory } from '../../categories/components/category-add.component';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { Category } from '../../../transactions/models/transactions.models';
+import { AddIncomeBtn } from './add-income-btn';
+import { AddExpenseBtn } from './add-expense-btn';
+import { TotalMonthDisplay } from './total-month-display';
+import { PieChartDisplay } from './pie-chart-display';
+import { AddCategory } from '../../../categories/components/category-add.component';
 
 @Component({
   selector: 'app-dashboard-sidebar',

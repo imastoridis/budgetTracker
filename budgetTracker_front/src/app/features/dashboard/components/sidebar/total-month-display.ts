@@ -5,16 +5,16 @@ import {
   output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../../transactions/services/transactions.service';
-import { Category } from '../../transactions/models/transactions.models';
-import { UpdateCategory } from '../../categories/components/category-update.component';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { TransactionsService } from '../../../transactions/services/transactions.service';
+import { Category } from '../../../transactions/models/transactions.models';
+import { UpdateCategory } from '../../../categories/components/category-update.component';
 
 import {} from '@angular/material/dialog';
 import {
   initCategoryForm,
   CategoryForm,
-} from '../../transactions/forms/transactions-form-builder';
+} from '../../../transactions/forms/transactions-form-builder';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({

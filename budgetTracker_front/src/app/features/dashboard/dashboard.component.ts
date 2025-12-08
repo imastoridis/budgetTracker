@@ -5,27 +5,27 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+//import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Category } from '../categories/models/categories.models';
 import { of } from 'rxjs';
 import { MaterialModule } from '../../shared/modules/material/material.module';
+import { Utils } from '../../shared/utils/utils';
 /* Categories */
+import { Category } from '../categories/models/categories.models';
 import { CategoriesService } from '../categories/services/categories.service';
 /* Transactions */
 import { TransactionsService } from '../transactions/services/transactions.service';
 /* Dashboard children*/
 import { DashboardHeader } from './components/dashboard-header';
-import { DashboardSidebar } from './components/dashboard-sidebar';
-import { DashboardSummary } from './components/dashboard-summary';
-import { Utils } from '../../shared/utils/utils';
+import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
+import { DashboardSummary } from './components/summary/dashboard-summary';
+
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     MaterialModule,
-    ReactiveFormsModule,
     DashboardHeader,
     DashboardSidebar,
     DashboardSummary,
@@ -33,14 +33,15 @@ import { Utils } from '../../shared/utils/utils';
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
-  errorMessage = signal<string>('Test');
   utils = inject(Utils);
 
-  /* Categories */
+  /**
+   * Categories
+   */
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
 
-  // Get all categories for user */ /* TO DO ALPHABETICALLY */
+  /* Get all categories for user */ /* TO DO ALPHABETICALLY */
   getCategories(): void {
     this.categoriesService.getCategories().subscribe({
       next: (categories) => {
@@ -67,22 +68,6 @@ export class DashboardComponent implements OnInit {
       }),
     );
   }
-
-  /* Handler to update the signal when a new category is deleted from the sidebar */
-  /* Open update category dialog */
-  /*   openUpdateCategory(category: Category): void {
-    this.dashboardCategoriesService
-      .openUpdateCategory(category)
-      .subscribe((result: Category) => {
-        if (result) {
-          this.allCategories.update((categories) =>
-            categories.map((cat) => {
-              return cat.id === result.id ? result : cat;
-            }),
-          );
-        }
-      });
-  } */
 
   /* Open delete category dialog */
   /*   openDeleteCategory(category: Category): void {

@@ -5,33 +5,40 @@ import {
   output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../../transactions/services/transactions.service';
-import { Category } from '../../transactions/models/transactions.models';
-import { UpdateCategory } from '../../categories/components/category-update.component';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { TransactionsService } from '../../../transactions/services/transactions.service';
+import { Category } from '../../../transactions/models/transactions.models';
+import { UpdateCategory } from '../../../categories/components/category-update.component';
 
 import {} from '@angular/material/dialog';
 import {
   initCategoryForm,
   CategoryForm,
-} from '../../transactions/forms/transactions-form-builder';
+} from '../../../transactions/forms/transactions-form-builder';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-add-expense-btn',
+  selector: 'app-pie-chart-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
   template: `
-    <button
-      (click)="openDialogAddIncome()"
-      mat-raised-button
-      class="!bg-red-700 hover:!bg-red-800 !text-white !w-full"
-    >
-      Add expense
-    </button>
+    <div>
+      <div
+        class="flex border-b align-items-center  text-xl font-semibold text-sky-700"
+      >
+        <mat-icon aria-label="face icon" fontIcon="pie_chart"></mat-icon>
+        <h2>Repartition</h2>
+      </div>
+
+      <div
+        class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500"
+      >
+        [Pie Chart Placeholder]
+      </div>
+    </div>
   `,
 })
-export class AddExpenseBtn {
+export class PieChartDisplay {
   private categoriesService = inject(TransactionsService);
   readonly categoryForm: CategoryForm = initCategoryForm();
   categoryAdded = output<Category>();

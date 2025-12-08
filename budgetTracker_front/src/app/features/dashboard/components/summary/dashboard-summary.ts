@@ -6,13 +6,13 @@ import {
   output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { Category } from '../../transactions/models/transactions.models';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { Category } from '../../../transactions/models/transactions.models';
 import {} from '@angular/material/dialog';
-import { DashboardCategoriesService } from '../services/dashboard-categories.service';
+import { DashboardCategoriesService } from '../../services/dashboard-categories.service';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateCategory } from '../../categories/components/category-update.component';
+import { UpdateCategory } from '../../../categories/components/category-update.component';
 
 @Component({
   selector: 'app-dashboard-summary',

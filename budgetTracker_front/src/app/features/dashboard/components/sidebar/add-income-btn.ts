@@ -5,16 +5,13 @@ import {
   output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../../transactions/services/transactions.service';
-import { Category } from '../../transactions/models/transactions.models';
-import { UpdateCategory } from '../../categories/components/category-update.component';
-
-import {} from '@angular/material/dialog';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { Category } from '../../../transactions/models/transactions.models';
+import { UpdateCategory } from '../../../categories/components/category-update.component';
 import {
   initCategoryForm,
   CategoryForm,
-} from '../../transactions/forms/transactions-form-builder';
+} from '../../../transactions/forms/transactions-form-builder';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -32,7 +29,6 @@ import { MatDialog } from '@angular/material/dialog';
   `,
 })
 export class AddIncomeBtn {
-  private categoriesService = inject(TransactionsService);
   readonly categoryForm: CategoryForm = initCategoryForm();
   categoryAdded = output<Category>();
 
