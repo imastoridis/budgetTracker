@@ -8,11 +8,10 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { Category } from '../../../transactions/models/transactions.models';
-import {} from '@angular/material/dialog';
-import { DashboardCategoriesService } from '../../services/dashboard-categories.service';
-import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateCategory } from '../../../categories/components/category-update.component';
+import { DeleteCategory } from '../../../categories/components/category-delete.component';
+import { Utils } from '../../../../shared/utils/utils';
 
 @Component({
   selector: 'app-dashboard-summary',
@@ -68,7 +67,6 @@ import { UpdateCategory } from '../../../categories/components/category-update.c
               </span>
             </div>
             <div class="text-green-600 font-medium">$2,000</div>
-            <!-- (click)="deleteCategory(item.id)" -->
             <div class="text-green-600 font-medium">%</div>
           </div>
         }
@@ -77,47 +75,43 @@ import { UpdateCategory } from '../../../categories/components/category-update.c
   `,
 })
 export class DashboardSummary {
-  dashboardCategoriesService = inject(DashboardCategoriesService);
   private dialog = inject(MatDialog);
-
+  utils = inject(Utils);
   allCategories = input.required<Category[]>();
 
   /* Add category */
-  //Add an output to re-emit the event to the parent (DashboardComponent)
-  categoryAdded = output<Category>();
-  categoryUpdated = output<Category>();
+  addedCategory = output<Category>();
 
   // Handles the event emitted by the AddCategory component when a new category is added.
   onCategoryAdded(newCategory: Category): void {
-    console.log(newCategory);
-    this.categoryAdded.emit(newCategory);
+    this.addedCategory.emit(newCategory);
   }
 
   /* Update category */
+  updatedCategory = output<Category>();
 
   openUpdateCategory(category: Category): void {
-    /* Open update category dialog */
     const dialogRef = this.dialog.open(UpdateCategory, {
       data: category,
     });
 
-    //Emit when save
-    dialogRef.componentInstance.categoryUpdated.subscribe(
-      (updatedCategory: Category) => {
-        this.categoryUpdated.emit(updatedCategory);
-      },
-    );
+    dialogRef.afterClosed().subscribe((updatedCategory: Category) => {
+      if (updatedCategory) {
+        this.updatedCategory.emit(updatedCategory);
+      }
+    });
   }
 
-  /* Open delete category dialog */
+  /* Delete category */
+  deletedCategory = output<Category>();
+
   openDeleteCategory(category: Category): void {
-    /*    this.dashboardCategoriesService
-      .openDeleteCategory(category)
-      .subscribe((result: Category) => {
-        console.log('Delete dialog closed with result:', result);
-        this.allCategories.update((categories) =>
-          categories.filter((cat) => cat.id !== category.id),
-        );
-      }); */
+    const dialogRef = this.dialog.open(DeleteCategory, {
+      data: category,
+    });
+
+    dialogRef.afterClosed().subscribe((initialCategory: Category) => {
+      this.deletedCategory.emit(initialCategory);
+    });
   }
 }

@@ -8,8 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
-
-import {} from '@angular/material/dialog';
 import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
 
 @Component({
@@ -49,7 +47,7 @@ import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
 export class AddCategory {
   private categoriesService = inject(CategoriesService);
   readonly categoryForm: CategoryForm = initCategoryForm();
-  categoryAdded = output<Category>();
+  addedCategory = output<Category>();
 
   /* Add category */
   addCategory(): void {
@@ -58,8 +56,7 @@ export class AddCategory {
     this.categoriesService.addCategory(categoryData).subscribe({
       next: (response) => {
         this.categoryForm.reset();
-        //Emit response to parent component
-        this.categoryAdded.emit(response);
+        this.addedCategory.emit(response);
       },
       error: (err) => {
         console.error('Error adding category:', err);

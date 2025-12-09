@@ -11,6 +11,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 @NgModule({
   imports: [
     MatToolbarModule,
@@ -21,6 +27,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
   ],
   exports: [
     // Exporting makes them available to any module that imports this one
@@ -33,7 +43,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatIconModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
-    MatExpansionModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
   ],
 })
 export class MaterialModule {}

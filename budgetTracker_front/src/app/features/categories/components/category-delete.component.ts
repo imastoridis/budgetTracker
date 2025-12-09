@@ -11,7 +11,6 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import {} from '@angular/material/dialog';
 import {
   buildCategoryForm,
   CategoryForm,
@@ -20,14 +19,7 @@ import {
 @Component({
   selector: 'app-dialog-category-delete',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MaterialModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    ReactiveFormsModule,
-  ],
+  imports: [MaterialModule, ReactiveFormsModule],
   template: ` <h2 mat-dialog-title>Delete category</h2>
     <form [formGroup]="categoryForm">
       <mat-dialog-content
@@ -47,15 +39,15 @@ export class DeleteCategory {
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
 
-  /* Update category */
+  /* Delete category */
   deleteCategory(): void {
     const deletedCategory: Category = this.categoryForm.getRawValue();
-    console.log('Deleting category:', deletedCategory);
+
     this.categoriesService
       .deleteCategory(deletedCategory as Category)
       .subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
+        next: () => {
+          this.dialogRef.close(this.initialData);
         },
         error: (err) => {
           console.error('Error updating category:', err.error);

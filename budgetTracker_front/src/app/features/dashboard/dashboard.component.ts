@@ -5,7 +5,6 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-//import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of } from 'rxjs';
 import { MaterialModule } from '../../shared/modules/material/material.module';
@@ -69,17 +68,12 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  /* Open delete category dialog */
-  /*   openDeleteCategory(category: Category): void {
-    this.dashboardCategoriesService
-      .openDeleteCategory(category)
-      .subscribe((result: Category) => {
-        console.log('Delete dialog closed with result:', result);
-        this.allCategories.update((categories) =>
-          categories.filter((cat) => cat.id !== category.id),
-        );
-      });
-  } */
+  /* Handler to update the signal when a new category is delete from the sidebar */
+  onCategoryDeleted(deletedCategory: Category): void {
+    this.allCategories.update((categories) =>
+      categories.filter((category) => category.id !== deletedCategory.id),
+    );
+  }
 
   /**
    * Transactions

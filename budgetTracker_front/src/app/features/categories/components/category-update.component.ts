@@ -10,15 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
-import {} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   buildCategoryForm,
   CategoryForm,
@@ -27,14 +19,7 @@ import {
 @Component({
   selector: 'app-dialog-category-update',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MaterialModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    ReactiveFormsModule,
-  ],
+  imports: [MaterialModule, ReactiveFormsModule],
   template: ` <h2 mat-dialog-title>Update category</h2>
     <form [formGroup]="categoryForm">
       <mat-dialog-content>
@@ -82,7 +67,6 @@ export class UpdateCategory {
       .subscribe({
         next: (response) => {
           this.dialogRef.close(response);
-          this.categoryUpdated.emit(updatedCategory);
         },
         error: (err) => {
           console.error('Error updating category:', err.error);
