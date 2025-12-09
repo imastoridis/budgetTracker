@@ -3,66 +3,136 @@ import {
   ChangeDetectionStrategy,
   inject,
   output,
+  input,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { TransactionsService } from '../services/transactions.service';
-import { Category } from '../models/transactions.models';
-
-import {} from '@angular/material/dialog';
+import { Transaction } from '../models/transactions.models';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
-  initCategoryForm,
-  CategoryForm,
+  initTransactionFormIncome,
+  TransactionForm,
 } from '../forms/transactions-form-builder';
+import { TransactionType } from '../models/transaction-types.enum';
+import { AddIncomeBtn } from '../../dashboard/components/sidebar/add-income-btn';
+import {
+  DateAdapter,
+  NativeDateAdapter,
+  MAT_DATE_FORMATS,
+  MatNativeDateModule,
+} from '@angular/material/core';
+import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
+import { Utils } from '../../../shared/utils/utils';
 
 @Component({
-  selector: 'app-add-transaction',
+  selector: 'app-add-transaction-income',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MaterialModule, ReactiveFormsModule],
-  template: ` <form [formGroup]="categoryForm">
-    <mat-accordion class="example-headers-align" multi>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title> Add Category </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="flex flex-row gap-2 items-start">
+  providers: [
+    { provide: DateAdapter, useClass: NativeDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  ],
+  imports: [MaterialModule, ReactiveFormsModule, MatNativeDateModule],
+  template: ` <h2 mat-dialog-title>Add Income</h2>
+    <form [formGroup]="transactionFormIncome">
+      <div>
+        <mat-dialog-content class="!flex !flex-col !gap-5">
+          <!-- Amοunt -->
+          <mat-form-field appearance="outline" class="!align-center">
+            <mat-label>Amount</mat-label>
+            <mat-icon matSuffix fontIcon="euro_symbol" class="!me-2"></mat-icon>
+            <input matInput cdkFocusInitial formControlName="amount" required />
+            @if (transactionFormIncome.controls.amount.hasError('hasText')) {
+              <mat-error> Add an amount </mat-error>
+            }
+          </mat-form-field>
+          <!-- category -->
           <mat-form-field appearance="outline">
-            <mat-label>Category name</mat-label>
+            <mat-label>Categories</mat-label>
+            <mat-select formControlName="categoryId">
+              @for (category of allCategories(); track category) {
+                <mat-option [value]="category.id">{{
+                  category.name
+                }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <!-- Description -->
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput></textarea>
+          </mat-form-field>
+          <!-- Date -->
+          <mat-form-field appearance="outline">
+            <mat-label>Choose a date</mat-label>
             <input
               matInput
-              [formControl]="categoryForm.controls.name"
+              [matDatepicker]="picker"
+              formControlName="date"
               required
             />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
-          <span
-            class="material-symbols-outlined !text-4xl cursor-pointer mt-2 text-green-700"
-            (click)="addCategory()"
-          >
-            add_circle
-          </span>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </form>`,
+        </mat-dialog-content>
+      </div>
+      <mat-dialog-actions>
+        <button matButton [mat-dialog-close] class="!text-red-700">
+          Cancel
+        </button>
+        <button
+          matButton
+          (click)="addTransaction()"
+          [disabled]="transactionFormIncome.invalid"
+        >
+          Ok
+        </button>
+      </mat-dialog-actions>
+    </form>`,
 })
-export class AddCategory {
-  private categoriesService = inject(TransactionsService);
-  readonly categoryForm: CategoryForm = initCategoryForm();
-  categoryAdded = output<Category>();
+export class AddTransactionIncome {
+  private transactionService = inject(TransactionsService);
+  utils = inject(Utils);
 
-  /* Add category */
-  addCategory(): void {
-    const categoryData: Category = this.categoryForm.getRawValue();
+  readonly transactionFormIncome: TransactionForm = initTransactionFormIncome();
+  readonly transactionTypes = Object.values(TransactionType);
 
-    this.categoriesService.addCategory(categoryData).subscribe({
+  private dialogRef = inject(MatDialogRef<AddIncomeBtn>);
+  allCategories = inject(MAT_DIALOG_DATA);
+
+  transactionAdded = output<Transaction>();
+
+  /* Add transaction */
+  addTransaction(): void {
+    const transactionData: Transaction =
+      this.transactionFormIncome.getRawValue();
+
+    this.transactionService.addTransaction(transactionData).subscribe({
       next: (response) => {
-        this.categoryForm.reset();
+        console.log(response);
+        this.transactionFormIncome.reset();
         //Emit response to parent component
-        this.categoryAdded.emit(response);
+        this.transactionAdded.emit(response);
       },
       error: (err) => {
-        console.error('Error adding category:', err);
+        this.utils.openSnackBar(err.message, '');
+        console.error('Error adding transaction:', err);
       },
     });
+  }
+
+  get amount() {
+    return this.transactionFormIncome.get('amount');
+  }
+
+  get categoryId() {
+    return this.transactionFormIncome.get('categoryId');
+  }
+
+  get date() {
+    return this.transactionFormIncome.get('date');
   }
 }

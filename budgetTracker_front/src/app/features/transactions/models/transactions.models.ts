@@ -1,8 +1,14 @@
+import { TransactionType } from './transaction-types.enum';
+
 /**
  *Interface for the expected response body from the login API endpoint.
  */
-export interface Category {
+export interface Transaction {
   id: number | null;
-  name: string;
+  amount: number;
+  description: string | '';
+  type: TransactionType | null;
+  date: Date;
+  categoryId: number | null;
   userId: number | null;
 }

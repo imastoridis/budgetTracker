@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Category } from '../models/transactions.models';
+import { Transaction } from '../models/transactions.models';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +14,8 @@ export class TransactionsService {
    * Gets categories from the backend.
    * @returns An Observable of the categories response.
    */
-  getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.apiUrlCategories);
+  getCategories(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(this.apiUrlCategories);
   }
 
   /**
@@ -23,9 +23,9 @@ export class TransactionsService {
    * @param category
    * @returns An Observable of the categories response.
    */
-  addCategory(category: Category): Observable<Category> {
+  addTransaction(category: Transaction): Observable<Transaction> {
     console.log('Adding category:', category);
-    return this.http.post<Category>(this.apiUrlCategories, category).pipe(
+    return this.http.post<Transaction>(this.apiUrlCategories, category).pipe(
       tap((response) => {
         console.log('Categories fetched:', response);
       }),
@@ -37,9 +37,9 @@ export class TransactionsService {
    * @param category
    * @returns An Observable of the updated category response.
    */
-  updateCategory(category: Category): Observable<Category> {
+  updateTransaction(category: Transaction): Observable<Transaction> {
     return this.http
-      .put<Category>(this.apiUrlCategories + '/' + category.id, category)
+      .put<Transaction>(this.apiUrlCategories + '/' + category.id, category)
       .pipe(
         tap((response) => {
           console.log('Categories fetched:', response);
@@ -52,8 +52,8 @@ export class TransactionsService {
    * @param category
    * @returns An Observable of the updated category response.
    */
-  deleteCategory(category: Category): Observable<Category> {
-    return this.http.delete<Category>(
+  deleteTransaction(category: Transaction): Observable<Transaction> {
+    return this.http.delete<Transaction>(
       this.apiUrlCategories + '/' + category.id,
     );
   }

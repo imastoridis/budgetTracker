@@ -1,13 +1,18 @@
-import { Component, ChangeDetectionStrategy, output } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  output,
+  input,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { Category } from '../../../transactions/models/transactions.models';
+import { Transaction } from '../../../transactions/models/transactions.models';
 import { AddIncomeBtn } from './add-income-btn';
 import { AddExpenseBtn } from './add-expense-btn';
 import { TotalMonthDisplay } from './total-month-display';
 import { PieChartDisplay } from './pie-chart-display';
 import { AddCategory } from '../../../categories/components/category-add.component';
-
+import { Category } from '../../../categories/models/categories.models';
 @Component({
   selector: 'app-dashboard-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,7 +36,9 @@ import { AddCategory } from '../../../categories/components/category-add.compone
           <h2>Transactions</h2>
         </div>
         <!-- Add income btn -->
-        <app-add-income-btn></app-add-income-btn>
+        <app-add-income-btn
+          [allCategories]="allCategories()"
+        ></app-add-income-btn>
         <!-- Add expense btn -->
         <app-add-expense-btn></app-add-expense-btn>
       </div>
@@ -50,11 +57,12 @@ import { AddCategory } from '../../../categories/components/category-add.compone
   `,
 })
 export class DashboardSidebar {
+  allCategories = input.required<Category[]>();
   //Add an output to re-emit the event to the parent (DashboardComponent)
-  categoryAdded = output<Category>();
+  categoryAdded = output<Transaction>();
 
   /* Handles the event emitted by the AddCategory component when a new category is added. */
-  onCategoryAdded(newCategory: Category): void {
+  onCategoryAdded(newCategory: Transaction): void {
     this.categoryAdded.emit(newCategory);
   }
 }

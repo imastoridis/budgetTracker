@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { Category } from '../../../transactions/models/transactions.models';
+import { Category } from '../../../categories/models/categories.models';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateCategory } from '../../../categories/components/category-update.component';
 import { DeleteCategory } from '../../../categories/components/category-delete.component';

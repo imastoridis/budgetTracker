@@ -7,14 +7,13 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../../transactions/services/transactions.service';
-import { Category } from '../../../transactions/models/transactions.models';
-import { UpdateCategory } from '../../../categories/components/category-update.component';
+/* import { Category } from '../../../transactions/models/transactions.models'; */
 
 import {} from '@angular/material/dialog';
-import {
+/* import {
   initCategoryForm,
   CategoryForm,
-} from '../../../transactions/forms/transactions-form-builder';
+} from '../../../transactions/forms/transactions-form-builder'; */
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -38,26 +37,4 @@ import { MatDialog } from '@angular/material/dialog';
     </div>
   `,
 })
-export class PieChartDisplay {
-  private categoriesService = inject(TransactionsService);
-  readonly categoryForm: CategoryForm = initCategoryForm();
-  categoryAdded = output<Category>();
-
-  dialog = inject(MatDialog);
-
-  /* Open add transaction dialog for income */
-  openDialogAddIncome(): void {
-    const dialogRef = this.dialog.open(UpdateCategory);
-
-    //After update, update the signal
-    dialogRef.afterClosed().subscribe((result: Category) => {
-      /*      if (result) {
-        this.allCategories.update((categories) =>
-          categories.map((cat) => {
-            return cat.id === result.id ? result : cat;
-          }),
-        );
-      } */
-    });
-  }
-}
+export class PieChartDisplay {}

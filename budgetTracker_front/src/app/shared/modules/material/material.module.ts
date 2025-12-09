@@ -17,6 +17,8 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 @NgModule({
   imports: [
     MatToolbarModule,
@@ -31,6 +33,8 @@ import {
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
+    MatSelectModule,
+    MatDatepickerModule,
   ],
   exports: [
     // Exporting makes them available to any module that imports this one
@@ -47,6 +51,8 @@ import {
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
+    MatSelectModule,
+    MatDatepickerModule,
   ],
 })
 export class MaterialModule {}

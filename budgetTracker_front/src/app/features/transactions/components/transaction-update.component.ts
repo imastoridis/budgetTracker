@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { TransactionsService } from '../services/transactions.service';
-import { Category } from '../models/transactions.models';
+import { Transaction } from '../models/transactions.models';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -13,8 +13,8 @@ import {
 } from '@angular/material/dialog';
 import {} from '@angular/material/dialog';
 import {
-  buildCategoryForm,
-  CategoryForm,
+  TransactionFormWithData,
+  TransactionForm,
 } from '../forms/transactions-form-builder';
 
 @Component({
@@ -28,18 +28,18 @@ import {
     MatDialogClose,
     ReactiveFormsModule,
   ],
-  template: ` <h2 mat-dialog-title>Update category</h2>
-    <form [formGroup]="categoryForm">
+  template: ` <h2 mat-dialog-title>Update transaction</h2>
+    <form [formGroup]="transactionForm">
       <mat-dialog-content>
         <mat-form-field appearance="outline" class="!mt-5">
-          <mat-label>Category</mat-label>
+          <mat-label>Transaction</mat-label>
           <input matInput formControlName="name" cdkFocusInitial required />
           <!-- Validation Feedback -->
           @if (
-            categoryForm.controls.name.touched &&
-            categoryForm.controls.name.hasError('required')
+            transactionForm.controls.amount.touched &&
+            transactionForm.controls.amount.hasError('required')
           ) {
-            <mat-error> Category name is required. </mat-error>
+            <mat-error> Transaction name is required. </mat-error>
           }
         </mat-form-field>
       </mat-dialog-content>
@@ -49,34 +49,36 @@ import {
         </button>
         <button
           matButton
-          (click)="updateCategory()"
-          [disabled]="categoryForm.invalid"
+          (click)="updateTransaction()"
+          [disabled]="transactionForm.invalid"
         >
           Ok
         </button>
       </mat-dialog-actions>
     </form>`,
 })
-export class UpdateCategory {
-  private categoriesService = inject(TransactionsService);
-  private dialogRef = inject(MatDialogRef<UpdateCategory>);
-  private initialData = inject(MAT_DIALOG_DATA) as Category;
+export class UpdateTransaction {
+  private transactionService = inject(TransactionsService);
+  private dialogRef = inject(MatDialogRef<UpdateTransaction>);
+  private initialData = inject(MAT_DIALOG_DATA) as Transaction;
 
   // Initialize the form using the imported factory function
-  readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
+  readonly transactionForm: TransactionForm = TransactionFormWithData(
+    this.initialData,
+  );
 
-  /* Update category */
-  updateCategory(): void {
-    const updatedCategory: Category = this.categoryForm.getRawValue();
+  /* Update transaction */
+  updateTransaction(): void {
+    const updatedTransaction: Transaction = this.transactionForm.getRawValue();
 
-    this.categoriesService
-      .updateCategory(updatedCategory as Category)
+    this.transactionService
+      .updateTransaction(updatedTransaction as Transaction)
       .subscribe({
         next: (response) => {
           this.dialogRef.close(response);
         },
         error: (err) => {
-          console.error('Error updating category:', err.error);
+          console.error('Error updating transaction:', err.error);
         },
       });
   }

@@ -1,49 +1,135 @@
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Category } from '../models/transactions.models';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
+import { Transaction } from '../models/transactions.models';
+import { TransactionType } from '../models/transaction-types.enum';
 
 /**
- * Defines the structure for the Category FormGroup.
+ * Defines the structure for the Transaction FormGroup.
  * This type is exported to ensure type safety when accessing form values
  */
-export type CategoryForm = FormGroup<{
+export type TransactionForm = FormGroup<{
   id: FormControl<number | null>;
-  name: FormControl<string>;
+  amount: FormControl<number>;
+  description: FormControl<string>;
+  type: FormControl<TransactionType | null>;
+  date: FormControl<Date>;
+  categoryId: FormControl<number | null>;
   userId: FormControl<number | null>;
 }>;
 
 /**
- * Creates and initializes the Category FormGroup with required validators if the form already has values.
- * @param initialData The Category object used to pre-fill the form controls.
- * @returns A CategoryForm instance.
+ * Creates and initializes the Transaction FormGroup with required validators if the form already has values.
+ * @param initialData The Transaction object used to pre-fill the form controls.
+ * @returns A TransactionForm instance.
  */
-export function buildCategoryForm(initialData: Category): CategoryForm {
+export function TransactionFormWithData(
+  initialData: Transaction,
+): TransactionForm {
   return new FormGroup({
     id: new FormControl<number | null>(initialData.id, {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    name: new FormControl<string>(initialData.name, {
+    amount: new FormControl<number>(initialData.amount, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        numericValidator(),
+        Validators.min(0.01),
+      ],
+    }),
+    description: new FormControl<string | ''>(initialData.description, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    type: new FormControl<TransactionType | null>(initialData.type, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    date: new FormControl<Date>(initialData.date, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    categoryId: new FormControl<number | null>(initialData.categoryId, {
       nonNullable: true,
       validators: [Validators.required],
     }),
     userId: new FormControl<number | null>(initialData.userId, {
-      nonNullable: true,
+      nonNullable: false,
       validators: [Validators.required],
     }),
-  }) as CategoryForm;
+  }) as TransactionForm;
 }
 
 /**
- * Initializes an empty Category FormGroup with required validators.
- * @returns A CategoryForm instance.
+ * Creates and initializes the Transaction FormGroup with required validators .
+ * @returns A TransactionForm instance.
  */
-export function initCategoryForm(): CategoryForm {
+export function initTransactionFormIncome(): TransactionForm {
+  return new FormGroup({
+    id: new FormControl<number | null>(null),
+    amount: new FormControl<number>(0, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        numericValidator(),
+        Validators.min(0.01),
+      ],
+    }),
+    description: new FormControl<string>(''),
+    type: new FormControl<TransactionType>(TransactionType.INCOME, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    date: new FormControl<Date>(new Date(), {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    categoryId: new FormControl<number | null>(null, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    userId: new FormControl<number | null>(null),
+  }) as TransactionForm;
+}
+
+/**
+ * Creates and initializes the Transaction FormGroup with required validators .
+ * @returns A TransactionForm instance.
+ */
+export function initTransactionForm(): TransactionForm {
   return new FormGroup({
     id: new FormControl<number | null>(null, {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    name: new FormControl<string>('', {
+    amount: new FormControl<number>(0, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        numericValidator(),
+        Validators.min(0.01),
+      ],
+    }),
+    description: new FormControl<string | ''>('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    type: new FormControl<TransactionType | null>(null, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    date: new FormControl<Date>(new Date(), {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    categoryId: new FormControl<number | null>(null, {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -51,5 +137,26 @@ export function initCategoryForm(): CategoryForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
-  }) as CategoryForm;
+  }) as TransactionForm;
+}
+
+/**
+ * Custom validator to check if the input contains non-numeric text.
+ * Note: input type="number" allows 'e', '+', '-', and '.'
+ */
+export function numericValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+
+    if (value === null || value === '') {
+      return null; // Let the 'required' validator handle empty state
+    }
+
+    // Regular expression to check for any non-numeric, non-decimal, non-sign character.
+    // If the value contains anything that makes it an invalid number, we fail.
+    // parseFloat(value) returns NaN if the string is truly non-numeric.
+    const isNumeric = !isNaN(parseFloat(value)) && isFinite(value);
+    // If it is NOT numeric, return the custom error object.
+    return !isNumeric ? { hasText: true } : null;
+  };
 }
