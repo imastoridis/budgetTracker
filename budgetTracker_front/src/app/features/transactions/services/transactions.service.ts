@@ -7,7 +7,8 @@ import { Transaction } from '../models/transactions.models';
   providedIn: 'root',
 })
 export class TransactionsService {
-  private readonly apiUrlCategories = 'http://localhost:8080/api/categories';
+  private readonly apiUrlTransactions =
+    'http://localhost:8080/api/transactions';
   private http = inject(HttpClient);
 
   /**
@@ -15,7 +16,7 @@ export class TransactionsService {
    * @returns An Observable of the categories response.
    */
   getCategories(): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(this.apiUrlCategories);
+    return this.http.get<Transaction[]>(this.apiUrlTransactions);
   }
 
   /**
@@ -25,7 +26,7 @@ export class TransactionsService {
    */
   addTransaction(category: Transaction): Observable<Transaction> {
     console.log('Adding category:', category);
-    return this.http.post<Transaction>(this.apiUrlCategories, category).pipe(
+    return this.http.post<Transaction>(this.apiUrlTransactions, category).pipe(
       tap((response) => {
         console.log('Categories fetched:', response);
       }),
@@ -39,7 +40,7 @@ export class TransactionsService {
    */
   updateTransaction(category: Transaction): Observable<Transaction> {
     return this.http
-      .put<Transaction>(this.apiUrlCategories + '/' + category.id, category)
+      .put<Transaction>(this.apiUrlTransactions + '/' + category.id, category)
       .pipe(
         tap((response) => {
           console.log('Categories fetched:', response);
@@ -54,7 +55,7 @@ export class TransactionsService {
    */
   deleteTransaction(category: Transaction): Observable<Transaction> {
     return this.http.delete<Transaction>(
-      this.apiUrlCategories + '/' + category.id,
+      this.apiUrlTransactions + '/' + category.id,
     );
   }
 }

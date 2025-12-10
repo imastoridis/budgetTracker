@@ -3,6 +3,7 @@ package com.budgetTracker.controller;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.User;
 import com.budgetTracker.service.TransactionService;
+import com.budgetTracker.util.JsonUtils;
 import com.budgetTracker.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/transactions")
 @SuppressWarnings("unused")
@@ -41,6 +44,8 @@ public class TransactionController {
             @RequestBody TransactionDto transactionDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
+        log.info("CategoryController::createCategory request body {}", JsonUtils.toJsonString(transactionDto));
+
         // Get the authenticated User using the username principal
         User user = securityUtils.getAuthenticatedUser(userDetails);
         // Set fields and save

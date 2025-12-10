@@ -119,7 +119,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       # Debugger enabled
-      MAVEN_OPTS: "-Dspring-boot.run.fork=false -Dspring.devtools.restart.enabled=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      #MAVEN_OPTS: "-Dspring-boot.run.fork=false -Dspring.devtools.restart.enabled=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
 
@@ -137,8 +137,8 @@ services:
       - backend_network
 
     # Use fully qualified maven goal
-    command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
-
+    #command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
+    command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker -Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005'"
   # ---------------------------------------------
   # Spring Boot API Service (PRODUCTION Mode)
   # ---------------------------------------------

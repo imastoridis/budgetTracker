@@ -113,6 +113,7 @@ export class AddTransactionIncome {
     this.transactionService.addTransaction(transactionData).subscribe({
       next: (response) => {
         console.log(response);
+        this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormIncome.reset();
         //Emit response to parent component
         this.transactionAdded.emit(response);
