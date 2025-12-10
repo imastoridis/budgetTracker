@@ -28,11 +28,11 @@ import { Utils } from '../../../shared/utils/utils';
 @Component({
   selector: 'app-add-transaction-income',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MaterialModule, ReactiveFormsModule, MatNativeDateModule],
   providers: [
     { provide: DateAdapter, useClass: NativeDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
   ],
-  imports: [MaterialModule, ReactiveFormsModule, MatNativeDateModule],
   template: ` <h2 mat-dialog-title>Add Income</h2>
     <form [formGroup]="transactionFormIncome">
       <div>
@@ -64,7 +64,7 @@ import { Utils } from '../../../shared/utils/utils';
           </mat-form-field>
           <!-- Date -->
           <mat-form-field appearance="outline">
-            <mat-label>Choose a date</mat-label>
+            <mat-label>Date</mat-label>
             <input
               matInput
               [matDatepicker]="picker"
@@ -95,15 +95,12 @@ import { Utils } from '../../../shared/utils/utils';
 })
 export class AddTransactionIncome {
   private transactionService = inject(TransactionsService);
-  utils = inject(Utils);
+  private utils = inject(Utils);
 
   readonly transactionFormIncome: TransactionForm = initTransactionFormIncome();
   readonly transactionTypes = Object.values(TransactionType);
-
-  private dialogRef = inject(MatDialogRef<AddIncomeBtn>);
+  readonly transactionAdded = output<Transaction>();
   allCategories = inject(MAT_DIALOG_DATA);
-
-  transactionAdded = output<Transaction>();
 
   /* Add transaction */
   addTransaction(): void {
@@ -112,10 +109,8 @@ export class AddTransactionIncome {
 
     this.transactionService.addTransaction(transactionData).subscribe({
       next: (response) => {
-        console.log(response);
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormIncome.reset();
-        //Emit response to parent component
         this.transactionAdded.emit(response);
       },
       error: (err) => {

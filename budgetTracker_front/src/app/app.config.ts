@@ -12,7 +12,7 @@ import {
 } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http'; // Import the provider function
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
-
+import { LOCALE_ID } from '@angular/core';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -24,5 +24,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     // Register the authInterceptor globally
     provideHttpClient(withInterceptors([authInterceptor])),
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
   ],
 };
