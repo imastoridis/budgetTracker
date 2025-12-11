@@ -14,8 +14,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
      *
      * @param userId : the userId
      */
-    // List<Category> findByUserId(Long userId);
     List<Category> findByUserId(Long userId);
+
+    /**
+     * Custom finder method: Retrieves all Categories belonging to a specific User ID filtered by name.
+     *
+     * @param userId : the userId
+     */
+    List<Category> findByUserIdOrderByNameAsc(Long userId);
 
     /**
      * Security method: Finds a Category by its ID AND ensures it belongs to the given user ID.

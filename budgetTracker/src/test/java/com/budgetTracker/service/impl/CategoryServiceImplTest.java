@@ -8,6 +8,7 @@ import com.budgetTracker.exception.ResourceNotFoundException;
 import com.budgetTracker.mapper.CategoryMapper;
 import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.User;
+import com.budgetTracker.model.enums.TransactionType;
 import com.budgetTracker.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class CategoryServiceImplTest {
     void createCategory_shouldSaveAndReturnDto() {
         // Arrange
         // Input DTO doesn't have an ID (it's new)
-        CategoryDto inputDto = new CategoryDto(null, "Travel", testUser.getId());
+        CategoryDto inputDto = new CategoryDto(null, "Travel", testUser.getId(), TransactionType.INCOME);
 
         // Mock the repository save operation to return the entity *with* the generated ID (10L)
         when(categoryRepository.save(any(Category.class))).thenReturn(category1);
@@ -142,7 +143,7 @@ class CategoryServiceImplTest {
     @Test
     void updateCategory_shouldUpdateNameAndReturnDto() {
         // Arrange
-        CategoryDto updateDto = new CategoryDto(10L, "New Name", 1L);
+        CategoryDto updateDto = new CategoryDto(10L, "New Name", 1L, TransactionType.INCOME);
 
         // Mock repository to return existing category for find
         when(categoryRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(category1));

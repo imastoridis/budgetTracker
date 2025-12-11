@@ -9,6 +9,7 @@ import { MaterialModule } from '../../../shared/modules/material/material.module
 import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
 import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
+import { Utils } from '../../../shared/utils/utils';
 
 @Component({
   selector: 'app-add-category',
@@ -16,27 +17,38 @@ import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
   imports: [MaterialModule, ReactiveFormsModule],
   template: `
     <div class="flex flex-col">
-      <form [formGroup]="categoryForm">
+      <form [formGroup]="categoryForm" appearance="outline">
         <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title> Add Category </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="flex flex-row gap-2 items-start">
-              <mat-form-field appearance="outline">
+            <div class="flex flex-col gap-2 ">
+              <mat-form-field
+                appearance="outline"
+                [class.valid-green-border]="name?.valid"
+              >
                 <mat-label>Category name</mat-label>
                 <input
                   matInput
-                  [formControl]="categoryForm.controls.name"
+                  formControlName="name"
                   required
+                  cdkFocusInitial
                 />
               </mat-form-field>
-              <span
-                class="material-symbols-outlined !text-4xl cursor-pointer mt-2 text-green-700"
-                (click)="addCategory()"
+              <mat-form-field
+                appearance="outline"
+                [class.valid-green-border]="type?.valid"
               >
-                add_circle
-              </span>
+                <mat-label>Categories</mat-label>
+                <mat-select formControlName="type" required>
+                  <mat-option value="INCOME">Income</mat-option>
+                  <mat-option value="EXPENSE">Expense</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-dialog-actions class="text-end">
+                <button matButton (click)="addCategory()">Add</button>
+              </mat-dialog-actions>
             </div>
           </mat-expansion-panel>
         </mat-accordion>
@@ -47,20 +59,28 @@ import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
 export class AddCategory {
   private categoriesService = inject(CategoriesService);
   readonly categoryForm: CategoryForm = initCategoryForm();
+  private utils = inject(Utils);
+
   addedCategory = output<Category>();
 
   /* Add category */
   addCategory(): void {
     const categoryData: Category = this.categoryForm.getRawValue();
-
     this.categoriesService.addCategory(categoryData).subscribe({
       next: (response) => {
         this.categoryForm.reset();
         this.addedCategory.emit(response);
       },
       error: (err) => {
-        console.error('Error adding category:', err);
+        this.utils.openSnackBar(err.message, '');
       },
     });
+  }
+
+  get name() {
+    return this.categoryForm.get('name');
+  }
+  get type() {
+    return this.categoryForm.get('type');
   }
 }

@@ -1,5 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Category } from '../models/categories.models';
+import { TransactionType } from '../../transactions/models/transaction-types.enum';
 
 /**
  * Defines the structure for the Category FormGroup.
@@ -9,6 +10,7 @@ export type CategoryForm = FormGroup<{
   id: FormControl<number | null>;
   name: FormControl<string>;
   userId: FormControl<number | null>;
+  type: FormControl<TransactionType | null>;
 }>;
 
 /**
@@ -30,6 +32,10 @@ export function buildCategoryForm(initialData: Category): CategoryForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    type: new FormControl<TransactionType | null>(initialData.type, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
   }) as CategoryForm;
 }
 
@@ -48,6 +54,10 @@ export function initCategoryForm(): CategoryForm {
       validators: [Validators.required],
     }),
     userId: new FormControl<number | null>(null, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    type: new FormControl<TransactionType | null>(TransactionType.INCOME, {
       nonNullable: true,
       validators: [Validators.required],
     }),

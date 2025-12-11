@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   output,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -29,15 +30,15 @@ import { MatDialog } from '@angular/material/dialog';
       <div class="flex flex-col gap-2">
         <div class="flex flex-row justify-between">
           <span class="text-gray-600">Total Income:</span>
-          <span class="font-medium text-green-600">$5,000</span>
+          <span class="font-medium text-green-600">€ {{ totalIncome() }}</span>
         </div>
         <div class="flex flex-row justify-between">
           <span class="text-gray-600">Total Expenses:</span>
-          <span class="font-medium text-red-600">$3,200</span>
+          <span class="font-medium text-red-600">€ {{ totalExpenses() }}</span>
         </div>
         <div class="flex flex-row justify-between border-t pt-2">
           <span class="text-gray-800 font-semibold">Balance:</span>
-          <span class="font-semibold text-gray-800">$1,800</span>
+          <span class="font-semibold text-gray-800">€ {{ balance() }}</span>
         </div>
       </div>
     </div>
@@ -45,6 +46,10 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class TotalMonthDisplay {
   private categoriesService = inject(TransactionsService);
+  readonly totalIncome = signal<string>('0');
+  readonly totalExpenses = signal<string>('0');
+  readonly balance = signal<string>('0');
+
   /* readonly categoryForm: CategoryForm = initCategoryForm();
   categoryAdded = output<Category>(); */
 

@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../services/transactions.service';
-import { Transaction } from '../models/transactions.models';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { TransactionsService } from '../../services/transactions.service';
+import { Transaction } from '../../models/transactions.models';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -15,7 +15,7 @@ import {} from '@angular/material/dialog';
 import {
   TransactionFormWithData,
   TransactionForm,
-} from '../forms/transactions-form-builder';
+} from '../../forms/transactions-form-builder';
 
 @Component({
   selector: 'app-dialog-transaction-update',

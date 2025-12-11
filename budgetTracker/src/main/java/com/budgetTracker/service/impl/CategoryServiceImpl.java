@@ -105,7 +105,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Cacheable(value = CATEGORY_CACHE, key = "#userId")
     public List<CategoryDto> findUserCategories(Long userId) {
         log.info("Fetching all categories for user ID {} from database (not cache).", userId);
-        List<Category> categoryEntities = categoryRepository.findByUserId(userId);
+        List<Category> categoryEntities = categoryRepository.findByUserIdOrderByNameAsc(userId);
 
         if (categoryEntities.isEmpty()) {
             throw new NoSuchElementException("No categories for this user");

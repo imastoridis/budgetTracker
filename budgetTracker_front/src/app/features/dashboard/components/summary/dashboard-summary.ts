@@ -35,6 +35,7 @@ import { Utils } from '../../../../shared/utils/utils';
         @for (category of allCategories(); track category.id) {
           <div
             class="flex flex-col border p-4 rounded-lg shadow-md w-1/6 justify-between"
+            [class]="category.type === 'INCOME' ? 'bg-green-50' : 'bg-red-50'"
           >
             <div class="flex flex-row gap-4 justify-between items-center mb-2">
               <span class="flex items-center gap-2">

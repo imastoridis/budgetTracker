@@ -6,24 +6,21 @@ import {
   input,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../services/transactions.service';
-import { Transaction } from '../models/transactions.models';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {
-  initTransactionFormIncome,
-  TransactionForm,
-} from '../forms/transactions-form-builder';
-import { TransactionType } from '../models/transaction-types.enum';
-import { AddIncomeBtn } from '../../dashboard/components/sidebar/add-income-btn';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { TransactionsService } from '../../services/transactions.service';
+import { Transaction } from '../../models/transactions.models';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TransactionForm } from '../../forms/transactions-form-builder';
+import { initTransactionFormIncome } from '../../forms/transactions-income-form-builder';
+import { TransactionType } from '../../models/transaction-types.enum';
 import {
   DateAdapter,
   NativeDateAdapter,
   MAT_DATE_FORMATS,
   MatNativeDateModule,
 } from '@angular/material/core';
-import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
-import { Utils } from '../../../shared/utils/utils';
+import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
+import { Utils } from '../../../../shared/utils/utils';
 
 @Component({
   selector: 'app-add-transaction-income',
@@ -33,7 +30,7 @@ import { Utils } from '../../../shared/utils/utils';
     { provide: DateAdapter, useClass: NativeDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
   ],
-  template: ` <h2 mat-dialog-title>Add Income</h2>
+  template: ` <h2 mat-dialog-title class="text-center">Add Income</h2>
     <form [formGroup]="transactionFormIncome">
       <div>
         <mat-dialog-content class="!flex !flex-col !gap-5">

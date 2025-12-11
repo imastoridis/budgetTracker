@@ -38,9 +38,12 @@ import { Category } from '../../../categories/models/categories.models';
         <!-- Add income btn -->
         <app-add-income-btn
           [allCategories]="allCategories()"
+          (transactionAdded)="onTransactionAdded($any($event))"
         ></app-add-income-btn>
         <!-- Add expense btn -->
-        <app-add-expense-btn></app-add-expense-btn>
+        <app-add-expense-btn
+          [allCategories]="allCategories()"
+        ></app-add-expense-btn>
       </div>
 
       <!-- This month total display -->
@@ -51,18 +54,23 @@ import { Category } from '../../../categories/models/categories.models';
 
       <!-- Add Category-->
       <app-add-category
-        (categoryAdded)="onCategoryAdded($any($event))"
+        (addedCategory)="onCategoryAdded($any($event))"
       ></app-add-category>
     </div>
   `,
 })
 export class DashboardSidebar {
   allCategories = input.required<Category[]>();
-  //Add an output to re-emit the event to the parent (DashboardComponent)
-  categoryAdded = output<Transaction>();
+  categoryAdded = output<Category>();
+  transactionAdded = output<Transaction>();
 
   /* Handles the event emitted by the AddCategory component when a new category is added. */
-  onCategoryAdded(newCategory: Transaction): void {
+  onCategoryAdded(newCategory: Category): void {
     this.categoryAdded.emit(newCategory);
+  }
+
+  /* Handles the event emitted by the AddCategory component when a new category is added. */
+  onTransactionAdded(newTransaction: Transaction): void {
+    this.transactionAdded.emit(newTransaction);
   }
 }

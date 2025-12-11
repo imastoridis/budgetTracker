@@ -13,6 +13,7 @@ public class CategoryMapper {
         dto.setId(category.getId());
         dto.setName(category.getName());
         dto.setUserId(category.getUser().getId());
+        dto.setType(category.getType());
         return dto;
     }
 
@@ -24,6 +25,7 @@ public class CategoryMapper {
         Category category = new Category();
         category.setName(categoryDto.getName());
         category.setUser(user);
+        category.setType(categoryDto.getType());
         return category;
     }
 }

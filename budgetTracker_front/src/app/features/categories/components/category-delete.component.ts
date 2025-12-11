@@ -8,6 +8,7 @@ import {
   buildCategoryForm,
   CategoryForm,
 } from '../forms/category-form-builder';
+import { Utils } from '../../../shared/utils/utils';
 
 @Component({
   selector: 'app-dialog-category-delete',
@@ -16,7 +17,7 @@ import {
   template: ` <h2 mat-dialog-title>Delete category</h2>
     <form [formGroup]="categoryForm">
       <mat-dialog-content
-        >Are you sure you want to delete this category</mat-dialog-content
+        >Are you sure you want to delete this category?</mat-dialog-content
       >
       <mat-dialog-actions>
         <button matButton mat-dialog-close>Close</button>
@@ -28,6 +29,7 @@ export class DeleteCategory {
   private categoriesService = inject(CategoriesService);
   private dialogRef = inject(MatDialogRef<DeleteCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
+  private utils = inject(Utils);
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -43,7 +45,7 @@ export class DeleteCategory {
           this.dialogRef.close(this.initialData);
         },
         error: (err) => {
-          console.error('Error updating category:', err.error);
+          this.utils.openSnackBar(err.error, '');
         },
       });
   }

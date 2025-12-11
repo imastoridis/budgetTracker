@@ -2,6 +2,7 @@ package com.budgetTracker.controller;
 
 import com.budgetTracker.dto.CategoryDto;
 import com.budgetTracker.exception.AccessDeniedException;
+import com.budgetTracker.model.enums.TransactionType;
 import com.budgetTracker.service.CategoryService;
 import com.budgetTracker.service.UserService;
 import com.budgetTracker.util.SecurityUtils;
@@ -49,7 +50,8 @@ public class CategoryControllerTest {
     private CategoryService categoryService;
     @MockBean
     private SecurityUtils securityUtils;
-
+    @MockBean
+    private TransactionType transactionType;
     // --- Mocks required by Security Infrastructure (JwtAuthenticationFilter) ---
     @MockBean
     private UserService userService;
@@ -66,8 +68,8 @@ public class CategoryControllerTest {
     @Test
     void getUserCategories_shouldReturnUserCategories() throws Exception {
         // Arrange
-        CategoryDto cat1 = new CategoryDto(1L, "Food", USER_ID);
-        CategoryDto cat2 = new CategoryDto(2L, "Rent", USER_ID);
+        CategoryDto cat1 = new CategoryDto(1L, "Food", USER_ID, TransactionType.INCOME);
+        CategoryDto cat2 = new CategoryDto(2L, "Rent", USER_ID, TransactionType.INCOME);
         List<CategoryDto> categoryList = Arrays.asList(cat1, cat2);
 
         // Mock security to return a user ID
@@ -85,7 +87,9 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].name").value("Food"))
-                .andExpect(jsonPath("$[1].name").value("Rent"));
+                .andExpect(jsonPath("$[1].name").value("Rent"))
+                .andExpect(jsonPath("$[0].type").value("INCOME"))
+                .andExpect(jsonPath("$[1].type").value("INCOME"));
     }
 
     /**
@@ -94,8 +98,8 @@ public class CategoryControllerTest {
     @Test
     void createCategory_shouldReturnCreatedCategoryAnd201() throws Exception {
         // Arrange
-        CategoryDto inputDto = new CategoryDto(null, "Groceries", null);
-        CategoryDto createdDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID);
+        CategoryDto inputDto = new CategoryDto(null, "Groceries", null, TransactionType.INCOME);
+        CategoryDto createdDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, TransactionType.INCOME);
 
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);
@@ -109,7 +113,8 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(inputDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(MOCK_CATEGORY_ID))
-                .andExpect(jsonPath("$.name").value("Groceries"));
+                .andExpect(jsonPath("$.name").value("Groceries"))
+                .andExpect(jsonPath("$.type").value("INCOME"));
     }
 
     /**
@@ -118,8 +123,8 @@ public class CategoryControllerTest {
     @Test
     void updateCategory_shouldReturnUpdatedCategoryAnd200() throws Exception {
         // Arrange
-        CategoryDto updateInputDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID);
-        CategoryDto updatedDto = new CategoryDto(MOCK_CATEGORY_ID, "Updated Groceries", USER_ID);
+        CategoryDto updateInputDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, TransactionType.INCOME);
+        CategoryDto updatedDto = new CategoryDto(MOCK_CATEGORY_ID, "Updated Groceries", USER_ID, TransactionType.EXPENSE);
 
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);
@@ -134,7 +139,8 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(updateInputDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(MOCK_CATEGORY_ID))
-                .andExpect(jsonPath("$.name").value("Updated Groceries"));
+                .andExpect(jsonPath("$.name").value("Updated Groceries"))
+                .andExpect(jsonPath("$.type").value("EXPENSE"));
     }
 
     /**

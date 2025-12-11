@@ -23,14 +23,15 @@ import {
   template: ` <h2 mat-dialog-title>Update category</h2>
     <form [formGroup]="categoryForm">
       <mat-dialog-content>
-        <mat-form-field appearance="outline" class="!mt-5">
+        <mat-form-field
+          appearance="outline"
+          class="!mt-5"
+          [class.valid-green-border]="type?.valid"
+        >
           <mat-label>Category</mat-label>
           <input matInput formControlName="name" cdkFocusInitial required />
           <!-- Validation Feedback -->
-          @if (
-            categoryForm.controls.name.touched &&
-            categoryForm.controls.name.hasError('required')
-          ) {
+          @if (name?.touched && name?.hasError('required')) {
             <mat-error> Category name is required. </mat-error>
           }
         </mat-form-field>
@@ -72,5 +73,12 @@ export class UpdateCategory {
           console.error('Error updating category:', err.error);
         },
       });
+  }
+
+  get name() {
+    return this.categoryForm.get('name');
+  }
+  get type() {
+    return this.categoryForm.get('type');
   }
 }

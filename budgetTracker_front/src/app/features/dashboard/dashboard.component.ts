@@ -18,6 +18,7 @@ import { TransactionsService } from '../transactions/services/transactions.servi
 import { DashboardHeader } from './components/dashboard-header';
 import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
 import { DashboardSummary } from './components/summary/dashboard-summary';
+import { Transaction } from '../transactions/models/transactions.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,7 +48,7 @@ export class DashboardComponent implements OnInit {
         this.allCategories.set(categories);
       },
       error: (err) => {
-        this.utils.openSnackBar(err, '');
+        this.utils.openSnackBar(err.error.message, '');
         this.allCategories.set([]);
         return of([]);
       },
@@ -56,7 +57,11 @@ export class DashboardComponent implements OnInit {
 
   /* Handler to update the signal when a new category is added from the sidebar */
   onCategoryAdded(newCategory: Category): void {
-    this.allCategories.update((categories) => [...categories, newCategory]);
+    this.allCategories.update((categories) => {
+      //Add alphabetically
+      const updatedCategories = [...categories, newCategory];
+      return updatedCategories.sort((a, b) => a.name.localeCompare(b.name));
+    });
   }
 
   /* Handler to update the signal when a new category is udpated from the sidebar */
@@ -81,6 +86,7 @@ export class DashboardComponent implements OnInit {
   private transactionsService = inject(TransactionsService);
   readonly allExpenses = signal<Category[]>([]);
   readonly allIncome = signal<Category[]>([]);
+  readonly allTransactions = signal<Transaction[]>([]);
 
   /* Get all transactoins for user */
   getAllTransactions(): void {
@@ -89,13 +95,20 @@ export class DashboardComponent implements OnInit {
         this.allCategories.set(categories);
       },
       error: (err) => {
-        console.error('Error fetching categories in dashboard:', err);
+        this.utils.openSnackBar(err.error.message, '');
         this.allCategories.set([]);
         return of([]);
       },
     });
   }
 
+  /* Handles the event emitted by the AddTransaction component when a new transaction is added. */
+  onTransactionAdded(newTransaction: Transaction): void {
+    /*     this.allTransactions.update((transactions) => [
+      ...transactions,
+      newTransaction,
+    ]); */
+  }
   /* On init */
   ngOnInit(): void {
     this.getCategories();

@@ -8,7 +8,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { Transaction } from '../../../transactions/models/transactions.models';
-import { AddTransactionIncome } from '../../../transactions/components/transaction-add-income.component';
+import { AddTransactionIncome } from '../../../transactions/components/income/transaction-add-income.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Category } from '../../../categories/models/categories.models';
 
@@ -33,18 +33,8 @@ export class AddIncomeBtn {
 
   /* Open add transaction dialog for income */
   openDialogAddIncome(): void {
-    const dialogRef = this.dialog.open(AddTransactionIncome, {
+    this.dialog.open(AddTransactionIncome, {
       data: this.allCategories,
-    });
-    //After update, update the signal
-    dialogRef.afterClosed().subscribe((result: Transaction) => {
-      /*      if (result) {
-        this.allCategories.update((categories) =>
-          categories.map((cat) => {
-            return cat.id === result.id ? result : cat;
-          }),
-        );
-      } */
     });
   }
 }

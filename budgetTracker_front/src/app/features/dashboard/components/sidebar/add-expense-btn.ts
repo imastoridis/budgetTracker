@@ -3,17 +3,14 @@ import {
   ChangeDetectionStrategy,
   inject,
   output,
+  input,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { TransactionsService } from '../../../transactions/services/transactions.service';
 import { Transaction } from '../../../transactions/models/transactions.models';
-import { UpdateCategory } from '../../../categories/components/category-update.component';
-import {
-  initTransactionForm,
-  TransactionForm,
-} from '../../../transactions/forms/transactions-form-builder';
+import { AddTransactionExpense } from '../../../transactions/components/expense/transaction-add-expense.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Category } from '../../../categories/models/categories.models';
 
 @Component({
   selector: 'app-add-expense-btn',
@@ -21,7 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
   imports: [MaterialModule, ReactiveFormsModule],
   template: `
     <button
-      (click)="openDialogAddIncome()"
+      (click)="openDialogAddExpense()"
       mat-raised-button
       class="!bg-red-700 hover:!bg-red-800 !text-white !w-full"
     >
@@ -30,25 +27,14 @@ import { MatDialog } from '@angular/material/dialog';
   `,
 })
 export class AddExpenseBtn {
-  private categoriesService = inject(TransactionsService);
-  readonly categoryForm: TransactionForm = initTransactionForm();
-  categoryAdded = output<Transaction>();
-
+  transactionAdded = output<Transaction>();
   dialog = inject(MatDialog);
+  allCategories = input.required<Category[]>();
 
-  /* Open add transaction dialog for income */
-  openDialogAddIncome(): void {
-    const dialogRef = this.dialog.open(UpdateCategory);
-
-    //After update, update the signal
-    dialogRef.afterClosed().subscribe((result: Transaction) => {
-      /*      if (result) {
-        this.allCategories.update((categories) =>
-          categories.map((cat) => {
-            return cat.id === result.id ? result : cat;
-          }),
-        );
-      } */
+  /* Open add transaction dialog for expense */
+  openDialogAddExpense(): void {
+    this.dialog.open(AddTransactionExpense, {
+      data: this.allCategories,
     });
   }
 }
