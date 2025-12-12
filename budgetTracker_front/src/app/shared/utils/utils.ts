@@ -9,15 +9,18 @@ import {
   providedIn: 'root',
 })
 export class Utils {
+  /* SnackBar */
   private _snackBar = inject(MatSnackBar);
 
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'top';
+  durationInSeconds = 5;
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
+      duration: this.durationInSeconds * 1000,
     });
   }
 }

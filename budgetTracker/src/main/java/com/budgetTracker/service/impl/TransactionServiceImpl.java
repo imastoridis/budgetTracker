@@ -10,13 +10,16 @@ import com.budgetTracker.model.entity.User;
 import com.budgetTracker.repository.TransactionRepository;
 import com.budgetTracker.service.CategoryService;
 import com.budgetTracker.service.TransactionService;
-import com.budgetTracker.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -147,5 +150,41 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found or access denied."));
 
         transactionRepository.delete(transactionToDelete);
+    }
+
+
+
+    /**
+     * GET ALL: Retrieves total income for a given user and month.
+     *
+     * @param userId The userId
+     * @param date The date
+     * @return The total income
+     */
+    @Override
+    public BigDecimal getTotalIncomeByUserIdAndMonth(Long userId, LocalDate date) {
+
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+        BigDecimal totalIncome = transactionRepository.findIncomeByMonthByUserIdAndDate(userId, startDate, endDate);
+
+        return Objects.requireNonNullElseGet(totalIncome, () -> BigDecimal.valueOf(0));
+    }
+
+    /**
+     * GET ALL: Retrieves total income for a given user and month.
+     *
+     * @param userId The userId
+     * @param date The date
+     * @return The total expenses
+     */
+    @Override
+    public BigDecimal getTotalExpenseByUserIdAndMonth(Long userId, LocalDate date) {
+
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+        BigDecimal totalExpense = transactionRepository.findExpenseByMonthByUserIdAndDate(userId, startDate, endDate);
+
+        return Objects.requireNonNullElseGet(totalExpense, () -> BigDecimal.valueOf(0));
     }
 }

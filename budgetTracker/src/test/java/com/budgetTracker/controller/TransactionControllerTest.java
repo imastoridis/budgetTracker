@@ -72,7 +72,6 @@ public class TransactionControllerTest {
     private static final TransactionDto dto1 = new TransactionDto(
             MOCK_TRANSACTION_ID,
             new BigDecimal("180.00"),
-            TransactionType.INCOME,
             LocalDate.of(2025, 11, 10),
             "Description 1",
             MOCK_CATEGORY_ID,
@@ -83,7 +82,6 @@ public class TransactionControllerTest {
     private static final TransactionDto dto2 = new TransactionDto(
             MOCK_TRANSACTION_ID,
             new BigDecimal("150.00"),
-            TransactionType.EXPENSE,
             LocalDate.of(2025, 10, 10),
             "Description 2",
             MOCK_CATEGORY_ID,
@@ -114,7 +112,6 @@ public class TransactionControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].amount").value("180.0"))
-                .andExpect(jsonPath("$[0].type").value("INCOME"))
                 .andExpect(jsonPath("$[0].date").value("2025-11-10"))
                 .andExpect(jsonPath("$[0].description").value("Description 1"))
                 .andExpect(jsonPath("$[0].categoryId").value(MOCK_CATEGORY_ID))
@@ -139,7 +136,6 @@ public class TransactionControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(MOCK_TRANSACTION_ID))
                 .andExpect(jsonPath("$.amount").value("180.0"))
-                .andExpect(jsonPath("$.type").value("INCOME"))
                 .andExpect(jsonPath("$.date").value("2025-11-10"))
                 .andExpect(jsonPath("$.description").value("Description 1"))
                 .andExpect(jsonPath("$.categoryId").value(MOCK_CATEGORY_ID))
@@ -168,7 +164,6 @@ public class TransactionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(MOCK_TRANSACTION_ID))
                 .andExpect(jsonPath("$.amount").value("150.0"))
-                .andExpect(jsonPath("$.type").value("EXPENSE"))
                 .andExpect(jsonPath("$.date").value("2025-10-10"))
                 .andExpect(jsonPath("$.description").value("Description 2"))
                 .andExpect(jsonPath("$.categoryId").value(MOCK_CATEGORY_ID))

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Transaction } from '../models/transactions.models';
 
 @Injectable({
@@ -20,42 +20,65 @@ export class TransactionsService {
   }
 
   /**
-   * Adds a new category to the backend.
-   * @param category
-   * @returns An Observable of the categories response.
+   * Adds a new transaction to the backend.
+   * @param transaction
+   * @returns An Observable of the transactions response.
    */
-  addTransaction(category: Transaction): Observable<Transaction> {
-    console.log('Adding category:', category);
-    return this.http.post<Transaction>(this.apiUrlTransactions, category).pipe(
-      tap((response) => {
-        console.log('Categories fetched:', response);
-      }),
-    );
-  }
-
-  /**
-   * Updates an existing category in the backend.
-   * @param category
-   * @returns An Observable of the updated category response.
-   */
-  updateTransaction(category: Transaction): Observable<Transaction> {
-    return this.http
-      .put<Transaction>(this.apiUrlTransactions + '/' + category.id, category)
-      .pipe(
+  addTransaction(transaction: Transaction): Observable<Transaction> {
+    return this.http.post<Transaction>(this.apiUrlTransactions, transaction);
+    /*       .pipe(
         tap((response) => {
-          console.log('Categories fetched:', response);
+          console.log('transactions fetched:', response);
         }),
-      );
+      ); */
   }
 
   /**
-   * Deletes an existing category in the backend.
-   * @param category
-   * @returns An Observable of the updated category response.
+   * Updates an existing transaction in the backend.
+   * @param transaction
+   * @returns An Observable of the updated transaction response.
    */
-  deleteTransaction(category: Transaction): Observable<Transaction> {
-    return this.http.delete<Transaction>(
-      this.apiUrlTransactions + '/' + category.id,
+  updateTransaction(transaction: Transaction): Observable<Transaction> {
+    return this.http.put<Transaction>(
+      this.apiUrlTransactions + '/' + transaction.id,
+      transaction,
     );
+  }
+
+  /**
+   * Deletes an existing transaction in the backend.
+   * @param transaction
+   * @returns An Observable of the updated transaction response.
+   */
+  deleteTransaction(transaction: Transaction): Observable<Transaction> {
+    return this.http.delete<Transaction>(
+      this.apiUrlTransactions + '/' + transaction.id,
+    );
+  }
+
+  /**
+   * Gets total income based on the month
+   * @returns An Observable of the total income response.
+   */
+  getTotalIncomeByMonth(date: Date): Observable<string> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+
+    return this.http.get<string>(this.apiUrlTransactions + '/total-income', {
+      params: params,
+    });
+  }
+
+  /**
+   * Gets total expenses based on the month
+   * @returns An Observable of the total expense response.
+   */
+  getTotalExpensesByMonth(date: Date): Observable<string> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+
+    return this.http.get<string>(this.apiUrlTransactions + '/total-expense', {
+      params: params,
+    });
   }
 }

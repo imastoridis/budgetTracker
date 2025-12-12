@@ -61,7 +61,6 @@ class TransactionRepositoryTest {
         tra1.setAmount(BigDecimal.valueOf(150.00));
         tra1.setDate(LocalDate.parse("2025-09-10"));
         tra1.setDescription("test1");
-        tra1.setType(TransactionType.valueOf("INCOME"));
         tra1.setUser(testUser);
         tra1.setCategory(category);
         entityManager.persist(tra1);
@@ -70,7 +69,6 @@ class TransactionRepositoryTest {
         tra2.setAmount(BigDecimal.valueOf(180.00));
         tra2.setDate(LocalDate.parse("2025-08-10"));
         tra2.setDescription("test2");
-        tra2.setType(TransactionType.valueOf("EXPENSE"));
         tra2.setUser(testUser);
         tra2.setCategory(category);
         entityManager.persist(tra2);
@@ -80,7 +78,6 @@ class TransactionRepositoryTest {
         tra3.setAmount(BigDecimal.valueOf(180.00));
         tra3.setDate(LocalDate.parse("2025-08-10"));
         tra3.setDescription("test2");
-        tra3.setType(TransactionType.valueOf("EXPENSE"));
         tra3.setUser(otherUser);
         tra3.setCategory(category);
         entityManager.persist(tra3);
@@ -102,14 +99,12 @@ class TransactionRepositoryTest {
         assertThat(transactions).hasSize(2); //Size of a list
         assertThat(transactions.getFirst().getAmount()).isIn(new BigDecimal("150.00"));
         assertThat(transactions.getFirst().getDate()).isIn(LocalDate.parse("2025-09-10"));
-        assertThat(transactions.getFirst().getType()).isIn(TransactionType.valueOf("INCOME"));
         assertThat(transactions.getFirst().getDescription()).isIn("test1");
         assertThat(transactions.getFirst().getCategory().getId()).isEqualTo(category.getId());
         assertThat(transactions.getFirst().getUser().getId()).isEqualTo(testUser.getId());
 
         assertThat(transactions.get(1).getAmount()).isIn(new BigDecimal("180.00"));
         assertThat(transactions.get(1).getDate()).isIn(LocalDate.parse("2025-08-10"));
-        assertThat(transactions.get(1).getType()).isIn(TransactionType.valueOf("EXPENSE"));
         assertThat(transactions.get(1).getDescription()).isIn("test2");
         assertThat(transactions.get(1).getCategory().getId()).isEqualTo(category.getId());
         assertThat(transactions.get(1).getUser().getId()).isEqualTo(testUser.getId());

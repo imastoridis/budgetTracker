@@ -1,11 +1,8 @@
 package com.budgetTracker.model.entity;
 
-import com.budgetTracker.model.enums.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -33,11 +30,6 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    // Could be "INCOME" or "EXPENSE"
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private TransactionType type;
-
     @Column(nullable = false)
     private LocalDate date;
 
@@ -61,14 +53,12 @@ public class Transaction {
 
     public Transaction(
             BigDecimal amount,
-            TransactionType type,
             LocalDate date,
             String description,
             User user,
             Category category
     ) {
         this.amount = amount;
-        this.type = type;
         this.date = date;
         this.description = description;
         this.user = user;

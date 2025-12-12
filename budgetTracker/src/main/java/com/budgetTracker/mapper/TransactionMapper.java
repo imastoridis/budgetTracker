@@ -1,6 +1,5 @@
 package com.budgetTracker.mapper;
 
-import com.budgetTracker.dto.CategoryDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.Transaction;
@@ -13,7 +12,6 @@ public class TransactionMapper {
 
         TransactionDto dto = new TransactionDto();
         dto.setId(transaction.getId());
-        dto.setType(transaction.getType());
         dto.setAmount(transaction.getAmount());
         dto.setDate(transaction.getDate());
         dto.setDescription(transaction.getDescription());
@@ -30,7 +28,6 @@ public class TransactionMapper {
 
         Transaction transaction = new Transaction();
         transaction.setId(transactionDto.getId());
-        transaction.setType(transactionDto.getType());
         transaction.setAmount(transactionDto.getAmount());
         transaction.setDate(transactionDto.getDate());
         transaction.setDescription(transactionDto.getDescription());
@@ -44,7 +41,6 @@ public class TransactionMapper {
 
         if (transactionDto == null) return null;
         existingTransaction.setId(transactionDto.getId());
-        existingTransaction.setType(transactionDto.getType());
         existingTransaction.setAmount(transactionDto.getAmount());
         existingTransaction.setDate(transactionDto.getDate());
         existingTransaction.setDescription(transactionDto.getDescription());

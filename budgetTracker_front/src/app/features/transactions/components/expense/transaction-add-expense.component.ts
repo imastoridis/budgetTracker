@@ -1,10 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  output,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../services/transactions.service';
@@ -12,7 +6,6 @@ import { Transaction } from '../../models/transactions.models';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TransactionForm } from '../../forms/transactions-form-builder';
 import { initTransactionFormExpense } from '../../forms/transactions-expense-form-builder';
-import { TransactionType } from '../../models/transaction-types.enum';
 import {
   DateAdapter,
   NativeDateAdapter,
@@ -22,6 +15,7 @@ import {
 import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
 import { Utils } from '../../../../shared/utils/utils';
 import { Category } from '../../../categories/models/categories.models';
+import { TransactionEventsService } from '../../services/transaction-event.service';
 
 @Component({
   selector: 'app-add-transaction-expense',
@@ -37,24 +31,13 @@ export class AddTransactionExpense {
   /* Injects */
   private transactionService = inject(TransactionsService);
   private utils = inject(Utils);
+  private transactionEventsService = inject(TransactionEventsService);
 
   /* Variables */
   readonly transactionFormExpense: TransactionForm =
     initTransactionFormExpense();
-  readonly transactionTypes = Object.values(TransactionType);
-  readonly transactionAdded = output<Transaction>();
-  allCategories = inject(MAT_DIALOG_DATA) as Category[];
 
-  /* Get filtered categories for expense */
-  readonly filteredCategories = computed(() => {
-    return this.allCategories.filter(
-      (category) => category.type === TransactionType.EXPENSE,
-    );
-  });
-
-  /**
-   * Functions
-   */
+  allCategories: Category[] = inject(MAT_DIALOG_DATA);
 
   /* Add transaction */
   addTransaction(): void {
@@ -62,14 +45,13 @@ export class AddTransactionExpense {
       this.transactionFormExpense.getRawValue();
 
     this.transactionService.addTransaction(transactionData).subscribe({
-      next: (response) => {
+      next: (newTransaction) => {
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormExpense.reset();
-        this.transactionAdded.emit(response);
+        this.transactionEventsService.notifyTransactionAdded(newTransaction);
       },
       error: (err) => {
         this.utils.openSnackBar(err.message, '');
-        console.error('Error adding transaction:', err);
       },
     });
   }

@@ -6,14 +6,18 @@ import com.budgetTracker.service.TransactionService;
 import com.budgetTracker.util.JsonUtils;
 import com.budgetTracker.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -103,5 +107,39 @@ public class TransactionController {
         transactionService.deleteTransaction(id, userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * GET /api/transactions/total-income: retrieves the total income for the currently authenticated user.
+     *
+     * @param date :
+     * @return the income associated with the logged-in user
+     */
+    @GetMapping("/total-income")
+    public ResponseEntity<BigDecimal> getTotalIncomeByMonth(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        System.out.println("TEST");
+        BigDecimal totalIncomeByMonth = transactionService.getTotalIncomeByUserIdAndMonth(userId, date);
+        return ResponseEntity.ok(totalIncomeByMonth);
+    }
+
+    /**
+     * GET /api/transactions/total-expense: retrieves the total expense for the currently authenticated user.
+     *
+     * @param date :
+     * @return the expense associated with the logged-in user
+     */
+    @GetMapping("/total-expense")
+    public ResponseEntity<BigDecimal> getTotalExpenseByMonth(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+
+        BigDecimal totalExpenseByMonth = transactionService.getTotalExpenseByUserIdAndMonth(userId, date);
+        return ResponseEntity.ok(totalExpenseByMonth);
     }
 }

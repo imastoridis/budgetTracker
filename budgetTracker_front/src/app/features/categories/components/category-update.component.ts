@@ -15,7 +15,7 @@ import {
   buildCategoryForm,
   CategoryForm,
 } from '../forms/category-form-builder';
-
+import { Utils } from '../../../shared/utils/utils';
 @Component({
   selector: 'app-dialog-category-update',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +55,7 @@ export class UpdateCategory {
   private dialogRef = inject(MatDialogRef<UpdateCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
   categoryUpdated = output<Category>();
+  utils = inject(Utils);
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -70,7 +71,7 @@ export class UpdateCategory {
           this.dialogRef.close(response);
         },
         error: (err) => {
-          console.error('Error updating category:', err.error);
+          this.utils.openSnackBar('Error updating category:' + err.error, '');
         },
       });
   }

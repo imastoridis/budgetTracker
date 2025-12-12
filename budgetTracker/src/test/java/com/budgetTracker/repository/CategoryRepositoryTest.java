@@ -4,6 +4,7 @@ package com.budgetTracker.repository;
 
 import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.User;
+import com.budgetTracker.model.enums.TransactionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,17 +50,21 @@ class CategoryRepositoryTest {
         Category cat1 = new Category();
         cat1.setName("Groceries");
         cat1.setUser(testUser);
+        cat1.setType(TransactionType.valueOf("INCOME"));
+
         entityManager.persist(cat1);
 
         Category cat2 = new Category();
         cat2.setName("Rent");
         cat2.setUser(testUser);
+        cat2.setType(TransactionType.valueOf("EXPENSE"));
         entityManager.persist(cat2);
 
         // Setup category for the other user (to test isolation)
         Category cat3 = new Category();
         cat3.setName("Entertainment");
         cat3.setUser(otherUser);
+        cat3.setType(TransactionType.valueOf("EXPENSE"));
         entityManager.persist(cat3);
 
         entityManager.flush();
@@ -79,6 +84,8 @@ class CategoryRepositoryTest {
         assertThat(categories).hasSize(2);
         assertThat(categories.get(0).getName()).isIn("Groceries", "Rent");
         assertThat(categories.get(1).getUser().getId()).isEqualTo(testUser.getId());
+        assertThat(categories.get(2).getType()).isIn(TransactionType.valueOf("INCOME"));
+
     }
 
     /**
@@ -86,7 +93,6 @@ class CategoryRepositoryTest {
      */
     @Test
     void findByIdAndUserId_shouldReturnCategoryWhenOwned() {
-        // Arrange
         // Get the ID of one of the test user's categories
         Category userCat = categoryRepository.findByUserId(testUser.getId()).getFirst();
 
@@ -103,7 +109,6 @@ class CategoryRepositoryTest {
      */
     @Test
     void findByIdAndUserId_shouldReturnEmptyWhenNotOwned() {
-        // Arrange
         // Get the ID of the other user's category
         Category otherUserCat = categoryRepository.findByUserId(otherUser.getId()).getFirst();
 

@@ -1,6 +1,5 @@
 package com.budgetTracker.dto;
 
-import com.budgetTracker.model.enums.TransactionType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,11 +19,8 @@ public class TransactionDto {
     private Long id;
 
     @NotNull(message = "Amount is required.")
-    @DecimalMin(value = "0.01", inclusive = true, message = "Amount must be greater than zero.")
+    @DecimalMin(value = "0.01", message = "Amount must be greater than zero.")
     private BigDecimal amount;
-
-    @NotNull(message = "Transaction type is required.")
-    private TransactionType type;
 
     @NotNull(message = "Date is required.")
     private LocalDate date;
@@ -48,7 +44,6 @@ public class TransactionDto {
     public TransactionDto(
             Long id,
             BigDecimal amount,
-            TransactionType type,
             LocalDate date,
             String description,
             Long categoryId,
@@ -56,7 +51,6 @@ public class TransactionDto {
     ) {
         this.id = id;
         this.amount = amount;
-        this.type = type;
         this.date = date;
         this.description = description;
         this.categoryId = categoryId;

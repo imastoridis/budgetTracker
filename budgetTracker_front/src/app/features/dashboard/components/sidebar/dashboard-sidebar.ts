@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   output,
   input,
+  inject,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -38,7 +39,6 @@ import { Category } from '../../../categories/models/categories.models';
         <!-- Add income btn -->
         <app-add-income-btn
           [allCategories]="allCategories()"
-          (transactionAdded)="onTransactionAdded($any($event))"
         ></app-add-income-btn>
         <!-- Add expense btn -->
         <app-add-expense-btn
@@ -62,15 +62,9 @@ import { Category } from '../../../categories/models/categories.models';
 export class DashboardSidebar {
   allCategories = input.required<Category[]>();
   categoryAdded = output<Category>();
-  transactionAdded = output<Transaction>();
 
   /* Handles the event emitted by the AddCategory component when a new category is added. */
   onCategoryAdded(newCategory: Category): void {
     this.categoryAdded.emit(newCategory);
-  }
-
-  /* Handles the event emitted by the AddCategory component when a new category is added. */
-  onTransactionAdded(newTransaction: Transaction): void {
-    this.transactionAdded.emit(newTransaction);
   }
 }

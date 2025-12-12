@@ -34,7 +34,12 @@ export class AddIncomeBtn {
   /* Open add transaction dialog for income */
   openDialogAddIncome(): void {
     this.dialog.open(AddTransactionIncome, {
-      data: this.allCategories,
+      data: this.getFilteredIncomeCategories(),
     });
+  }
+
+  private getFilteredIncomeCategories(): Category[] {
+    const categories = this.allCategories();
+    return categories.filter((category) => category.type === 'INCOME');
   }
 }

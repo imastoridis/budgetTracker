@@ -104,6 +104,7 @@ export class DashboardComponent implements OnInit {
 
   /* Handles the event emitted by the AddTransaction component when a new transaction is added. */
   onTransactionAdded(newTransaction: Transaction): void {
+    console.log(newTransaction);
     /*     this.allTransactions.update((transactions) => [
       ...transactions,
       newTransaction,
