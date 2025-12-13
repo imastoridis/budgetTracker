@@ -102,6 +102,28 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
+     * GET ALL: Retrieves all transactions for a given user by category Id.
+     *
+     * @param userId     The userId
+     * @param categoryId The userId
+     * @return The transactionDto for the logged-in user.
+     * @throws NoSuchElementException no category with the given ID is found.
+     */
+    @Override
+    public List<TransactionDto> findCategoryTransactions(Long userId, Long categoryId) {
+        List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId);
+
+        if (categoryEntities.isEmpty()) {
+            throw new NoSuchElementException("No transactions for this user");
+        } else {
+            // Map each User entity to a TransactionDto
+            return categoryEntities.stream()
+                    .map(TransactionMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
      * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.
      *
      * @param transactionId The ID of the transaction.
@@ -152,13 +174,11 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.delete(transactionToDelete);
     }
 
-
-
     /**
      * GET ALL: Retrieves total income for a given user and month.
      *
      * @param userId The userId
-     * @param date The date
+     * @param date   The date
      * @return The total income
      */
     @Override
@@ -175,7 +195,7 @@ public class TransactionServiceImpl implements TransactionService {
      * GET ALL: Retrieves total income for a given user and month.
      *
      * @param userId The userId
-     * @param date The date
+     * @param date   The date
      * @return The total expenses
      */
     @Override

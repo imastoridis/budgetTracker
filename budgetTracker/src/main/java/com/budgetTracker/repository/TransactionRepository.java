@@ -25,6 +25,25 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      */
     Optional<Transaction> findByIdAndUserId(Long id, Long userId);
 
+
+    /**
+     * Finds the total sum of the 'amount' column for all expense transactions
+     * belonging to a specific user within the month of the given date.
+     *
+     * @param userId     The ID of the authenticated user.
+     * @param categoryId category Id
+     * @return The sum of all amounts (as BigDecimal).
+     */
+    @Query("SELECT t " +
+            "FROM Transaction t " +
+            "WHERE t.user.id = :userId AND " +
+            "t.category.id = :categoryId"
+    )
+    List<Transaction> findByUserIdAndCategoryId(
+            @Param("userId") Long userId,
+            @Param("categoryId") Long categoryId
+    );
+
     /**
      * Finds the total sum of the 'amount' column for all income transactions
      * belonging to a specific user within the month of the given date.
@@ -64,4 +83,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+
 }

@@ -1,8 +1,10 @@
 package com.budgetTracker.controller;
 
 import com.budgetTracker.dto.CategoryDto;
+import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.User;
 import com.budgetTracker.service.CategoryService;
+import com.budgetTracker.service.TransactionService;
 import com.budgetTracker.util.JsonUtils;
 import com.budgetTracker.util.SecurityUtils;
 import jakarta.validation.Valid;
@@ -26,11 +28,13 @@ public class CategoryController {
 
     private final SecurityUtils securityUtils;
     private final CategoryService categoryService;
+    private final TransactionService transactionService;
 
     @Autowired
-    public CategoryController(SecurityUtils securityUtils, CategoryService categoryService) {
+    public CategoryController(SecurityUtils securityUtils, CategoryService categoryService, TransactionService transactionService) {
         this.securityUtils = securityUtils;
         this.categoryService = categoryService;
+        this.transactionService = transactionService;
     }
 
     // --- CRUD Endpoints ---
@@ -110,5 +114,25 @@ public class CategoryController {
         categoryService.deleteCategory(id, userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * GET /api/categories/has-transactions/id: Retrieves all categories belonging to the authenticated user.
+     *
+     * @return the categories dto associated with the logged-in user
+     */
+    @GetMapping("/has-transactions/{id}")
+    public ResponseEntity<Boolean> hasTransactions(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        boolean hasTransactions = true;
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        List<TransactionDto> transactions = transactionService.findCategoryTransactions(userId, id);
+//Return 204 no content?
+        if (transactions.isEmpty()) {
+            hasTransactions = false;
+        }
+        return ResponseEntity.ok(hasTransactions);
     }
 }

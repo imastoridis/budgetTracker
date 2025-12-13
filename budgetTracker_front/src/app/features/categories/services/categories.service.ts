@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../models/categories.models';
 
@@ -50,5 +50,18 @@ export class CategoriesService {
     return this.http.delete<Category>(
       this.apiUrlCategories + '/' + category.id,
     );
+  }
+
+  /**
+   * Deletes an existing category in the backend.
+   * @param category
+   * @returns truth false
+   */
+  categoryHasTransactions(category: Category): Observable<boolean> {
+    return this.http
+      .get<{
+        hasTransactions: boolean;
+      }>(this.apiUrlCategories + '/has-transactions/' + category.id)
+      .pipe(map((response) => response.hasTransactions));
   }
 }
