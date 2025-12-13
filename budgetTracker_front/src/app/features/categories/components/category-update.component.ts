@@ -1,11 +1,6 @@
 //src\app\features\categories\components\category-update.component.ts
 
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
@@ -16,6 +11,8 @@ import {
   CategoryForm,
 } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
+import { CategoryEventsService } from '../services/category-event.service';
+
 @Component({
   selector: 'app-dialog-category-update',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,8 +51,8 @@ export class UpdateCategory {
   private categoriesService = inject(CategoriesService);
   private dialogRef = inject(MatDialogRef<UpdateCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
-  categoryUpdated = output<Category>();
   utils = inject(Utils);
+  private categoryEventService = inject(CategoryEventsService);
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -68,7 +65,9 @@ export class UpdateCategory {
       .updateCategory(updatedCategory as Category)
       .subscribe({
         next: (response) => {
-          this.dialogRef.close(response);
+          this.dialogRef.close();
+          this.categoryEventService.notifyCategoryUpdated(response);
+          this.utils.openSnackBar('Category updated successfully', '');
         },
         error: (err) => {
           this.utils.openSnackBar('Error updating category:' + err.error, '');

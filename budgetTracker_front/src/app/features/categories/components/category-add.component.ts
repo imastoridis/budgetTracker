@@ -1,15 +1,11 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
 import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
+import { CategoryEventsService } from '../services/category-event.service';
 
 @Component({
   selector: 'app-add-category',
@@ -60,8 +56,7 @@ export class AddCategory {
   private categoriesService = inject(CategoriesService);
   readonly categoryForm: CategoryForm = initCategoryForm();
   private utils = inject(Utils);
-
-  addedCategory = output<Category>();
+  private categoryEventService = inject(CategoryEventsService);
 
   /* Add category */
   addCategory(): void {
@@ -69,7 +64,8 @@ export class AddCategory {
     this.categoriesService.addCategory(categoryData).subscribe({
       next: (response) => {
         this.categoryForm.reset();
-        this.addedCategory.emit(response);
+        this.categoryEventService.notifyCategoryAdded(response);
+        this.utils.openSnackBar('Category added successfully', '');
       },
       error: (err) => {
         this.utils.openSnackBar(err.message, '');

@@ -5,6 +5,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { of } from 'rxjs';
 import { MaterialModule } from '../../shared/modules/material/material.module';
@@ -12,6 +13,7 @@ import { Utils } from '../../shared/utils/utils';
 /* Categories */
 import { Category } from '../categories/models/categories.models';
 import { CategoriesService } from '../categories/services/categories.service';
+import { CategoryEventsService } from '../categories/services/category-event.service';
 /* Transactions */
 import { TransactionsService } from '../transactions/services/transactions.service';
 /* Dashboard children*/
@@ -34,14 +36,11 @@ import { Transaction } from '../transactions/models/transactions.models';
 })
 export class DashboardComponent implements OnInit {
   utils = inject(Utils);
-
-  /**
-   * Categories
-   */
+  private categoryEventsService = inject(CategoryEventsService);
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
 
-  /* Get all categories for user */ /* TO DO ALPHABETICALLY */
+  /* Get all categories for user */
   getCategories(): void {
     this.categoriesService.getCategories().subscribe({
       next: (categories) => {
@@ -55,31 +54,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  /* Handler to update the signal when a new category is added from the sidebar */
-  onCategoryAdded(newCategory: Category): void {
-    this.allCategories.update((categories) => {
-      //Add alphabetically
-      const updatedCategories = [...categories, newCategory];
-      return updatedCategories.sort((a, b) => a.name.localeCompare(b.name));
-    });
-  }
-
-  /* Handler to update the signal when a new category is udpated from the sidebar */
-  onCategoryUpdated(updatedCategory: Category): void {
-    this.allCategories.update((categories) =>
-      categories.map((category) => {
-        return category.id === updatedCategory.id ? updatedCategory : category;
-      }),
-    );
-  }
-
-  /* Handler to update the signal when a new category is delete from the sidebar */
-  onCategoryDeleted(deletedCategory: Category): void {
-    this.allCategories.update((categories) =>
-      categories.filter((category) => category.id !== deletedCategory.id),
-    );
-  }
-
   /**
    * Transactions
    */
@@ -89,7 +63,7 @@ export class DashboardComponent implements OnInit {
   readonly allTransactions = signal<Transaction[]>([]);
 
   /* Get all transactoins for user */
-  getAllTransactions(): void {
+  /*   getAllTransactions(): void {
     this.categoriesService.getCategories().subscribe({
       next: (categories) => {
         this.allCategories.set(categories);
@@ -101,15 +75,39 @@ export class DashboardComponent implements OnInit {
       },
     });
   }
+ */
 
-  /* Handles the event emitted by the AddTransaction component when a new transaction is added. */
-  onTransactionAdded(newTransaction: Transaction): void {
-    console.log(newTransaction);
-    /*     this.allTransactions.update((transactions) => [
-      ...transactions,
-      newTransaction,
-    ]); */
+  /* Constructor */
+  constructor() {
+    //Uses the category-event.service to add, update or delete a category
+    this.categoryEventsService.updatedCategory$
+      .pipe(takeUntilDestroyed())
+      .subscribe((updatedCategory) => {
+        this.allCategories.update((categories) =>
+          categories.map((category) =>
+            category.id === updatedCategory.id ? updatedCategory : category,
+          ),
+        );
+      });
+
+    this.categoryEventsService.addedCategory$
+      .pipe(takeUntilDestroyed())
+      .subscribe((addedCategory) => {
+        this.allCategories.update((categories) => {
+          const updatedCategories = [...categories, addedCategory];
+          return updatedCategories.sort((a, b) => a.name.localeCompare(b.name));
+        });
+      });
+
+    this.categoryEventsService.deletedCategory$
+      .pipe(takeUntilDestroyed())
+      .subscribe((deletedCategory) => {
+        this.allCategories.update((categories) =>
+          categories.filter((category) => category.id !== deletedCategory.id),
+        );
+      });
   }
+
   /* On init */
   ngOnInit(): void {
     this.getCategories();

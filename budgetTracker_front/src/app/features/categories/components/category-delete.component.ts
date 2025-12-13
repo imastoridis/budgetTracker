@@ -9,6 +9,7 @@ import {
   CategoryForm,
 } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
+import { CategoryEventsService } from '../services/category-event.service';
 
 @Component({
   selector: 'app-dialog-category-delete',
@@ -30,6 +31,7 @@ export class DeleteCategory {
   private dialogRef = inject(MatDialogRef<DeleteCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
   private utils = inject(Utils);
+  private categoryEventService = inject(CategoryEventsService);
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -42,7 +44,9 @@ export class DeleteCategory {
       .deleteCategory(deletedCategory as Category)
       .subscribe({
         next: () => {
-          this.dialogRef.close(this.initialData);
+          this.dialogRef.close();
+          this.categoryEventService.notifyCategoryDeleted(this.initialData);
+          this.utils.openSnackBar('Category deleted successfully', '');
         },
         error: (err) => {
           this.utils.openSnackBar(err.error, '');

@@ -1,13 +1,6 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  output,
-  input,
-  inject,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { Transaction } from '../../../transactions/models/transactions.models';
 import { AddIncomeBtn } from './add-income-btn';
 import { AddExpenseBtn } from './add-expense-btn';
 import { TotalMonthDisplay } from './total-month-display';
@@ -53,18 +46,10 @@ import { Category } from '../../../categories/models/categories.models';
       <app-pie-chart-display></app-pie-chart-display>
 
       <!-- Add Category-->
-      <app-add-category
-        (addedCategory)="onCategoryAdded($any($event))"
-      ></app-add-category>
+      <app-add-category></app-add-category>
     </div>
   `,
 })
 export class DashboardSidebar {
   allCategories = input.required<Category[]>();
-  categoryAdded = output<Category>();
-
-  /* Handles the event emitted by the AddCategory component when a new category is added. */
-  onCategoryAdded(newCategory: Category): void {
-    this.categoryAdded.emit(newCategory);
-  }
 }

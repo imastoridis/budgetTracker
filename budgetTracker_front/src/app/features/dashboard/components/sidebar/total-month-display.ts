@@ -2,22 +2,18 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  output,
   signal,
-  effect,
   OnInit,
-  Injector,
-  runInInjectionContext,
   computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../../transactions/services/transactions.service';
 import { Utils } from '../../../../shared/utils/utils';
-import { MatDialog } from '@angular/material/dialog';
-import { Transaction } from '../../../transactions/models/transactions.models';
 import { TransactionEventsService } from '../../../transactions/services/transaction-event.service';
 import { CurrencyPipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 @Component({
   selector: 'app-total-month-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,16 +56,14 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class TotalMonthDisplay implements OnInit {
   private transactionsService = inject(TransactionsService);
+  private utils = inject(Utils);
+  private transactionEventsService = inject(TransactionEventsService);
   readonly totalIncome = signal<number>(0);
   readonly totalExpenses = signal<number>(0);
   readonly date = signal<Date>(new Date());
   readonly balance = computed<number>(() => {
     return this.totalIncome() - this.totalExpenses();
   });
-
-  dialog = inject(MatDialog);
-  utils = inject(Utils);
-  transactionEventsService = inject(TransactionEventsService);
 
   /* Gets total of income for a month */
   getTotalIncomeByMonth(date: Date): void {
@@ -95,22 +89,37 @@ export class TotalMonthDisplay implements OnInit {
     });
   }
 
-  #injector = inject(Injector);
-  /* On init */
-  ngOnInit(): void {
-    runInInjectionContext(this.#injector, () => {
-      effect(() => {
-        const newTransaction = this.transactionEventsService.newTransaction$();
-        if (newTransaction) {
-          console.log(newTransaction);
-          this.getTotalIncomeByMonth(this.date());
-          this.getTotalExpensesByMonth(this.date());
-        }
-      });
-    });
-
-    //Get total income for current month
+  /* Gets total by month */
+  getTotalByMonth() {
     this.getTotalIncomeByMonth(this.date());
     this.getTotalExpensesByMonth(this.date());
+  }
+
+  /* Constructor */
+  constructor() {
+    //Uses the category-event.service to add, update or delete a category
+    this.transactionEventsService.updatedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.getTotalByMonth();
+      });
+
+    this.transactionEventsService.addedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.getTotalByMonth();
+      });
+
+    this.transactionEventsService.deletedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.getTotalByMonth();
+      });
+  }
+
+  /* On init */
+  ngOnInit(): void {
+    //Get total income for current month
+    this.getTotalByMonth();
   }
 }

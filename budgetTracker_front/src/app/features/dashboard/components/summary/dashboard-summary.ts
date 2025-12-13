@@ -111,6 +111,7 @@ export class DashboardSummary {
       data: category,
     });
 
+    //After delete the dialog closes
     dialogRef.afterClosed().subscribe((initialCategory: Category) => {
       this.deletedCategory.emit(initialCategory);
     });

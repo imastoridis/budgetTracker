@@ -1,17 +1,33 @@
 // transaction-events.service.ts
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Transaction } from '../models/transactions.models';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionEventsService {
-  // Use a signal to notify about a new transaction
-  private readonly newTransactionSource: WritableSignal<Transaction | null> =
-    signal(null);
+  // Private RxJS Subjects to act as event emitters
+  private readonly addTransactionSubject = new Subject<Transaction>();
+  private readonly updateTransactionSubject = new Subject<Transaction>();
+  private readonly deleteTransactionSubject = new Subject<Transaction>();
 
-  readonly newTransaction$ = this.newTransactionSource.asReadonly();
+  // Public Observables for components to subscribe to
+  readonly addedTransaction$: Observable<Transaction> =
+    this.addTransactionSubject.asObservable();
+  readonly updatedTransaction$: Observable<Transaction> =
+    this.updateTransactionSubject.asObservable();
+  readonly deletedTransaction$: Observable<Transaction> =
+    this.deleteTransactionSubject.asObservable();
 
+  // Methods to trigger the events
   notifyTransactionAdded(transaction: Transaction): void {
-    // Set the signal to the new transaction
-    this.newTransactionSource.set(transaction);
+    this.addTransactionSubject.next(transaction);
+  }
+
+  notifyTransactionUpdated(transaction: Transaction): void {
+    this.updateTransactionSubject.next(transaction);
+  }
+
+  notifyTransactionDeleted(transaction: Transaction): void {
+    this.deleteTransactionSubject.next(transaction);
   }
 }

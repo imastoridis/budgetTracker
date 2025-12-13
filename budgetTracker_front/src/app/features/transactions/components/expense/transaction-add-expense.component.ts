@@ -28,15 +28,11 @@ import { TransactionEventsService } from '../../services/transaction-event.servi
   templateUrl: './transaction-add-expense.html',
 })
 export class AddTransactionExpense {
-  /* Injects */
   private transactionService = inject(TransactionsService);
   private utils = inject(Utils);
   private transactionEventsService = inject(TransactionEventsService);
-
-  /* Variables */
   readonly transactionFormExpense: TransactionForm =
     initTransactionFormExpense();
-
   allCategories: Category[] = inject(MAT_DIALOG_DATA);
 
   /* Add transaction */
