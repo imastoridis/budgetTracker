@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../../transactions/services/transactions.service';
 import { Utils } from '../../../../shared/utils/utils';
-import { TransactionEventsService } from '../../../transactions/services/transaction-event.service';
+import { TransactionEventsService } from '../../../transactions/services/transaction-events.service';
 import { CurrencyPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

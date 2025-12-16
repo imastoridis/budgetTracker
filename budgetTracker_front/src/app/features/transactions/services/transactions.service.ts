@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Transaction } from '../models/transactions.models';
+import { Category } from '../../categories/models/categories.models';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,18 @@ export class TransactionsService {
    * Gets categories from the backend.
    * @returns An Observable of the categories response.
    */
-  getCategories(): Observable<Transaction[]> {
+  getTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiUrlTransactions);
+  }
+
+  /**
+   * Gets categories from the backend.
+   * @returns An Observable of the categories response.
+   */
+  getTransactionsByCategory(category: Category): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(
+      this.apiUrlTransactions + '/by-category/' + category.id,
+    );
   }
 
   /**

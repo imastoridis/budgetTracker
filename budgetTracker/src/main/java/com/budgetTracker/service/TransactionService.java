@@ -41,13 +41,13 @@ public interface TransactionService {
     List<TransactionDto> findUserTransactions(Long userId);
 
     /**
-     * GET ALL : Retrieves a list of all transactions belonging to a specific category ID.
+     * GET ALL: Retrieves a list of all transactions belonging to a specific category ID.
      *
      * @param userId The ID of the owning user.
      * @param categoryId The ID of the category.
      * @return A list of the user's transactions.
      */
-    List<TransactionDto> findCategoryTransactions(Long userId, Long categoryId);
+    List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId);
 
     /**
      * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.

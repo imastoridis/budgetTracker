@@ -115,7 +115,6 @@ public class CategoryServiceImpl implements CategoryService {
                     .map(CategoryMapper::toDto)
                     .collect(Collectors.toList());
         }
-        //  log.debug(categoryEntities);
     }
 
     /**

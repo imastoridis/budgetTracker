@@ -1,0 +1,47 @@
+<h2 mat-dialog-title class="text-center">Update transaction</h2>
+<form [formGroup]="transactionFormUpdate">
+    <div>
+        <mat-dialog-content class="!flex !flex-col !gap-5">
+            <!-- Amοunt -->
+            <mat-form-field appearance="outline" class="!align-center">
+                <mat-label>Amount</mat-label>
+                <mat-icon matSuffix fontIcon="euro_symbol" class="!me-2"></mat-icon>
+                <input matInput cdkFocusInitial formControlName="amount" required />
+                @if (transactionFormUpdate.controls.amount.hasError('hasText')) {
+                <mat-error> Add an amount </mat-error>
+                }
+            </mat-form-field>
+            <!-- category -->
+            <mat-form-field appearance="outline">
+                <mat-label>Categories</mat-label>
+                <mat-select formControlName="categoryId">
+                    @for (category of allCategories; track category) {
+                    <mat-option [value]="category.id">{{
+                        category.name
+                        }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            <!-- Description -->
+            <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <textarea matInput></textarea>
+            </mat-form-field>
+            <!-- Date -->
+            <mat-form-field appearance="outline">
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" required />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </mat-dialog-content>
+    </div>
+    <mat-dialog-actions>
+        <button matButton [mat-dialog-close] class="!text-red-700">
+            Cancel
+        </button>
+        <button matButton (click)="updateTransaction()" [disabled]="transactionFormUpdate.invalid">
+            Ok
+        </button>
+    </mat-dialog-actions>
+</form>

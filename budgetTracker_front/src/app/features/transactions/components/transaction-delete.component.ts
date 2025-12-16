@@ -16,6 +16,8 @@ import {
   TransactionFormWithData,
   TransactionForm,
 } from '../forms/transactions-form-builder';
+import { TransactionEventsService } from '../services/transaction-events.service';
+import { Utils } from '../../../shared/utils/utils';
 
 @Component({
   selector: 'app-dialog-transaction-delete',
@@ -41,8 +43,10 @@ import {
 })
 export class DeleteTransaction {
   private transactionService = inject(TransactionsService);
+  private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<DeleteTransaction>);
   private initialData = inject(MAT_DIALOG_DATA) as Transaction;
+  private utils = inject(Utils);
 
   // Initialize the form using the imported factory function
   readonly transactionForm: TransactionForm = TransactionFormWithData(
@@ -52,12 +56,15 @@ export class DeleteTransaction {
   /* Update transaction */
   deleteTransaction(): void {
     const deletedTransaction: Transaction = this.transactionForm.getRawValue();
-    console.log('Deleting transaction:', deletedTransaction);
     this.transactionService
       .deleteTransaction(deletedTransaction as Transaction)
       .subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
+        next: (deletedCategory) => {
+          this.transactionEventService.notifyTransactionDeleted(
+            deletedCategory,
+          );
+          this.utils.openSnackBar('Category deleted successfully', '');
+          this.dialogRef.close(deletedCategory);
         },
         error: (err) => {
           console.error('Error updating transaction:', err.error);

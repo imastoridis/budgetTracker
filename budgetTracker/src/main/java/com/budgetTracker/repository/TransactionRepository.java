@@ -27,12 +27,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
 
     /**
-     * Finds the total sum of the 'amount' column for all expense transactions
-     * belonging to a specific user within the month of the given date.
+     * Finds all transactions belonging to a specific user and category
      *
      * @param userId     The ID of the authenticated user.
      * @param categoryId category Id
-     * @return The sum of all amounts (as BigDecimal).
+     * @return List of transactions
      */
     @Query("SELECT t " +
             "FROM Transaction t " +

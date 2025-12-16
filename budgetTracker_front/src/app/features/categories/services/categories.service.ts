@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../models/categories.models';
 
@@ -57,11 +57,9 @@ export class CategoriesService {
    * @param category
    * @returns truth false
    */
-  categoryHasTransactions(category: Category): Observable<boolean> {
-    return this.http
-      .get<{
-        hasTransactions: boolean;
-      }>(this.apiUrlCategories + '/has-transactions/' + category.id)
-      .pipe(map((response) => response.hasTransactions));
+  categoryHasTransactions(category: Category): Observable<string> {
+    return this.http.get<string>(
+      this.apiUrlCategories + '/has-transactions/' + category.id,
+    );
   }
 }

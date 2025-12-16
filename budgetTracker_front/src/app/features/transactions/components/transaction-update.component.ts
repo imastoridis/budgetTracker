@@ -16,6 +16,14 @@ import {
   TransactionFormWithData,
   TransactionForm,
 } from '../forms/transactions-form-builder';
+import { TransactionEventsService } from '../services/transaction-events.service';
+import { Utils } from '../../../shared/utils/utils';
+import {
+  DateAdapter,
+  NativeDateAdapter,
+  MAT_DATE_FORMATS,
+} from '@angular/material/core';
+import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
 
 @Component({
   selector: 'app-dialog-transaction-update',
@@ -28,58 +36,52 @@ import {
     MatDialogClose,
     ReactiveFormsModule,
   ],
-  template: ` <h2 mat-dialog-title>Update transaction</h2>
-    <form [formGroup]="transactionForm">
-      <mat-dialog-content>
-        <mat-form-field appearance="outline" class="!mt-5">
-          <mat-label>Transaction</mat-label>
-          <input matInput formControlName="name" cdkFocusInitial required />
-          <!-- Validation Feedback -->
-          @if (
-            transactionForm.controls.amount.touched &&
-            transactionForm.controls.amount.hasError('required')
-          ) {
-            <mat-error> Transaction name is required. </mat-error>
-          }
-        </mat-form-field>
-      </mat-dialog-content>
-      <mat-dialog-actions>
-        <button matButton [mat-dialog-close] class="!text-red-700">
-          Cancel
-        </button>
-        <button
-          matButton
-          (click)="updateTransaction()"
-          [disabled]="transactionForm.invalid"
-        >
-          Ok
-        </button>
-      </mat-dialog-actions>
-    </form>`,
+  providers: [
+    { provide: DateAdapter, useClass: NativeDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  ],
+  templateUrl: './transaction-update.html',
 })
 export class UpdateTransaction {
   private transactionService = inject(TransactionsService);
+  private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<UpdateTransaction>);
-  private initialData = inject(MAT_DIALOG_DATA) as Transaction;
-
+  private initialData = inject(MAT_DIALOG_DATA)[1] as Transaction;
+  allCategories = inject(MAT_DIALOG_DATA)[0];
+  private utils = inject(Utils);
   // Initialize the form using the imported factory function
-  readonly transactionForm: TransactionForm = TransactionFormWithData(
+  readonly transactionFormUpdate: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
 
   /* Update transaction */
   updateTransaction(): void {
-    const updatedTransaction: Transaction = this.transactionForm.getRawValue();
+    const updatedTransaction: Transaction =
+      this.transactionFormUpdate.getRawValue();
 
     this.transactionService
       .updateTransaction(updatedTransaction as Transaction)
       .subscribe({
         next: (response) => {
           this.dialogRef.close(response);
+          this.transactionEventService.notifyTransactionUpdated(response);
+          this.utils.openSnackBar('Category updated successfully', '');
         },
         error: (err) => {
           console.error('Error updating transaction:', err.error);
         },
       });
+  }
+
+  get amount() {
+    return this.transactionFormUpdate.get('amount');
+  }
+
+  get categoryId() {
+    return this.transactionFormUpdate.get('categoryId');
+  }
+
+  get date() {
+    return this.transactionFormUpdate.get('date');
   }
 }

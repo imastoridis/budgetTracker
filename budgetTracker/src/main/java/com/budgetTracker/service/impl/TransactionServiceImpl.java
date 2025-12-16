@@ -20,6 +20,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -89,13 +90,13 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public List<TransactionDto> findUserTransactions(Long userId) {
-        List<Transaction> categoryEntities = transactionRepository.findByUserId(userId);
+        List<Transaction> transactionsEntities = transactionRepository.findByUserId(userId);
 
-        if (categoryEntities.isEmpty()) {
+        if (transactionsEntities.isEmpty()) {
             throw new NoSuchElementException("No transactions for this user");
         } else {
             // Map each User entity to a TransactionDto
-            return categoryEntities.stream()
+            return transactionsEntities.stream()
                     .map(TransactionMapper::toDto)
                     .collect(Collectors.toList());
         }
@@ -110,16 +111,16 @@ public class TransactionServiceImpl implements TransactionService {
      * @throws NoSuchElementException no category with the given ID is found.
      */
     @Override
-    public List<TransactionDto> findCategoryTransactions(Long userId, Long categoryId) {
+    public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
         List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId);
 
         if (categoryEntities.isEmpty()) {
-            throw new NoSuchElementException("No transactions for this user");
+            return null;
         } else {
-            // Map each User entity to a TransactionDto
             return categoryEntities.stream()
                     .map(TransactionMapper::toDto)
                     .collect(Collectors.toList());
+
         }
     }
 

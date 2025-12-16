@@ -41,7 +41,7 @@ public interface CategoryService {
     List<CategoryDto> findUserCategories(Long userId);
 
     /**
-     * GET ONE : Finds a category by its ID, ensuring it belongs to the specified user.
+     * GET ONE: Finds a category by its ID, ensuring it belongs to the specified user.
      * This is critical for security checks before allowing an update or delete.
      *
      * @param categoryId The ID of the category.

@@ -9,7 +9,7 @@ import {
   CategoryForm,
 } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
-import { CategoryEventsService } from '../services/category-event.service';
+import { CategoryEventsService } from '../services/category-events.service';
 import { switchMap, tap, EMPTY } from 'rxjs';
 @Component({
   selector: 'app-dialog-category-delete',
@@ -42,15 +42,15 @@ export class DeleteCategory {
     this.categoriesService
       .categoryHasTransactions(deletedCategory)
       .pipe(
-        switchMap((response: boolean) => {
+        switchMap((response: string) => {
           if (response) {
-            return this.categoriesService.deleteCategory(deletedCategory);
-          } else {
             this.utils.openSnackBar(
-              'Cannot delete category, there are transactions associated with the category',
+              'Cannot delete category, there are transactions associated with the category, please delete them first.',
               '',
             );
             return EMPTY;
+          } else {
+            return this.categoriesService.deleteCategory(deletedCategory);
           }
         }),
         tap(() => {
@@ -61,36 +61,8 @@ export class DeleteCategory {
       )
       .subscribe({
         error: (err) => {
-          console.error(err);
-          this.utils.openSnackBar(
-            err.error?.message || 'Failed to delete category.',
-            '',
-          );
+          this.utils.openSnackBar(err.error?.message, '');
         },
       });
-
-    /*    this.categoriesService
-      .categoryHasTransactions(deletedCategory as Category)
-      .subscribe({
-        next: (response) => {
-          console.log(response);
-          if (response){}
-          this.categoriesService
-            .deleteCategory(deletedCategory as Category)
-            .subscribe({
-              next: () => {
-                this.dialogRef.close();
-                this.categoryEventService.notifyCategoryDeleted(
-                  this.initialData,
-                );
-                this.utils.openSnackBar('Category deleted successfully', '');
-              },
-              error: (err) => {
-                console.log(err);
-                this.utils.openSnackBar(err.error.message, '');
-              },
-            });
-        },
-      }); */
   }
 }

@@ -128,9 +128,11 @@ public class CategoryController {
     ) {
         boolean hasTransactions = true;
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
-        List<TransactionDto> transactions = transactionService.findCategoryTransactions(userId, id);
+
+        List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryId(userId, id);
 //Return 204 no content?
-        if (transactions.isEmpty()) {
+
+        if (transactions == null || transactions.isEmpty() ) {
             hasTransactions = false;
         }
         return ResponseEntity.ok(hasTransactions);

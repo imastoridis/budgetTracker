@@ -11,7 +11,7 @@ import {
   CategoryForm,
 } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
-import { CategoryEventsService } from '../services/category-event.service';
+import { CategoryEventsService } from '../services/category-events.service';
 
 @Component({
   selector: 'app-dialog-category-update',

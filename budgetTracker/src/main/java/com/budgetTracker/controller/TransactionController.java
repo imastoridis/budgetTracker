@@ -77,6 +77,21 @@ public class TransactionController {
     }
 
     /**
+     * GET /api/transactions/by-category/{id}: Retrieves all transactions for the currently authenticated user.
+     *
+     * @return the transactions associated with the logged-in user
+     */
+    @GetMapping("/by-category/{id}")
+    public ResponseEntity<List<TransactionDto>> getAllTransactionsByCategoryAndUserId(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryId(userId, id);
+        return ResponseEntity.ok(transactions);
+    }
+
+    /**
      * PUT /api/transactions/{id} : Updates a transaction
      *
      * @param id : transaction id

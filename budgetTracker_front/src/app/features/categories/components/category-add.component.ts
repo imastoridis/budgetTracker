@@ -5,7 +5,7 @@ import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
 import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
-import { CategoryEventsService } from '../services/category-event.service';
+import { CategoryEventsService } from '../services/category-events.service';
 
 @Component({
   selector: 'app-add-category',

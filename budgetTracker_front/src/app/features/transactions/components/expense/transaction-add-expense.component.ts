@@ -15,8 +15,7 @@ import {
 import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
 import { Utils } from '../../../../shared/utils/utils';
 import { Category } from '../../../categories/models/categories.models';
-import { TransactionEventsService } from '../../services/transaction-event.service';
-
+import { TransactionEventsService } from '../../services/transaction-events.service';
 @Component({
   selector: 'app-add-transaction-expense',
   changeDetection: ChangeDetectionStrategy.OnPush,

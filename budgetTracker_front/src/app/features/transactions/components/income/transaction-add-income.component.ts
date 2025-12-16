@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../services/transactions.service';
@@ -21,6 +16,7 @@ import {
 import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
 import { Utils } from '../../../../shared/utils/utils';
 import { Category } from '../../../categories/models/categories.models';
+import { TransactionEventsService } from '../../services/transaction-events.service';
 
 @Component({
   selector: 'app-add-transaction-income',
@@ -34,11 +30,11 @@ import { Category } from '../../../categories/models/categories.models';
 })
 export class AddTransactionIncome {
   private transactionService = inject(TransactionsService);
+  private transactionEventService = inject(TransactionEventsService);
   private utils = inject(Utils);
 
   readonly transactionFormIncome: TransactionForm = initTransactionFormIncome();
   readonly transactionTypes = Object.values(TransactionType);
-  readonly transactionAdded = output<Transaction>();
 
   allCategories: Category[] = inject(MAT_DIALOG_DATA);
 
@@ -51,7 +47,7 @@ export class AddTransactionIncome {
       next: (response) => {
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormIncome.reset();
-        this.transactionAdded.emit(response);
+        this.transactionEventService.notifyTransactionAdded(response);
       },
       error: (err) => {
         this.utils.openSnackBar(err.message, '');

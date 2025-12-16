@@ -13,9 +13,10 @@ import { Utils } from '../../shared/utils/utils';
 /* Categories */
 import { Category } from '../categories/models/categories.models';
 import { CategoriesService } from '../categories/services/categories.service';
-import { CategoryEventsService } from '../categories/services/category-event.service';
+import { CategoryEventsService } from '../categories/services/category-events.service';
 /* Transactions */
 import { TransactionsService } from '../transactions/services/transactions.service';
+import { TransactionEventsService } from '../transactions/services/transaction-events.service';
 /* Dashboard children*/
 import { DashboardHeader } from './components/dashboard-header';
 import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
@@ -58,24 +59,24 @@ export class DashboardComponent implements OnInit {
    * Transactions
    */
   private transactionsService = inject(TransactionsService);
+  private transactionEventsService = inject(TransactionEventsService);
   readonly allExpenses = signal<Category[]>([]);
   readonly allIncome = signal<Category[]>([]);
   readonly allTransactions = signal<Transaction[]>([]);
 
   /* Get all transactoins for user */
-  /*   getAllTransactions(): void {
-    this.categoriesService.getCategories().subscribe({
-      next: (categories) => {
-        this.allCategories.set(categories);
+  getTransactions(): void {
+    this.transactionsService.getTransactions().subscribe({
+      next: (transactions) => {
+        this.allTransactions.set(transactions);
       },
       error: (err) => {
         this.utils.openSnackBar(err.error.message, '');
-        this.allCategories.set([]);
+        this.allTransactions.set([]);
         return of([]);
       },
     });
   }
- */
 
   /* Constructor */
   constructor() {
@@ -106,10 +107,43 @@ export class DashboardComponent implements OnInit {
           categories.filter((category) => category.id !== deletedCategory.id),
         );
       });
+
+    //Uses the transaction-event.service to add, update or delete a transaction
+
+    this.transactionEventsService.updatedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe((updatedTransaction) => {
+        this.allTransactions.update((transactions) =>
+          transactions.map((transaction) =>
+            transaction.id === updatedTransaction.id
+              ? updatedTransaction
+              : transaction,
+          ),
+        );
+      });
+
+    this.transactionEventsService.addedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe((addedTransaction) => {
+        this.allTransactions.update((transactions) => {
+          return [...transactions, addedTransaction];
+        });
+      });
+
+    this.transactionEventsService.deletedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe((deletedTransaction) => {
+        this.allTransactions.update((transactions) =>
+          transactions.filter(
+            (transaction) => transaction.id !== deletedTransaction.id,
+          ),
+        );
+      });
   }
 
   /* On init */
   ngOnInit(): void {
     this.getCategories();
+    this.getTransactions();
   }
 }
