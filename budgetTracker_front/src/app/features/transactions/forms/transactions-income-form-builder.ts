@@ -1,6 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TransactionForm } from './transactions-form-builder';
-import { TransactionType } from '../models/transaction-types.enum';
 import { numericValidator } from './transactions-form-builder';
 
 /**
@@ -19,10 +18,6 @@ export function initTransactionFormIncome(): TransactionForm {
       ],
     }),
     description: new FormControl<string>(''),
-    type: new FormControl<TransactionType>(TransactionType.INCOME, {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
     date: new FormControl<Date>(new Date(), {
       nonNullable: true,
       validators: [Validators.required],

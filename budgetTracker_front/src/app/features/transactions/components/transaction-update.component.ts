@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { TransactionsService } from '../services/transactions.service';
@@ -42,14 +47,13 @@ import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
   ],
   templateUrl: './transaction-update.html',
 })
-export class UpdateTransaction {
+export class UpdateTransaction implements OnInit {
   private transactionService = inject(TransactionsService);
   private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<UpdateTransaction>);
   private initialData = inject(MAT_DIALOG_DATA)[1] as Transaction;
   allCategories = inject(MAT_DIALOG_DATA)[0];
   private utils = inject(Utils);
-  // Initialize the form using the imported factory function
   readonly transactionFormUpdate: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
@@ -65,10 +69,13 @@ export class UpdateTransaction {
         next: (response) => {
           this.dialogRef.close(response);
           this.transactionEventService.notifyTransactionUpdated(response);
-          this.utils.openSnackBar('Category updated successfully', '');
+          this.utils.openSnackBar('Transaction updated successfully', '');
         },
         error: (err) => {
-          console.error('Error updating transaction:', err.error);
+          this.utils.openSnackBar(
+            'Error updating transaction:' + err.error,
+            '',
+          );
         },
       });
   }
@@ -83,5 +90,9 @@ export class UpdateTransaction {
 
   get date() {
     return this.transactionFormUpdate.get('date');
+  }
+  ngOnInit(): void {
+    console.log(this.transactionFormUpdate.value);
+    console.log(this.transactionFormUpdate.valid);
   }
 }

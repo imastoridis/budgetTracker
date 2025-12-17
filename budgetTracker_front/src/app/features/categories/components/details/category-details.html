@@ -1,7 +1,7 @@
 <mat-dialog-content class=" w-full">
     <div class="flex flex-col text-center">
         <h2 mat-dialog-title>Transactions Details</h2>
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 ">
+        <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8 ">
 
             <!-- Position Column -->
             <ng-container matColumnDef="id">
@@ -32,7 +32,7 @@
                         </button>
                         <button mat-icon-button aria-label="Delete category">
                             <mat-icon fontIcon="delete" class="!text-red-700"
-                                (click)="openUpdateTransaction(element)"></mat-icon>
+                                (click)="openDeleteTransaction(element)"></mat-icon>
                         </button>
                     </span>
                 </td>

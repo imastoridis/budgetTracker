@@ -2,6 +2,7 @@ package com.budgetTracker.repository;
 
 import com.budgetTracker.model.entity.Transaction;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -40,10 +41,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     )
     List<Transaction> findByUserIdAndCategoryId(
             @Param("userId") Long userId,
-            @Param("categoryId") Long categoryId
+            @Param("categoryId") Long categoryId,
+            Sort sort
     );
 
-    /**
+    /**z
      * Finds the total sum of the 'amount' column for all income transactions
      * belonging to a specific user within the month of the given date.
      *

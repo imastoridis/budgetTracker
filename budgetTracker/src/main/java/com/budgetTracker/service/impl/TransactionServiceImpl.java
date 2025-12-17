@@ -12,6 +12,7 @@ import com.budgetTracker.service.CategoryService;
 import com.budgetTracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,7 +21,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -112,7 +112,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
-        List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId);
+        List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
 
         if (categoryEntities.isEmpty()) {
             return null;

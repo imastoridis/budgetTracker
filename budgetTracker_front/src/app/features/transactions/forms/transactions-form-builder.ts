@@ -7,7 +7,6 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { Transaction } from '../models/transactions.models';
-import { TransactionType } from '../models/transaction-types.enum';
 
 /**
  * Defines the structure for the Transaction FormGroup.
@@ -16,8 +15,7 @@ import { TransactionType } from '../models/transaction-types.enum';
 export type TransactionForm = FormGroup<{
   id: FormControl<number | null>;
   amount: FormControl<number>;
-  description: FormControl<string>;
-  type: FormControl<TransactionType | null>;
+  description: FormControl<string | ''>;
   date: FormControl<Date>;
   categoryId: FormControl<number | null>;
   userId: FormControl<number | null>;
@@ -45,12 +43,8 @@ export function TransactionFormWithData(
       ],
     }),
     description: new FormControl<string | ''>(initialData.description, {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    type: new FormControl<TransactionType | null>(initialData.type, {
-      nonNullable: true,
-      validators: [Validators.required],
+      nonNullable: false,
+      validators: [],
     }),
     date: new FormControl<Date>(initialData.date, {
       nonNullable: true,
@@ -86,10 +80,6 @@ export function initTransactionForm(): TransactionForm {
       ],
     }),
     description: new FormControl<string | ''>('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    type: new FormControl<TransactionType | null>(null, {
       nonNullable: true,
       validators: [Validators.required],
     }),

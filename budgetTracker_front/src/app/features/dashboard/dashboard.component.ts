@@ -109,7 +109,6 @@ export class DashboardComponent implements OnInit {
       });
 
     //Uses the transaction-event.service to add, update or delete a transaction
-
     this.transactionEventsService.updatedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((updatedTransaction) => {

@@ -1,8 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { TransactionsService } from '../services/transactions.service';
-import { Transaction } from '../models/transactions.models';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -11,11 +9,12 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import {} from '@angular/material/dialog';
 import {
   TransactionFormWithData,
   TransactionForm,
 } from '../forms/transactions-form-builder';
+import { Transaction } from '../models/transactions.models';
+import { TransactionsService } from '../services/transactions.service';
 import { TransactionEventsService } from '../services/transaction-events.service';
 import { Utils } from '../../../shared/utils/utils';
 
@@ -47,8 +46,6 @@ export class DeleteTransaction {
   private dialogRef = inject(MatDialogRef<DeleteTransaction>);
   private initialData = inject(MAT_DIALOG_DATA) as Transaction;
   private utils = inject(Utils);
-
-  // Initialize the form using the imported factory function
   readonly transactionForm: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
@@ -59,15 +56,15 @@ export class DeleteTransaction {
     this.transactionService
       .deleteTransaction(deletedTransaction as Transaction)
       .subscribe({
-        next: (deletedCategory) => {
+        next: (deletedTransaction) => {
           this.transactionEventService.notifyTransactionDeleted(
-            deletedCategory,
+            this.initialData,
           );
-          this.utils.openSnackBar('Category deleted successfully', '');
-          this.dialogRef.close(deletedCategory);
+          this.utils.openSnackBar('Transaction deleted successfully', '');
+          this.dialogRef.close(deletedTransaction);
         },
         error: (err) => {
-          console.error('Error updating transaction:', err.error);
+          this.utils.openSnackBar('Error deleting transaction' + err.error, '');
         },
       });
   }

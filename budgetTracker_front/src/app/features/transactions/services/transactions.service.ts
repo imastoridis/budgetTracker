@@ -13,7 +13,7 @@ export class TransactionsService {
   private http = inject(HttpClient);
 
   /**
-   * Gets categories from the backend.
+   * Gets categories
    * @returns An Observable of the categories response.
    */
   getTransactions(): Observable<Transaction[]> {
@@ -21,7 +21,7 @@ export class TransactionsService {
   }
 
   /**
-   * Gets categories from the backend.
+   * Gets categories
    * @returns An Observable of the categories response.
    */
   getTransactionsByCategory(category: Category): Observable<Transaction[]> {
@@ -31,7 +31,7 @@ export class TransactionsService {
   }
 
   /**
-   * Adds a new transaction to the backend.
+   * Adds a new transaction
    * @param transaction
    * @returns An Observable of the transactions response.
    */
@@ -45,7 +45,7 @@ export class TransactionsService {
   }
 
   /**
-   * Updates an existing transaction in the backend.
+   * Updates an existing transaction
    * @param transaction
    * @returns An Observable of the updated transaction response.
    */
@@ -57,7 +57,7 @@ export class TransactionsService {
   }
 
   /**
-   * Deletes an existing transaction in the backend.
+   * Deletes an existing transaction
    * @param transaction
    * @returns An Observable of the updated transaction response.
    */
