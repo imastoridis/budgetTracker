@@ -8,4 +8,5 @@ export interface Category {
   name: string;
   userId: number | null;
   type: TransactionType | null;
+  totalAmount: number | null;
 }

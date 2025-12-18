@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   input,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -13,17 +14,19 @@ import { DeleteCategory } from '../../../categories/components/category-delete.c
 import { DetailsCategory } from '../../../categories/components/details/category-details.component';
 import { Utils } from '../../../../shared/utils/utils';
 import { TransactionsService } from '../../../transactions/services/transactions.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard-summary',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MaterialModule, ReactiveFormsModule],
+  imports: [MaterialModule, ReactiveFormsModule, CurrencyPipe],
   templateUrl: './dashboard-summary.html',
 })
 export class DashboardSummary {
   private dialog = inject(MatDialog);
   utils = inject(Utils);
   allCategories = input.required<Category[]>();
+  transactionsTotal = signal<number>(0);
 
   /* Open Update category dialog*/
   openUpdateCategory(category: Category): void {

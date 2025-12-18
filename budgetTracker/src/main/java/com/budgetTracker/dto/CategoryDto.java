@@ -1,6 +1,6 @@
 package com.budgetTracker.dto;
 
-import com.budgetTracker.model.enums.TransactionType;
+import com.budgetTracker.model.enums.CategoryType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,7 +24,7 @@ public class CategoryDto {
     private Long userId;
 
     @NotNull(message = "Transaction type is required.")
-    private TransactionType type;
+    private CategoryType type;
 
     // No-args Constructor
     public CategoryDto() {
@@ -32,7 +32,7 @@ public class CategoryDto {
 
     // All-args constructor
 
-    public CategoryDto(Long id, String name, Long userId, TransactionType type) {
+    public CategoryDto(Long id, String name, Long userId, CategoryType type) {
         this.id = id;
         this.name = name;
         this.userId = userId;

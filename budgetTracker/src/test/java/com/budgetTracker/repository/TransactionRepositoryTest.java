@@ -5,7 +5,7 @@ package com.budgetTracker.repository;
 import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.Transaction;
 import com.budgetTracker.model.entity.User;
-import com.budgetTracker.model.enums.TransactionType;
+import com.budgetTracker.model.enums.CategoryType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

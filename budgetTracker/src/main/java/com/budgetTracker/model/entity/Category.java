@@ -1,6 +1,6 @@
 package com.budgetTracker.model.entity;
 
-import com.budgetTracker.model.enums.TransactionType;
+import com.budgetTracker.model.enums.CategoryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +35,7 @@ public class Category {
     // Could be "INCOME" or "EXPENSE"
     @Enumerated(EnumType.STRING)
     @Column(name = "type",nullable = false)
-    private TransactionType type;
+    private CategoryType type;
 
     /**
      * Many Categories map to One User.
@@ -55,7 +55,7 @@ public class Category {
     public Category(
             String name,
             User user,
-            TransactionType type
+            CategoryType type
 
     ) {
         this.name = name;

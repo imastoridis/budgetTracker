@@ -2,7 +2,7 @@ package com.budgetTracker.controller;
 
 import com.budgetTracker.dto.CategoryDto;
 import com.budgetTracker.exception.AccessDeniedException;
-import com.budgetTracker.model.enums.TransactionType;
+import com.budgetTracker.model.enums.CategoryType;
 import com.budgetTracker.service.CategoryService;
 import com.budgetTracker.service.UserService;
 import com.budgetTracker.util.SecurityUtils;
@@ -51,7 +51,7 @@ public class CategoryControllerTest {
     @MockBean
     private SecurityUtils securityUtils;
     @MockBean
-    private TransactionType transactionType;
+    private CategoryType transactionType;
     // --- Mocks required by Security Infrastructure (JwtAuthenticationFilter) ---
     @MockBean
     private UserService userService;
@@ -68,8 +68,8 @@ public class CategoryControllerTest {
     @Test
     void getUserCategories_shouldReturnUserCategories() throws Exception {
         // Arrange
-        CategoryDto cat1 = new CategoryDto(1L, "Food", USER_ID, TransactionType.INCOME);
-        CategoryDto cat2 = new CategoryDto(2L, "Rent", USER_ID, TransactionType.INCOME);
+        CategoryDto cat1 = new CategoryDto(1L, "Food", USER_ID, CategoryType.INCOME);
+        CategoryDto cat2 = new CategoryDto(2L, "Rent", USER_ID, CategoryType.INCOME);
         List<CategoryDto> categoryList = Arrays.asList(cat1, cat2);
 
         // Mock security to return a user ID
@@ -98,8 +98,8 @@ public class CategoryControllerTest {
     @Test
     void createCategory_shouldReturnCreatedCategoryAnd201() throws Exception {
         // Arrange
-        CategoryDto inputDto = new CategoryDto(null, "Groceries", null, TransactionType.INCOME);
-        CategoryDto createdDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, TransactionType.INCOME);
+        CategoryDto inputDto = new CategoryDto(null, "Groceries", null, CategoryType.INCOME);
+        CategoryDto createdDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, CategoryType.INCOME);
 
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);
@@ -123,8 +123,8 @@ public class CategoryControllerTest {
     @Test
     void updateCategory_shouldReturnUpdatedCategoryAnd200() throws Exception {
         // Arrange
-        CategoryDto updateInputDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, TransactionType.INCOME);
-        CategoryDto updatedDto = new CategoryDto(MOCK_CATEGORY_ID, "Updated Groceries", USER_ID, TransactionType.EXPENSE);
+        CategoryDto updateInputDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, CategoryType.INCOME);
+        CategoryDto updatedDto = new CategoryDto(MOCK_CATEGORY_ID, "Updated Groceries", USER_ID, CategoryType.EXPENSE);
 
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);

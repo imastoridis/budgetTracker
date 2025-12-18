@@ -9,6 +9,7 @@
         <div class="text-gray-600 text-xl">Categories</div>
     </div>
 
+    <!-- Category -->
     <div class="flex flex-wrap gap-10">
         @for (category of allCategories(); track category.id) {
         <div class="flex flex-col border p-4 rounded-lg shadow-md w-1/6 justify-between hover:bg-blue-100 "
@@ -30,8 +31,9 @@
                 </span>
             </div>
             <div>
-                <div class="text-green-600 font-medium">$2,000</div>
-                <div class="text-green-600 font-medium">%</div>
+                <div class="text-indigo-600 font-medium">Total : {{category.totalAmount| currency: 'EUR' : 'symbol' :
+                    '1.2-2'}}
+                </div>
             </div>
 
         </div>

@@ -11,6 +11,7 @@ export type CategoryForm = FormGroup<{
   name: FormControl<string>;
   userId: FormControl<number | null>;
   type: FormControl<TransactionType | null>;
+  totalAmount: FormControl<number | null>;
 }>;
 
 /**
@@ -36,6 +37,10 @@ export function buildCategoryForm(initialData: Category): CategoryForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    totalAmount: new FormControl<number | null>(initialData.totalAmount, {
+      nonNullable: true,
+      validators: [],
+    }),
   }) as CategoryForm;
 }
 
@@ -60,6 +65,10 @@ export function initCategoryForm(): CategoryForm {
     type: new FormControl<TransactionType | null>(TransactionType.INCOME, {
       nonNullable: true,
       validators: [Validators.required],
+    }),
+    totalAmount: new FormControl<number | null>(0, {
+      nonNullable: true,
+      validators: [],
     }),
   }) as CategoryForm;
 }

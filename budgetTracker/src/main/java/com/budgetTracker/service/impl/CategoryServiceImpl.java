@@ -1,6 +1,7 @@
 package com.budgetTracker.service.impl;
 
 import com.budgetTracker.dto.CategoryDto;
+import com.budgetTracker.dto.CategoryTotalDto;
 import com.budgetTracker.exception.DuplicateResourceException;
 import com.budgetTracker.mapper.CategoryMapper;
 import com.budgetTracker.model.entity.Category;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.exception.ResourceNotFoundException;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -33,7 +36,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     // Cache name
-    private static final String CATEGORY_CACHE = "userCategories";
 
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -72,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return The new category entity for the logged-in user.
      */
     @Override
-    @CacheEvict(value = CATEGORY_CACHE, key = "#user.id")
+    @CacheEvict(value = CATEGORY_CACHE, allEntries = true)
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto, User user) {
         Long userId = user.getId();
@@ -118,6 +120,25 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * GET ALL: Retrieves all categories for a given user with the sum of transactions for a month.
+     * Uses @Cacheable to first check Redis. If found, returns the cached list;
+     *
+     * @param userId The ID of the user who owns the category.
+     * @param date   the date of the month
+     * @return The categoriesDto for the logged-in user.
+     * @throws NoSuchElementException no category with the given ID is found.
+     */
+    @Override
+    @Cacheable(value = CATEGORY_CACHE, key = "#userId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
+    public List<CategoryTotalDto> findUserCategoriesWithTransactionsTotal(Long userId, LocalDate date) {
+
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+        return categoryRepository.findByUserIdOrderByNameAscWithAmount(userId, startDate, endDate);
+
+    }
+
+    /**
      * GET ONE: Finds a category by its ID, ensuring it belongs to the specified user.
      *
      * @param categoryId The ID of the category.
@@ -139,7 +160,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return The updated Category entity.
      */
     @Override
-    @CacheEvict(value = CATEGORY_CACHE, key = "#userId")
+    @CacheEvict(value = CATEGORY_CACHE, allEntries = true)
     @Transactional
     public CategoryDto updateCategory(Long categoryId, CategoryDto categoryDto, Long userId) {
         log.info("Category ID {} updated. Evicting cache for user ID: {}", categoryId, userId);
@@ -170,7 +191,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param userId     The ID of the owning user.
      */
     @Override
-    @CacheEvict(value = CATEGORY_CACHE, key = "#userId")
+    @CacheEvict(value = CATEGORY_CACHE, allEntries = true)
     @Transactional
     public void deleteCategory(Long categoryId, Long userId) {
         log.info("Category ID {} deleted. Evicting cache for user ID: {}", categoryId, userId);

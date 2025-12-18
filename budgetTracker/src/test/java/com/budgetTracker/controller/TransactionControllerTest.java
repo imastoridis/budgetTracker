@@ -3,7 +3,7 @@ package com.budgetTracker.controller;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.model.entity.User;
-import com.budgetTracker.model.enums.TransactionType;
+import com.budgetTracker.model.enums.CategoryType;
 import com.budgetTracker.service.TransactionService;
 import com.budgetTracker.service.UserService;
 import com.budgetTracker.util.JsonUtils;

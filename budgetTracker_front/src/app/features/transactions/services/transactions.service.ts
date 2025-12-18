@@ -13,20 +13,39 @@ export class TransactionsService {
   private http = inject(HttpClient);
 
   /**
-   * Gets categories
-   * @returns An Observable of the categories response.
+   * Gets transactions
+   * @returns An Observable of the transactions response.
    */
   getTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiUrlTransactions);
   }
 
   /**
-   * Gets categories
-   * @returns An Observable of the categories response.
+   * Gets transactions by category
+   * @returns An Observable of the transactions response.
    */
   getTransactionsByCategory(category: Category): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(
       this.apiUrlTransactions + '/by-category/' + category.id,
+    );
+  }
+
+  /**
+   * Gets categories
+   * @returns An Observable of the total amount of transactions a category.
+   */
+  getTransactionsTotalAmountByCategory(
+    category: Category,
+    date: Date,
+  ): Observable<number> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+
+    return this.http.get<number>(
+      this.apiUrlTransactions + '/total-amount-by-category/' + category.id,
+      {
+        params: params,
+      },
     );
   }
 
@@ -37,11 +56,6 @@ export class TransactionsService {
    */
   addTransaction(transaction: Transaction): Observable<Transaction> {
     return this.http.post<Transaction>(this.apiUrlTransactions, transaction);
-    /*       .pipe(
-        tap((response) => {
-          console.log('transactions fetched:', response);
-        }),
-      ); */
   }
 
   /**

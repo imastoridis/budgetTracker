@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Category } from '../models/categories.models';
 
 @Injectable({
@@ -17,6 +17,17 @@ export class CategoriesService {
    */
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrlCategories);
+  }
+
+  getCategoriesWithTotal(date: Date): Observable<Category[]> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+    return this.http.get<Category[]>(
+      this.apiUrlCategories + '/with-transactions-total',
+      {
+        params: params,
+      },
+    );
   }
 
   /**

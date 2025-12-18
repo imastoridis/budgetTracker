@@ -92,6 +92,22 @@ public class TransactionController {
     }
 
     /**
+     * GET /api/transactions/total-amount-by-category/{id}: Retrieves all transactions for the currently authenticated user.
+     *
+     * @return the transactions associated with the logged-in user
+     */
+    @GetMapping("/total-amount-by-category/{id}")
+    public ResponseEntity<BigDecimal> getTransactionsTotalAmountByCategoryAndUserId(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        BigDecimal totalAmount = transactionService.findTransactionsTotalAmountByCategoryId(userId, id, date);
+        return ResponseEntity.ok(totalAmount);
+    }
+
+    /**
      * PUT /api/transactions/{id} : Updates a transaction
      *
      * @param id : transaction id
@@ -136,7 +152,6 @@ public class TransactionController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
-        System.out.println("TEST");
         BigDecimal totalIncomeByMonth = transactionService.getTotalIncomeByUserIdAndMonth(userId, date);
         return ResponseEntity.ok(totalIncomeByMonth);
     }

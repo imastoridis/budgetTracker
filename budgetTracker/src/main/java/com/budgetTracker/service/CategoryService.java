@@ -1,18 +1,23 @@
 package com.budgetTracker.service;
 
 import com.budgetTracker.dto.CategoryDto;
+import com.budgetTracker.dto.CategoryTotalDto;
 import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.User;
+import com.budgetTracker.repository.CategoryRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
  * Interface defining the business contract for Category management.
  */
 public interface CategoryService {
+    //Cache name
+    String CATEGORY_CACHE = "userCategories";
 
     /**
-     * CREATE : Creates a new category, linking it to the specified user.
+     * CREATE: Creates a new category, linking it to the specified user.
      *
      * @param categoryDto The Category object to save.
      * @param user        The User.
@@ -21,7 +26,7 @@ public interface CategoryService {
     CategoryDto createCategory(CategoryDto categoryDto, User user);
 
     /**
-     * UPDATE : Updates the category
+     * UPDATE: Updates the category
      * <p>
      * * @param categoryId The ID of the category.
      *
@@ -39,6 +44,16 @@ public interface CategoryService {
      * @return A list of the user's categories.
      */
     List<CategoryDto> findUserCategories(Long userId);
+
+    /**
+     * GET ALL: Retrieves a list of all categories belonging to a specific user ID.
+     *
+     * @param userId The ID of the owning user.
+     * @param date   The ID of the owning user.
+     * @return A list of the user's categories.
+     */
+    List<CategoryTotalDto> findUserCategoriesWithTransactionsTotal(Long userId, LocalDate date);
+
 
     /**
      * GET ONE: Finds a category by its ID, ensuring it belongs to the specified user.

@@ -45,7 +45,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             Sort sort
     );
 
-    /**z
+    /**
      * Finds the total sum of the 'amount' column for all income transactions
      * belonging to a specific user within the month of the given date.
      *
@@ -57,7 +57,28 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT COALESCE(SUM(t.amount), 0) " +
             "FROM Transaction t " +
             "WHERE t.user.id = :userId AND " +
-            "t.category.type = com.budgetTracker.model.enums.TransactionType.INCOME AND " +
+            "t.category.id = :categoryId AND " +
+            "t.date BETWEEN :startDate AND :endDate")
+    BigDecimal findTransactionsTotalAmountByCategoryId(
+            @Param("userId") Long userId,
+            @Param("categoryId") Long categoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /**
+     * Finds the total sum of the 'amount' column for all income transactions
+     * belonging to a specific user within the month of the given date.
+     *
+     * @param userId    The ID of the authenticated user.
+     * @param startDate Start month.
+     * @param endDate   End month
+     * @return The sum of all amounts (as BigDecimal).
+     */
+    @Query("SELECT COALESCE(SUM(t.amount), 0) " +
+            "FROM Transaction t " +
+            "WHERE t.user.id = :userId AND " +
+            "t.category.type = com.budgetTracker.model.enums.CategoryType.INCOME AND " +
             "t.date BETWEEN :startDate AND :endDate")
     BigDecimal findIncomeByMonthByUserIdAndDate(
             @Param("userId") Long userId,
@@ -77,13 +98,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT COALESCE(SUM(t.amount), 0) " +
             "FROM Transaction t " +
             "WHERE t.user.id = :userId AND " +
-            "t.category.type = com.budgetTracker.model.enums.TransactionType.EXPENSE AND " +
+            "t.category.type = com.budgetTracker.model.enums.CategoryType.EXPENSE AND " +
             "t.date BETWEEN :startDate AND :endDate")
     BigDecimal findExpenseByMonthByUserIdAndDate(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
-
-
 }

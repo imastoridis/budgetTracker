@@ -2,8 +2,8 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  OnInit,
   signal,
+  afterNextRender,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -35,16 +35,18 @@ import { Transaction } from '../transactions/models/transactions.models';
   ],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   utils = inject(Utils);
   private categoryEventsService = inject(CategoryEventsService);
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
+  readonly date = signal<Date>(new Date());
 
   /* Get all categories for user */
   getCategories(): void {
-    this.categoriesService.getCategories().subscribe({
+    this.categoriesService.getCategoriesWithTotal(this.date()).subscribe({
       next: (categories) => {
+        console.log(categories);
         this.allCategories.set(categories);
       },
       error: (err) => {
@@ -60,8 +62,6 @@ export class DashboardComponent implements OnInit {
    */
   private transactionsService = inject(TransactionsService);
   private transactionEventsService = inject(TransactionEventsService);
-  readonly allExpenses = signal<Category[]>([]);
-  readonly allIncome = signal<Category[]>([]);
   readonly allTransactions = signal<Transaction[]>([]);
 
   /* Get all transactoins for user */
@@ -138,11 +138,10 @@ export class DashboardComponent implements OnInit {
           ),
         );
       });
-  }
 
-  /* On init */
-  ngOnInit(): void {
-    this.getCategories();
-    this.getTransactions();
+    afterNextRender(() => {
+      this.getCategories();
+      //  this.getTransactions();
+    });
   }
 }

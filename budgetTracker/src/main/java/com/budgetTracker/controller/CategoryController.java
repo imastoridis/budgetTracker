@@ -1,6 +1,7 @@
 package com.budgetTracker.controller;
 
 import com.budgetTracker.dto.CategoryDto;
+import com.budgetTracker.dto.CategoryTotalDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.User;
 import com.budgetTracker.service.CategoryService;
@@ -9,6 +10,7 @@ import com.budgetTracker.util.JsonUtils;
 import com.budgetTracker.util.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.time.LocalDate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +39,6 @@ public class CategoryController {
         this.categoryService = categoryService;
         this.transactionService = transactionService;
     }
-
     // --- CRUD Endpoints ---
 
     /**
@@ -78,6 +80,22 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getAllCategories(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
         List<CategoryDto> categories = categoryService.findUserCategories(userId);
+
+        return ResponseEntity.ok(categories);
+    }
+
+    /**
+     * GET /api/categories/with-transactions-total: Retrieves all categories belonging to the authenticated user.
+     *
+     * @return the categories dto associated with the logged-in user
+     */
+    @GetMapping("/with-transactions-total")
+    public ResponseEntity<List<CategoryTotalDto>> getAllCategoriesWithTransactionsTotal(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        List<CategoryTotalDto> categories = categoryService.findUserCategoriesWithTransactionsTotal(userId, date);
 
         return ResponseEntity.ok(categories);
     }
@@ -130,9 +148,8 @@ public class CategoryController {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
 
         List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryId(userId, id);
-//Return 204 no content?
 
-        if (transactions == null || transactions.isEmpty() ) {
+        if (transactions == null || transactions.isEmpty()) {
             hasTransactions = false;
         }
         return ResponseEntity.ok(hasTransactions);

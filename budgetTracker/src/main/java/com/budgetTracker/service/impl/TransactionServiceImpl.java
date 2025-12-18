@@ -12,6 +12,9 @@ import com.budgetTracker.service.CategoryService;
 import com.budgetTracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -70,71 +74,20 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The new transaction entity for the logged-in user.
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
+            @CacheEvict(value = "user_transactions", allEntries = true),
+            @CacheEvict(value = "category_transactions", allEntries = true),
+            @CacheEvict(value = "single_transaction", allEntries = true),
+            @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
+    })
     public TransactionDto createTransaction(TransactionDto transactionDto, User user) {
-        //Find category
         Category category = categoryService.findUserOneCategory(transactionDto.getCategoryId(), user.getId());
 
         Transaction newTransaction = TransactionMapper.toEntity(transactionDto, user, category);
         Transaction savedTransaction = transactionRepository.save(newTransaction);
 
-        // Transform the updated entity into its DTO representation
         return TransactionMapper.toDto(savedTransaction);
-    }
-
-    /**
-     * GET ALL: Retrieves all transactions for a given user.
-     *
-     * @param userId The userId
-     * @return The new transactionDto for the logged-in user.
-     * @throws NoSuchElementException no category with the given ID is found.
-     */
-    @Override
-    public List<TransactionDto> findUserTransactions(Long userId) {
-        List<Transaction> transactionsEntities = transactionRepository.findByUserId(userId);
-
-        if (transactionsEntities.isEmpty()) {
-            throw new NoSuchElementException("No transactions for this user");
-        } else {
-            // Map each User entity to a TransactionDto
-            return transactionsEntities.stream()
-                    .map(TransactionMapper::toDto)
-                    .collect(Collectors.toList());
-        }
-    }
-
-    /**
-     * GET ALL: Retrieves all transactions for a given user by category Id.
-     *
-     * @param userId     The userId
-     * @param categoryId The userId
-     * @return The transactionDto for the logged-in user.
-     * @throws NoSuchElementException no category with the given ID is found.
-     */
-    @Override
-    public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
-        List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
-
-        if (categoryEntities.isEmpty()) {
-            return null;
-        } else {
-            return categoryEntities.stream()
-                    .map(TransactionMapper::toDto)
-                    .collect(Collectors.toList());
-
-        }
-    }
-
-    /**
-     * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.
-     *
-     * @param transactionId The ID of the transaction.
-     * @param userId        The ID of the user who owns the category.
-     * @return The categoryDto for the logged-in user.
-     */
-    @Override
-    public TransactionDto findUserOneTransaction(Long transactionId, Long userId) {
-        Transaction transaction = validateTransactionOwnedByUser(transactionId, userId);
-        return TransactionMapper.toDto(transaction);
     }
 
     /**
@@ -145,6 +98,13 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The updated transaction entity.
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
+            @CacheEvict(value = "user_transactions", allEntries = true),
+            @CacheEvict(value = "category_transactions", allEntries = true),
+            @CacheEvict(value = "single_transaction", allEntries = true),
+            @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
+    })
     public TransactionDto updateTransaction(Long transactionId, TransactionDto transactionDto, User user) {
         // Validate ownership and existence
         Transaction existingTransaction = validateTransactionOwnedByUser(transactionDto.getId(), user.getId());
@@ -167,12 +127,96 @@ public class TransactionServiceImpl implements TransactionService {
      * @param userId        The ID of the owning user.
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
+            @CacheEvict(value = "user_transactions", allEntries = true),
+            @CacheEvict(value = "category_transactions", allEntries = true),
+            @CacheEvict(value = "single_transaction", allEntries = true),
+            @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
+    })
     public void deleteTransaction(Long transactionId, Long userId) {
         //Find the existing transaction and verify ownership/existence
         Transaction transactionToDelete = transactionRepository.findByIdAndUserId(transactionId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found or access denied."));
 
         transactionRepository.delete(transactionToDelete);
+    }
+
+    /**
+     * GET ALL: Retrieves all transactions for a given user.
+     *
+     * @param userId The userId
+     * @return The new transactionDto for the logged-in user.
+     * @throws NoSuchElementException no category with the given ID is found.
+     */
+    @Override
+    @Cacheable(value = "user_transactions", key = "#userId")
+    public List<TransactionDto> findUserTransactions(Long userId) {
+        List<Transaction> transactionsEntities = transactionRepository.findByUserId(userId);
+
+        if (transactionsEntities.isEmpty()) {
+            throw new NoSuchElementException("No transactions for this user");
+        } else {
+            // Map each User entity to a TransactionDto
+            return transactionsEntities.stream()
+                    .map(TransactionMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.
+     *
+     * @param transactionId The ID of the transaction.
+     * @param userId        The ID of the user who owns the category.
+     * @return The categoryDto for the logged-in user.
+     */
+    @Override
+    @Cacheable(value = "single_transaction", key = "#transactionId")
+    public TransactionDto findUserOneTransaction(Long transactionId, Long userId) {
+        Transaction transaction = validateTransactionOwnedByUser(transactionId, userId);
+        return TransactionMapper.toDto(transaction);
+    }
+
+    /**
+     * GET ALL: Retrieves all transactions for a given user by category id.
+     *
+     * @param userId     The userId
+     * @param categoryId The userId
+     * @return The transactionDto for the logged-in user.
+     * @throws NoSuchElementException no category with the given ID is found.
+     */
+    @Override
+    @Cacheable(value = "category_transactions", key = "#userId")
+    public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
+        List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
+
+        if (categoryEntities.isEmpty()) {
+            return null;
+        } else {
+            return categoryEntities.stream()
+                    .map(TransactionMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * GET: Retrieves the sum of transactions belonging to a specific category ID.
+     *
+     * @param userId     The userId
+     * @param categoryId The userId
+     * @param date       The date
+     * @return The total amount
+     * @throws NoSuchElementException no category with the given ID is found.
+     */
+    @Override
+    @Cacheable(value = "user_transactions_category_totals", key = "#userId + '-' + #categoryId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
+    public BigDecimal findTransactionsTotalAmountByCategoryId(Long userId, Long categoryId, LocalDate date) {
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+        BigDecimal totalIncome = transactionRepository.findTransactionsTotalAmountByCategoryId(userId, categoryId, startDate, endDate);
+
+        return Objects.requireNonNullElseGet(totalIncome, () -> BigDecimal.valueOf(0));
     }
 
     /**
@@ -184,7 +228,6 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public BigDecimal getTotalIncomeByUserIdAndMonth(Long userId, LocalDate date) {
-
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
         BigDecimal totalIncome = transactionRepository.findIncomeByMonthByUserIdAndDate(userId, startDate, endDate);
@@ -201,7 +244,6 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public BigDecimal getTotalExpenseByUserIdAndMonth(Long userId, LocalDate date) {
-
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
         BigDecimal totalExpense = transactionRepository.findExpenseByMonthByUserIdAndDate(userId, startDate, endDate);
