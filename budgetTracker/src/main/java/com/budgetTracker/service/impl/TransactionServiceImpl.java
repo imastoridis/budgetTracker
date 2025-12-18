@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@SuppressWarnings("unused")
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -187,36 +186,17 @@ public class TransactionServiceImpl implements TransactionService {
      * @throws NoSuchElementException no category with the given ID is found.
      */
     @Override
-    @Cacheable(value = "category_transactions", key = "#userId")
+    @Cacheable(value = "category_transactions", key = "#userId + '-' + #categoryId")
     public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
         List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
 
         if (categoryEntities.isEmpty()) {
-            return null;
+            return List.of();
         } else {
             return categoryEntities.stream()
                     .map(TransactionMapper::toDto)
                     .collect(Collectors.toList());
         }
-    }
-
-    /**
-     * GET: Retrieves the sum of transactions belonging to a specific category ID.
-     *
-     * @param userId     The userId
-     * @param categoryId The userId
-     * @param date       The date
-     * @return The total amount
-     * @throws NoSuchElementException no category with the given ID is found.
-     */
-    @Override
-    @Cacheable(value = "user_transactions_category_totals", key = "#userId + '-' + #categoryId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
-    public BigDecimal findTransactionsTotalAmountByCategoryId(Long userId, Long categoryId, LocalDate date) {
-        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
-        BigDecimal totalIncome = transactionRepository.findTransactionsTotalAmountByCategoryId(userId, categoryId, startDate, endDate);
-
-        return Objects.requireNonNullElseGet(totalIncome, () -> BigDecimal.valueOf(0));
     }
 
     /**

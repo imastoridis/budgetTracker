@@ -123,6 +123,11 @@
            <!-- <version>4.0.0-M2</version>-->
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Add the Jackson module for Java 8 Date/Time types (like LocalDate) -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>

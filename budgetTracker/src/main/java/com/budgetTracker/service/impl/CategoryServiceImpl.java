@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.exception.ResourceNotFoundException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
@@ -135,7 +136,6 @@ public class CategoryServiceImpl implements CategoryService {
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
         return categoryRepository.findByUserIdOrderByNameAscWithAmount(userId, startDate, endDate);
-
     }
 
     /**

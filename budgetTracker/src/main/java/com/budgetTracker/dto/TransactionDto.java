@@ -24,7 +24,7 @@ public class TransactionDto {
     private BigDecimal amount;
 
     @NotNull(message = "Date is required.")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate date;
 
     @NotBlank(message = "Description cannot be empty.")

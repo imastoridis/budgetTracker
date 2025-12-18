@@ -37,10 +37,14 @@ import { Transaction } from '../transactions/models/transactions.models';
 })
 export class DashboardComponent {
   utils = inject(Utils);
+  readonly date = signal<Date>(new Date());
+
+  /**
+   * Categories
+   */
   private categoryEventsService = inject(CategoryEventsService);
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
-  readonly date = signal<Date>(new Date());
 
   /* Get all categories for user */
   getCategories(): void {
@@ -78,9 +82,38 @@ export class DashboardComponent {
     });
   }
 
+  /**
+   * Calculates and returns a new category object with the updated total amount.
+   */
+  private updateCategoryTotal(
+    category: Category,
+    oldAmount: number,
+    newAmount: number,
+  ): Category {
+    return {
+      ...category,
+      totalAmount: (category.totalAmount ?? 0) - oldAmount + newAmount,
+    };
+  }
+
   /* Constructor */
   constructor() {
-    //Uses the category-event.service to add, update or delete a category
+    /**
+     * Category  Events
+     * Uses the category-event.service to add, update or delete a category
+     */
+
+    /* Category added */
+    this.categoryEventsService.addedCategory$
+      .pipe(takeUntilDestroyed())
+      .subscribe((addedCategory) => {
+        this.allCategories.update((categories) => {
+          const updatedCategories = [...categories, addedCategory];
+          return updatedCategories.sort((a, b) => a.name.localeCompare(b.name));
+        });
+      });
+
+    /* Category updated */
     this.categoryEventsService.updatedCategory$
       .pipe(takeUntilDestroyed())
       .subscribe((updatedCategory) => {
@@ -91,15 +124,7 @@ export class DashboardComponent {
         );
       });
 
-    this.categoryEventsService.addedCategory$
-      .pipe(takeUntilDestroyed())
-      .subscribe((addedCategory) => {
-        this.allCategories.update((categories) => {
-          const updatedCategories = [...categories, addedCategory];
-          return updatedCategories.sort((a, b) => a.name.localeCompare(b.name));
-        });
-      });
-
+    /* Category deleted */
     this.categoryEventsService.deletedCategory$
       .pipe(takeUntilDestroyed())
       .subscribe((deletedCategory) => {
@@ -108,43 +133,73 @@ export class DashboardComponent {
         );
       });
 
-    //Uses the transaction-event.service to add, update or delete a transaction, updates to sum in categories
-    this.transactionEventsService.updatedTransaction$
-      .pipe(takeUntilDestroyed())
-      .subscribe((updatedTransaction) => {
-        this.allTransactions.update((transactions) =>
-          transactions.map((transaction) => {
-            if (transaction.id === updatedTransaction.id) {
-              this.allCategories.update((categories) =>
-                categories.map((category) => {
-                  if (category.id === updatedTransaction.categoryId) {
-                    category.totalAmount =
-                      (category.totalAmount ?? 0) -
-                      transaction.amount +
-                      updatedTransaction.amount;
-                  }
-                  return category;
-                }),
-              );
-              return updatedTransaction;
-            } else {
-              return transaction;
-            }
-          }),
-        );
-      });
+    /**
+     * Transaction Events
+     * Uses the transaction-event.service to add, update or delete a transaction, updates to sum in categories
+     */
 
+    /* Transaction added */
     this.transactionEventsService.addedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((addedTransaction) => {
+        // Update Categories Signal
+        this.allCategories.update((categories) =>
+          categories.map((category) =>
+            category.id === addedTransaction.categoryId
+              ? this.updateCategoryTotal(category, 0, addedTransaction.amount)
+              : category,
+          ),
+        );
+
         this.allTransactions.update((transactions) => {
           return [...transactions, addedTransaction];
         });
       });
 
+    /* Transaction updated */
+    this.transactionEventsService.updatedTransaction$
+      .pipe(takeUntilDestroyed())
+      .subscribe((updatedTransaction) => {
+        const oldTransaction = this.allTransactions().find(
+          (t) => t.id === updatedTransaction.id,
+        );
+
+        if (oldTransaction) {
+          // Update Categories Signal
+          this.allCategories.update((categories) =>
+            categories.map((category) =>
+              category.id === updatedTransaction.categoryId
+                ? this.updateCategoryTotal(
+                    category,
+                    oldTransaction.amount,
+                    updatedTransaction.amount,
+                  )
+                : category,
+            ),
+          );
+
+          // Update Transactions Signal
+          this.allTransactions.update((transactions) =>
+            transactions.map((t) =>
+              t.id === updatedTransaction.id ? updatedTransaction : t,
+            ),
+          );
+        }
+      });
+
+    /* Transaction deleted */
     this.transactionEventsService.deletedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((deletedTransaction) => {
+        // Update Categories Signal
+        this.allCategories.update((categories) =>
+          categories.map((category) =>
+            category.id === deletedTransaction.categoryId
+              ? this.updateCategoryTotal(category, deletedTransaction.amount, 0)
+              : category,
+          ),
+        );
+
         this.allTransactions.update((transactions) =>
           transactions.filter(
             (transaction) => transaction.id !== deletedTransaction.id,

@@ -31,25 +31,6 @@ export class TransactionsService {
   }
 
   /**
-   * Gets categories
-   * @returns An Observable of the total amount of transactions a category.
-   */
-  getTransactionsTotalAmountByCategory(
-    category: Category,
-    date: Date,
-  ): Observable<number> {
-    const formattedDate = date.toISOString().substring(0, 10);
-    const params = new HttpParams().set('date', formattedDate);
-
-    return this.http.get<number>(
-      this.apiUrlTransactions + '/total-amount-by-category/' + category.id,
-      {
-        params: params,
-      },
-    );
-  }
-
-  /**
    * Adds a new transaction
    * @param transaction
    * @returns An Observable of the transactions response.

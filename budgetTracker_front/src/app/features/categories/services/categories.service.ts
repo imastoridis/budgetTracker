@@ -9,16 +9,20 @@ import { Category } from '../models/categories.models';
 export class CategoriesService {
   private readonly apiUrlCategories = 'http://localhost:8080/api/categories';
   private http = inject(HttpClient);
-
   readonly allCategories = signal<Category[]>([]);
+
   /**
-   * Gets categories from the backend.
+   * Gets categories
    * @returns An Observable of the categories response.
    */
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrlCategories);
   }
 
+  /**
+   * Gets categories with category total for a specific date
+   * @returns An Observable of the categories response.
+   */
   getCategoriesWithTotal(date: Date): Observable<Category[]> {
     const formattedDate = date.toISOString().substring(0, 10);
     const params = new HttpParams().set('date', formattedDate);
@@ -31,9 +35,9 @@ export class CategoriesService {
   }
 
   /**
-   * Adds a new category to the backend.
+   * Adds a new category
    * @param category
-   * @returns An Observable of the categories response.
+   * @returns An Observable of the added category response.
    */
   addCategory(category: Category): Observable<Category> {
     console.log(category);
@@ -41,7 +45,7 @@ export class CategoriesService {
   }
 
   /**
-   * Updates an existing category in the backend.
+   * Updates an existing category
    * @param category
    * @returns An Observable of the updated category response.
    */
@@ -53,9 +57,9 @@ export class CategoriesService {
   }
 
   /**
-   * Deletes an existing category in the backend.
+   * Deletes an existing category
    * @param category
-   * @returns An Observable of the updated category response.
+   * @returns An Observable of the deleted category response.
    */
   deleteCategory(category: Category): Observable<Category> {
     return this.http.delete<Category>(
@@ -64,7 +68,7 @@ export class CategoriesService {
   }
 
   /**
-   * Deletes an existing category in the backend.
+   * Deletes an existing category
    * @param category
    * @returns truth false
    */

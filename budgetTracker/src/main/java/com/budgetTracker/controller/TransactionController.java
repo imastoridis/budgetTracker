@@ -48,7 +48,7 @@ public class TransactionController {
             @RequestBody TransactionDto transactionDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        log.info("CategoryController::createCategory request body {}", JsonUtils.toJsonString(transactionDto));
+        log.info("TransactionController::createTransaction request body {}", JsonUtils.toJsonString(transactionDto));
 
         // Get the authenticated User using the username principal
         User user = securityUtils.getAuthenticatedUser(userDetails);
@@ -89,22 +89,6 @@ public class TransactionController {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
         List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryId(userId, id);
         return ResponseEntity.ok(transactions);
-    }
-
-    /**
-     * GET /api/transactions/total-amount-by-category/{id}: Retrieves all transactions for the currently authenticated user.
-     *
-     * @return the transactions associated with the logged-in user
-     */
-    @GetMapping("/total-amount-by-category/{id}")
-    public ResponseEntity<BigDecimal> getTransactionsTotalAmountByCategoryAndUserId(
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
-    ) {
-        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
-        BigDecimal totalAmount = transactionService.findTransactionsTotalAmountByCategoryId(userId, id, date);
-        return ResponseEntity.ok(totalAmount);
     }
 
     /**

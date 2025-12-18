@@ -6,6 +6,7 @@ import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.User;
 import com.budgetTracker.repository.CategoryRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -53,7 +54,6 @@ public interface CategoryService {
      * @return A list of the user's categories.
      */
     List<CategoryTotalDto> findUserCategoriesWithTransactionsTotal(Long userId, LocalDate date);
-
 
     /**
      * GET ONE: Finds a category by its ID, ensuring it belongs to the specified user.

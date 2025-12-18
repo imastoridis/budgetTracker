@@ -46,6 +46,7 @@ export class DetailsCategory {
 
   /* Open Update transaction dialog*/
   openUpdateTransaction(transaction: Transaction): void {
+    console.log(transaction);
     this.dialog.open(UpdateTransaction, {
       data: [this.allCategories, transaction],
     });

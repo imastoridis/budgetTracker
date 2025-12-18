@@ -48,16 +48,6 @@ public interface TransactionService {
      */
     List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId);
 
-
-    /**
-     * GET: Retrieves total amount of transactions belonging to a specific category ID.
-     *
-     * @param userId The ID of the owning user.
-     * @param categoryId The ID of the category.
-     * @return A list of the user's transactions.
-     */
-    BigDecimal findTransactionsTotalAmountByCategoryId(Long userId, Long categoryId, LocalDate date);
-
     /**
      * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.
      * This is critical for security checks before allowing an update or delete.

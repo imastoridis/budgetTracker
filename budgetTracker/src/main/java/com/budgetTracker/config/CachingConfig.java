@@ -1,6 +1,8 @@
 package com.budgetTracker.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.annotation.EnableCaching;
@@ -26,7 +28,7 @@ public class CachingConfig {
      * We use String serialization for keys and JSON (Jackson) serialization for values.
      * We also set a default Time-To-Live (TTL) for all cache entries.
      */
-    @Bean
+   /* @Bean
     public RedisCacheConfiguration cacheConfiguration() {
         ObjectMapper mapper = JsonMapper.builder()
                 .findAndAddModules()
@@ -40,5 +42,30 @@ public class CachingConfig {
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 // Use GenericJackson2JsonRedisSerializer for values (serializes objects to JSON)
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }*/
+    @Bean
+    public RedisCacheConfiguration cacheConfiguration() {
+        // 1. Create a dedicated mapper for Redis
+        ObjectMapper mapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule()) // Handles LocalDate
+                .build();
+
+        // 2. VERY IMPORTANT: Enable default typing
+        // This adds class information to the JSON so Jackson knows
+        // exactly which class to instantiate when reading from the cache.
+        mapper.activateDefaultTyping(
+                mapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
+
+        // 3. Create the serializer with this specific mapper
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
+
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(60))
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
     }
 }
