@@ -1,3 +1,4 @@
+/*
 package com.budgetTracker.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -10,4 +11,4 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @SuppressWarnings("unused")
 public class RedisConfig {
     // You can define Redis-related beans here, like RedisTemplate
-}
+}*/

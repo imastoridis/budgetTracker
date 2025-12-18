@@ -1,6 +1,7 @@
 package com.budgetTracker.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +28,9 @@ public class CachingConfig {
      */
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        ObjectMapper mapper = JsonMapper.builder()
+                .findAndAddModules()
+                .build();
         return RedisCacheConfiguration.defaultCacheConfig()
                 // Set a default expiration time for cache entries (e.g., 60 minutes)
                 .entryTtl(Duration.ofMinutes(60))

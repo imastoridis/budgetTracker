@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
 import { TransactionsService } from '../services/transactions.service';
@@ -47,7 +42,7 @@ import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
   ],
   templateUrl: './transaction-update.html',
 })
-export class UpdateTransaction implements OnInit {
+export class UpdateTransaction {
   private transactionService = inject(TransactionsService);
   private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<UpdateTransaction>);
@@ -90,9 +85,5 @@ export class UpdateTransaction implements OnInit {
 
   get date() {
     return this.transactionFormUpdate.get('date');
-  }
-  ngOnInit(): void {
-    console.log(this.transactionFormUpdate.value);
-    console.log(this.transactionFormUpdate.valid);
   }
 }

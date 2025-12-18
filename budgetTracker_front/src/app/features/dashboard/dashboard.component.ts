@@ -108,16 +108,29 @@ export class DashboardComponent {
         );
       });
 
-    //Uses the transaction-event.service to add, update or delete a transaction
+    //Uses the transaction-event.service to add, update or delete a transaction, updates to sum in categories
     this.transactionEventsService.updatedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((updatedTransaction) => {
         this.allTransactions.update((transactions) =>
-          transactions.map((transaction) =>
-            transaction.id === updatedTransaction.id
-              ? updatedTransaction
-              : transaction,
-          ),
+          transactions.map((transaction) => {
+            if (transaction.id === updatedTransaction.id) {
+              this.allCategories.update((categories) =>
+                categories.map((category) => {
+                  if (category.id === updatedTransaction.categoryId) {
+                    category.totalAmount =
+                      (category.totalAmount ?? 0) -
+                      transaction.amount +
+                      updatedTransaction.amount;
+                  }
+                  return category;
+                }),
+              );
+              return updatedTransaction;
+            } else {
+              return transaction;
+            }
+          }),
         );
       });
 
@@ -141,7 +154,7 @@ export class DashboardComponent {
 
     afterNextRender(() => {
       this.getCategories();
-      //  this.getTransactions();
+      this.getTransactions();
     });
   }
 }
