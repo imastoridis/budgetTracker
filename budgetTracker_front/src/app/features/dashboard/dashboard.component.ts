@@ -210,19 +210,19 @@ export class DashboardComponent {
       });
 
     /**
-     * On change date
+     * On selected date change
      */
     this.dashboardEventsService.changedDate$
       .pipe(takeUntilDestroyed())
       .subscribe((newDate) => {
-        console.log('Dashboard date changed to: ', newDate);
         this.date.set(newDate);
-
         this.getCategories(this.date());
         this.getTransactions();
       });
 
-    /* Initial data load */
+    /**
+     *  Initial data load
+     */
     afterNextRender(() => {
       this.getCategories(this.date());
       this.getTransactions();

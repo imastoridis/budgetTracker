@@ -24,12 +24,30 @@ export class TransactionsService {
    * Gets transactions by category
    * @returns An Observable of the transactions response.
    */
-  getTransactionsByCategory(category: Category): Observable<Transaction[]> {
+  getAllTransactionsByCategory(category: Category): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(
       this.apiUrlTransactions + '/by-category/' + category.id,
     );
   }
 
+  /**
+   * Gets transactions by category and selected month
+   * @returns An Observable of the transactions response.
+   */
+  getTransactionsByCategoryAndMonth(
+    category: Category,
+    date: Date,
+  ): Observable<Transaction[]> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+
+    return this.http.get<Transaction[]>(
+      this.apiUrlTransactions + '/by-category/by-month/' + category.id,
+      {
+        params: params,
+      },
+    );
+  }
   /**
    * Adds a new transaction
    * @param transaction

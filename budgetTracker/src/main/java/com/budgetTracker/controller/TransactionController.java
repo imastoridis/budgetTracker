@@ -77,7 +77,7 @@ public class TransactionController {
     }
 
     /**
-     * GET /api/transactions/by-category/{id}: Retrieves all transactions for the currently authenticated user.
+     * GET /api/transactions/by-category/{id}: Retrieves all transactions by category for the currently authenticated user.
      *
      * @return the transactions associated with the logged-in user
      */
@@ -90,6 +90,23 @@ public class TransactionController {
         List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryId(userId, id);
         return ResponseEntity.ok(transactions);
     }
+
+    /**
+     * GET /api/transactions/by-category/by-month/{id}: Retrieves all transactions by category and month for the currently authenticated user.
+     *
+     * @return the transactions associated with the logged-in user
+     */
+    @GetMapping("/by-category/by-month/{id}")
+    public ResponseEntity<List<TransactionDto>> getAllTransactionsByCategoryAndMonthAndUserId(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryIdAndMonth(userId, id, date);
+        return ResponseEntity.ok(transactions);
+    }
+
 
     /**
      * PUT /api/transactions/{id} : Updates a transaction

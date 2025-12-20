@@ -39,9 +39,32 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE t.user.id = :userId AND " +
             "t.category.id = :categoryId"
     )
-    List<Transaction> findByUserIdAndCategoryId(
+    List<Transaction> findUserTransactionsByCategoryId(
             @Param("userId") Long userId,
             @Param("categoryId") Long categoryId,
+            Sort sort
+    );
+
+    /**
+     * Finds all transactions belonging to a specific user and category within the month of the given date.
+     *
+     * @param userId     The ID of the authenticated user.
+     * @param categoryId category Id
+     * @param startDate  Start month.
+     * @param endDate    End month
+     * @return List of transactions
+     */
+    @Query("SELECT t " +
+            "FROM Transaction t " +
+            "WHERE t.user.id = :userId AND " +
+            "t.category.id = :categoryId AND " +
+            "t.date BETWEEN :startDate AND :endDate"
+    )
+    List<Transaction> findUserTransactionsByCategoryIdAndMonth(
+            @Param("userId") Long userId,
+            @Param("categoryId") Long categoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
             Sort sort
     );
 

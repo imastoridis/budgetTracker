@@ -77,6 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
             @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
             @CacheEvict(value = "user_transactions", allEntries = true),
             @CacheEvict(value = "category_transactions", allEntries = true),
+            @CacheEvict(value = "category_transactions_by_month", allEntries = true),
             @CacheEvict(value = "single_transaction", allEntries = true),
             @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
     })
@@ -101,6 +102,7 @@ public class TransactionServiceImpl implements TransactionService {
             @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
             @CacheEvict(value = "user_transactions", allEntries = true),
             @CacheEvict(value = "category_transactions", allEntries = true),
+            @CacheEvict(value = "category_transactions_by_month", allEntries = true),
             @CacheEvict(value = "single_transaction", allEntries = true),
             @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
     })
@@ -130,6 +132,7 @@ public class TransactionServiceImpl implements TransactionService {
             @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
             @CacheEvict(value = "user_transactions", allEntries = true),
             @CacheEvict(value = "category_transactions", allEntries = true),
+            @CacheEvict(value = "category_transactions_by_month", allEntries = true),
             @CacheEvict(value = "single_transaction", allEntries = true),
             @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
     })
@@ -181,14 +184,41 @@ public class TransactionServiceImpl implements TransactionService {
      * GET ALL: Retrieves all transactions for a given user by category id.
      *
      * @param userId     The userId
-     * @param categoryId The userId
+     * @param categoryId The categoryId
      * @return The transactionDto for the logged-in user.
      * @throws NoSuchElementException no category with the given ID is found.
      */
     @Override
     @Cacheable(value = "category_transactions", key = "#userId + '-' + #categoryId")
     public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
-        List<Transaction> categoryEntities = transactionRepository.findByUserIdAndCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
+        List<Transaction> categoryEntities = transactionRepository.findUserTransactionsByCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
+
+        if (categoryEntities.isEmpty()) {
+            return List.of();
+        } else {
+            return categoryEntities.stream()
+                    .map(TransactionMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * GET ALL: Retrieves all transactions for a given user by category id and chosen month
+     *
+     * @param userId     The userId
+     * @param categoryId The categoryId
+     * @param date       the chosen date
+     * @return The transactionDto for the logged-in user.
+     * @throws NoSuchElementException no category with the given ID is found.
+     */
+    @Override
+    @Cacheable(value = "category_transactions_by_month", key = "#userId + '-' + #categoryId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
+    public List<TransactionDto> findUserTransactionsByCategoryIdAndMonth(Long userId, Long categoryId, LocalDate date) {
+
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+
+        List<Transaction> categoryEntities = transactionRepository.findUserTransactionsByCategoryIdAndMonth(userId, categoryId, startDate, endDate, Sort.by(Sort.Direction.DESC, "date"));
 
         if (categoryEntities.isEmpty()) {
             return List.of();
