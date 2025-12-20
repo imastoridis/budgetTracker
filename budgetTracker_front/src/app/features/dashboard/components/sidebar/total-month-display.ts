@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
-  OnInit,
   computed,
+  afterNextRender,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -13,6 +13,7 @@ import { Utils } from '../../../../shared/utils/utils';
 import { TransactionEventsService } from '../../../transactions/services/transaction-events.service';
 import { CurrencyPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DashboardEventsService } from '../../services/dashboard-events.service';
 
 @Component({
   selector: 'app-total-month-display',
@@ -21,7 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   template: `
     <div class="flex flex-col gap-4">
       <div
-        class="flex border-b align-items-center  text-xl font-semibold text-sky-700"
+        class="flex border-b align-items-center  text-xl font-semibold text-sky-700  gap-2"
       >
         <mat-icon aria-label="face icon" fontIcon="calendar_month"></mat-icon>
         <h2>This month</h2>
@@ -54,16 +55,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     </div>
   `,
 })
-export class TotalMonthDisplay implements OnInit {
+export class TotalMonthDisplay {
   private transactionsService = inject(TransactionsService);
   private utils = inject(Utils);
   private transactionEventsService = inject(TransactionEventsService);
+  private dashboardEventsService = inject(DashboardEventsService);
   readonly totalIncome = signal<number>(0);
   readonly totalExpenses = signal<number>(0);
-  readonly date = signal<Date>(new Date());
   readonly balance = computed<number>(() => {
     return this.totalIncome() - this.totalExpenses();
   });
+
+  readonly date = signal<Date>(new Date());
+  //readonly date = new Date();
 
   /* Gets total of income for a month */
   getTotalIncomeByMonth(date: Date): void {
@@ -90,9 +94,9 @@ export class TotalMonthDisplay implements OnInit {
   }
 
   /* Gets total by month */
-  getTotalByMonth() {
-    this.getTotalIncomeByMonth(this.date());
-    this.getTotalExpensesByMonth(this.date());
+  getTotalByMonth(date: Date) {
+    this.getTotalIncomeByMonth(date);
+    this.getTotalExpensesByMonth(date);
   }
 
   /* Constructor */
@@ -101,25 +105,34 @@ export class TotalMonthDisplay implements OnInit {
     this.transactionEventsService.updatedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
-        this.getTotalByMonth();
+        this.getTotalByMonth(this.date());
       });
 
     this.transactionEventsService.addedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
-        this.getTotalByMonth();
+        this.getTotalByMonth(this.date());
       });
 
     this.transactionEventsService.deletedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
-        this.getTotalByMonth();
+        this.getTotalByMonth(this.date());
       });
-  }
 
-  /* On init */
-  ngOnInit(): void {
-    //Get total income for current month
-    this.getTotalByMonth();
+    /**
+     * On change date
+     */
+    this.dashboardEventsService.changedDate$
+      .pipe(takeUntilDestroyed())
+      .subscribe((newDate) => {
+        this.date.set(newDate);
+        this.getTotalByMonth(this.date());
+      });
+
+    afterNextRender(() => {
+      //Get total income for current month
+      this.getTotalByMonth(this.date());
+    });
   }
 }

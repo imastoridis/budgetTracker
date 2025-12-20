@@ -3,7 +3,6 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
@@ -11,6 +10,7 @@ import {
   CategoryForm,
 } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
+import { CategoriesService } from '../services/categories.service';
 import { CategoryEventsService } from '../services/category-events.service';
 
 @Component({

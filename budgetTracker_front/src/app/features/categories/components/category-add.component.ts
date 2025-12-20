@@ -12,7 +12,13 @@ import { CategoryEventsService } from '../services/category-events.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
   template: `
-    <div class="flex flex-col">
+    <div class="flex flex-col gap-4">
+      <div
+        class="flex border-b align-items-center  text-xl font-semibold text-sky-700 gap-2"
+      >
+        <mat-icon aria-label="face icon" fontIcon="category"></mat-icon>
+        <h2>Category</h2>
+      </div>
       <form [formGroup]="categoryForm" appearance="outline">
         <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel>

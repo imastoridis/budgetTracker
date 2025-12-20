@@ -6,6 +6,7 @@ import { AddExpenseBtn } from './add-expense-btn';
 import { TotalMonthDisplay } from './total-month-display';
 import { PieChartDisplay } from './pie-chart-display';
 import { AddCategory } from '../../../categories/components/category-add.component';
+import { DatePickerSidebar } from './datepicker';
 import { Category } from '../../../categories/models/categories.models';
 @Component({
   selector: 'app-dashboard-sidebar',
@@ -18,14 +19,18 @@ import { Category } from '../../../categories/models/categories.models';
     AddExpenseBtn,
     TotalMonthDisplay,
     PieChartDisplay,
+    DatePickerSidebar,
   ],
   template: `
     <div
       class="p-4 bg-white shadow-xl rounded-xl flex flex-col gap-10 h-[90vh] "
     >
+      <!-- Datepicker -->
+      <app-datepicker-sidebar></app-datepicker-sidebar>
+
       <!-- Add Transaction (Income/Expense)-->
-      <div class="flex flex-col gap-4 text-xl font-semibold text-sky-700">
-        <div class="flex border-b align-items-center">
+      <div class="flex flex-col gap-4 text-xl font-semibold text-sky-700 ">
+        <div class="flex border-b align-items-center  gap-2">
           <mat-icon aria-label="face icon" fontIcon="add_circle"></mat-icon>
           <h2>Transactions</h2>
         </div>

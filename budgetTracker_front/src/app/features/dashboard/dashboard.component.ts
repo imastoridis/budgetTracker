@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { of } from 'rxjs';
 import { MaterialModule } from '../../shared/modules/material/material.module';
 import { Utils } from '../../shared/utils/utils';
+import { DashboardEventsService } from './services/dashboard-events.service';
 /* Categories */
 import { Category } from '../categories/models/categories.models';
 import { CategoriesService } from '../categories/services/categories.service';
@@ -38,6 +39,7 @@ import { DashboardSummary } from './components/summary/dashboard-summary';
 export class DashboardComponent {
   utils = inject(Utils);
   readonly date = signal<Date>(new Date());
+  private dashboardEventsService = inject(DashboardEventsService);
 
   /**
    * Categories
@@ -47,8 +49,8 @@ export class DashboardComponent {
   readonly allCategories = signal<Category[]>([]);
 
   /* Get all categories for user */
-  getCategories(): void {
-    this.categoriesService.getCategoriesWithTotal(this.date()).subscribe({
+  getCategories(date: Date): void {
+    this.categoriesService.getCategoriesWithTotal(date).subscribe({
       next: (categories) => {
         this.allCategories.set(categories);
       },
@@ -207,8 +209,22 @@ export class DashboardComponent {
         );
       });
 
+    /**
+     * On change date
+     */
+    this.dashboardEventsService.changedDate$
+      .pipe(takeUntilDestroyed())
+      .subscribe((newDate) => {
+        console.log('Dashboard date changed to: ', newDate);
+        this.date.set(newDate);
+
+        this.getCategories(this.date());
+        this.getTransactions();
+      });
+
+    /* Initial data load */
     afterNextRender(() => {
-      this.getCategories();
+      this.getCategories(this.date());
       this.getTransactions();
     });
   }

@@ -11,6 +11,7 @@ import {
 import { Utils } from '../../../shared/utils/utils';
 import { CategoryEventsService } from '../services/category-events.service';
 import { switchMap, tap, EMPTY } from 'rxjs';
+
 @Component({
   selector: 'app-dialog-category-delete',
   changeDetection: ChangeDetectionStrategy.OnPush,

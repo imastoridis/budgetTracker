@@ -10,13 +10,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Utils } from '../../../../shared/utils/utils';
-import { Transaction } from '../../../transactions/models/transactions.models';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { UpdateTransaction } from '../../../transactions/components/transaction-update.component';
 import { Category } from '../../models/categories.models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Transaction } from '../../../transactions/models/transactions.models';
 import { TransactionEventsService } from '../../../transactions/services/transaction-events.service';
+import { UpdateTransaction } from '../../../transactions/components/transaction-update.component';
 import { DeleteTransaction } from '../../../transactions/components/transaction-delete.component';
 
 @Component({

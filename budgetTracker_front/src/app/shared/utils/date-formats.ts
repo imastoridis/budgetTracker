@@ -19,3 +19,18 @@ export const CUSTOM_DATE_FORMATS: MatDateFormats = {
     monthYearA11yLabel: 'MMMM yyyy', // e.g., 'December 2025'
   },
 };
+
+/**
+ * Custom date formats for MM/yyyy display.
+ */
+export const CUSTOM_MONTH_YEAR_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'MM/yyyy',
+  },
+  display: {
+    dateInput: 'MMMM yyyy', // This is what the user sees in the input
+    monthYearLabel: 'MMM yyyy',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM yyyy',
+  },
+};
