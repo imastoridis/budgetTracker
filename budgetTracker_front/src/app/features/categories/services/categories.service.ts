@@ -68,7 +68,7 @@ export class CategoriesService {
   }
 
   /**
-   * Deletes an existing category
+   * Checks if category has transactions
    * @param category
    * @returns truth false
    */

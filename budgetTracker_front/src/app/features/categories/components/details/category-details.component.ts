@@ -44,9 +44,15 @@ export class DetailsCategory {
   displayedColumns: string[] = ['id', 'date', 'amount', 'action'];
   dataSource = this.TRANSACTION_ARRAY;
 
+  /* Total amount for category */
+  getTotalAmount() {
+    return this.TRANSACTION_ARRAY()
+      .map((t) => t.amount)
+      .reduce((acc, value) => acc + value, 0);
+  }
+
   /* Open Update transaction dialog*/
   openUpdateTransaction(transaction: Transaction): void {
-    console.log(transaction);
     this.dialog.open(UpdateTransaction, {
       data: [this.allCategories, transaction],
     });

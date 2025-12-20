@@ -47,7 +47,7 @@ export class UpdateTransaction {
   private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<UpdateTransaction>);
   private initialData = inject(MAT_DIALOG_DATA)[1] as Transaction;
-  allCategories = inject(MAT_DIALOG_DATA)[0];
+  readonly allCategories = inject(MAT_DIALOG_DATA)[0];
   private utils = inject(Utils);
   readonly transactionFormUpdate: TransactionForm = TransactionFormWithData(
     this.initialData,

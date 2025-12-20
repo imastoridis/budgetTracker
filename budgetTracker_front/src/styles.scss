@@ -29,3 +29,8 @@ body {
 .invalid-red-border {
   --mat-mdc-form-field-outline-color: red !important;
 }
+
+/* Bold on all footers of mat-table*/
+tr.mat-mdc-footer-row td {
+  font-weight: bold;
+}

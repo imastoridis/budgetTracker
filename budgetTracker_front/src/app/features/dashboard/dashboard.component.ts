@@ -15,13 +15,13 @@ import { Category } from '../categories/models/categories.models';
 import { CategoriesService } from '../categories/services/categories.service';
 import { CategoryEventsService } from '../categories/services/category-events.service';
 /* Transactions */
+import { Transaction } from '../transactions/models/transactions.models';
 import { TransactionsService } from '../transactions/services/transactions.service';
 import { TransactionEventsService } from '../transactions/services/transaction-events.service';
 /* Dashboard children*/
 import { DashboardHeader } from './components/dashboard-header';
 import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
 import { DashboardSummary } from './components/summary/dashboard-summary';
-import { Transaction } from '../transactions/models/transactions.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,7 +50,6 @@ export class DashboardComponent {
   getCategories(): void {
     this.categoriesService.getCategoriesWithTotal(this.date()).subscribe({
       next: (categories) => {
-        console.log(categories);
         this.allCategories.set(categories);
       },
       error: (err) => {
@@ -151,6 +150,7 @@ export class DashboardComponent {
           ),
         );
 
+        // Update Transactions Signal
         this.allTransactions.update((transactions) => {
           return [...transactions, addedTransaction];
         });
