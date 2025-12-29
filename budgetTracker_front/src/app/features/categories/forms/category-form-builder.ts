@@ -31,7 +31,7 @@ export function buildCategoryForm(initialData: Category): CategoryForm {
     }),
     userId: new FormControl<number | null>(initialData.userId, {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [],
     }),
     type: new FormControl<TransactionType | null>(initialData.type, {
       nonNullable: true,

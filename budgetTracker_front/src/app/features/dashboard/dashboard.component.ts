@@ -49,7 +49,7 @@ export class DashboardComponent {
   readonly allCategories = signal<Category[]>([]);
 
   /* Get all categories for user */
-  getCategories(date: Date): void {
+  getCategoriesWithTotal(date: Date): void {
     this.categoriesService.getCategoriesWithTotal(date).subscribe({
       next: (categories) => {
         this.allCategories.set(categories);
@@ -68,6 +68,7 @@ export class DashboardComponent {
   private transactionsService = inject(TransactionsService);
   private transactionEventsService = inject(TransactionEventsService);
   readonly allTransactions = signal<Transaction[]>([]);
+  readonly allTransactions$ = signal<Transaction[]>([]);
 
   /* Get all transactoins for user */
   getTransactions(): void {
@@ -216,7 +217,7 @@ export class DashboardComponent {
       .pipe(takeUntilDestroyed())
       .subscribe((newDate) => {
         this.date.set(newDate);
-        this.getCategories(this.date());
+        this.getCategoriesWithTotal(this.date());
         this.getTransactions();
       });
 
@@ -224,7 +225,7 @@ export class DashboardComponent {
      *  Initial data load
      */
     afterNextRender(() => {
-      this.getCategories(this.date());
+      this.getCategoriesWithTotal(this.date());
       this.getTransactions();
     });
   }

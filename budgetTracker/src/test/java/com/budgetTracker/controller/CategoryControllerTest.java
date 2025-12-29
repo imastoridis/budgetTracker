@@ -17,6 +17,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,8 +69,8 @@ public class CategoryControllerTest {
     @Test
     void getUserCategories_shouldReturnUserCategories() throws Exception {
         // Arrange
-        CategoryDto cat1 = new CategoryDto(1L, "Food", USER_ID, CategoryType.INCOME);
-        CategoryDto cat2 = new CategoryDto(2L, "Rent", USER_ID, CategoryType.INCOME);
+        CategoryDto cat1 = new CategoryDto(1L, "Food", USER_ID, CategoryType.INCOME, new BigDecimal("100"));
+        CategoryDto cat2 = new CategoryDto(2L, "Rent", USER_ID, CategoryType.INCOME, new BigDecimal("100"));
         List<CategoryDto> categoryList = Arrays.asList(cat1, cat2);
 
         // Mock security to return a user ID
@@ -98,8 +99,8 @@ public class CategoryControllerTest {
     @Test
     void createCategory_shouldReturnCreatedCategoryAnd201() throws Exception {
         // Arrange
-        CategoryDto inputDto = new CategoryDto(null, "Groceries", null, CategoryType.INCOME);
-        CategoryDto createdDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, CategoryType.INCOME);
+        CategoryDto inputDto = new CategoryDto(null, "Groceries", null, CategoryType.INCOME, new BigDecimal("0"));
+        CategoryDto createdDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, CategoryType.INCOME, new BigDecimal("100"));
 
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);
@@ -123,8 +124,8 @@ public class CategoryControllerTest {
     @Test
     void updateCategory_shouldReturnUpdatedCategoryAnd200() throws Exception {
         // Arrange
-        CategoryDto updateInputDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, CategoryType.INCOME);
-        CategoryDto updatedDto = new CategoryDto(MOCK_CATEGORY_ID, "Updated Groceries", USER_ID, CategoryType.EXPENSE);
+        CategoryDto updateInputDto = new CategoryDto(MOCK_CATEGORY_ID, "Groceries", USER_ID, CategoryType.INCOME, new BigDecimal("100"));
+        CategoryDto updatedDto = new CategoryDto(MOCK_CATEGORY_ID, "Updated Groceries", USER_ID, CategoryType.EXPENSE, new BigDecimal("100"));
 
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);

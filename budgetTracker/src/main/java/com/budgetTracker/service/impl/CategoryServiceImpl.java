@@ -1,7 +1,6 @@
 package com.budgetTracker.service.impl;
 
 import com.budgetTracker.dto.CategoryDto;
-import com.budgetTracker.dto.CategoryTotalDto;
 import com.budgetTracker.exception.DuplicateResourceException;
 import com.budgetTracker.mapper.CategoryMapper;
 import com.budgetTracker.model.entity.Category;
@@ -11,11 +10,11 @@ import com.budgetTracker.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.exception.ResourceNotFoundException;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
@@ -75,7 +74,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @return The new category entity for the logged-in user.
      */
     @Override
-    @CacheEvict(value = CATEGORY_CACHE, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "user_categories", allEntries = true),
+            @CacheEvict(value = "user_categories_totals", allEntries = true),
+    })
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto, User user) {
         Long userId = user.getId();
@@ -105,7 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @throws NoSuchElementException no category with the given ID is found.
      */
     @Override
-    @Cacheable(value = CATEGORY_CACHE, key = "#userId")
+    @Cacheable(value = "user_categories", key = "#userId")
     public List<CategoryDto> findUserCategories(Long userId) {
         log.info("Fetching all categories for user ID {} from database (not cache).", userId);
         List<Category> categoryEntities = categoryRepository.findByUserIdOrderByNameAsc(userId);
@@ -130,8 +132,8 @@ public class CategoryServiceImpl implements CategoryService {
      * @throws NoSuchElementException no category with the given ID is found.
      */
     @Override
-    @Cacheable(value = CATEGORY_CACHE, key = "#userId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
-    public List<CategoryTotalDto> findUserCategoriesWithTransactionsTotal(Long userId, LocalDate date) {
+    @Cacheable(value = "user_categories_totals", key = "#userId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
+    public List<CategoryDto> findUserCategoriesWithTransactionsTotal(Long userId, LocalDate date) {
 
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
@@ -160,7 +162,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @return The updated Category entity.
      */
     @Override
-    @CacheEvict(value = CATEGORY_CACHE, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "user_categories", allEntries = true),
+            @CacheEvict(value = "user_categories_totals", allEntries = true),
+    })
     @Transactional
     public CategoryDto updateCategory(Long categoryId, CategoryDto categoryDto, Long userId) {
         log.info("Category ID {} updated. Evicting cache for user ID: {}", categoryId, userId);
@@ -191,7 +196,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @param userId     The ID of the owning user.
      */
     @Override
-    @CacheEvict(value = CATEGORY_CACHE, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "user_categories", allEntries = true),
+            @CacheEvict(value = "user_categories_totals", allEntries = true),
+    })
     @Transactional
     public void deleteCategory(Long categoryId, Long userId) {
         log.info("Category ID {} deleted. Evicting cache for user ID: {}", categoryId, userId);

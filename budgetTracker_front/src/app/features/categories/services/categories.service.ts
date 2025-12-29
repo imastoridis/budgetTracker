@@ -15,9 +15,9 @@ export class CategoriesService {
    * Gets categories
    * @returns An Observable of the categories response.
    */
-  getCategories(): Observable<Category[]> {
+  /*   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrlCategories);
-  }
+  } */
 
   /**
    * Gets categories with category total for a specific date
@@ -50,6 +50,7 @@ export class CategoriesService {
    * @returns An Observable of the updated category response.
    */
   updateCategory(category: Category): Observable<Category> {
+    console.log(category);
     return this.http.put<Category>(
       this.apiUrlCategories + '/' + category.id,
       category,

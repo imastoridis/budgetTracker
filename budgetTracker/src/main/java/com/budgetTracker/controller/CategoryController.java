@@ -1,7 +1,6 @@
 package com.budgetTracker.controller;
 
 import com.budgetTracker.dto.CategoryDto;
-import com.budgetTracker.dto.CategoryTotalDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.User;
 import com.budgetTracker.service.CategoryService;
@@ -17,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.time.LocalDate;
@@ -91,12 +89,12 @@ public class CategoryController {
      * @return the categories dto associated with the logged-in user
      */
     @GetMapping("/with-transactions-total")
-    public ResponseEntity<List<CategoryTotalDto>> getAllCategoriesWithTransactionsTotal(
+    public ResponseEntity<List<CategoryDto>> getAllCategoriesWithTransactionsTotal(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
-        List<CategoryTotalDto> categories = categoryService.findUserCategoriesWithTransactionsTotal(userId, date);
+        List<CategoryDto> categories = categoryService.findUserCategoriesWithTransactionsTotal(userId, date);
 
         return ResponseEntity.ok(categories);
     }

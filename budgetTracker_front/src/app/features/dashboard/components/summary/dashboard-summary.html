@@ -1,42 +1,14 @@
 <div class="p-4 flex flex-col bg-white shadow-xl rounded-xl h-[90vh]">
     <div class="flex border-b align-items-center text-xl font-semibold text-sky-700">
         <mat-icon aria-label="face icon" fontIcon="business_center"></mat-icon>
-        <h2>Monthly Summary</h2>
+        <h2>Monthly Budget</h2>
     </div>
 
-    <div class="flex my-4 gap-1">
-        <mat-icon aria-label="face icon" fontIcon="category"></mat-icon>
-        <div class="text-gray-600 text-xl">Categories</div>
-    </div>
+    <!-- Categories -->
+    <app-dashboard-summary-categories [allCategories]="allCategories()"></app-dashboard-summary-categories>
 
-    <!-- Category -->
-    <div class="flex flex-wrap gap-10">
-        @for (category of allCategories(); track category.id) {
-        <div class="flex flex-col border p-4 rounded-lg shadow-md w-1/6 justify-between hover:bg-blue-100 "
-            [class]="category.type === 'INCOME' ? 'bg-green-50' : 'bg-red-50'">
-            <div class="flex flex-row gap-4 justify-between items-center mb-2">
-                <span class="flex items-center gap-2 cursor-pointer " (click)="openCategoryDetails(category)">
-                    <mat-icon aria-label="face icon" fontIcon="label" class="!text-cyan-700"></mat-icon>
-                    <span class="text-cyan-700 text-xl">{{ category.name }}</span>
-                </span>
-                <span class="flex flex row ">
-                    <button mat-icon-button aria-label="Update category" class="-me-2"
-                        (click)="openUpdateCategory(category)">
-                        <mat-icon fontIcon="autorenew" class="!text-indigo-700"></mat-icon>
-                    </button>
-                    <button mat-icon-button aria-label="Delete category">
-                        <mat-icon fontIcon="delete" class="!text-red-700"
-                            (click)="openDeleteCategory(category)"></mat-icon>
-                    </button>
-                </span>
-            </div>
-            <div>
-                <div class="text-indigo-600 font-medium">Total : {{category.totalAmount| currency: 'EUR' : 'symbol' :
-                    '1.2-2'}}
-                </div>
-            </div>
+    <!-- Incomes list -->
+    <app-dashboard-summary-income-transactions [allCategories]="allCategories()">
+    </app-dashboard-summary-income-transactions>
 
-        </div>
-        }
-    </div>
 </div>

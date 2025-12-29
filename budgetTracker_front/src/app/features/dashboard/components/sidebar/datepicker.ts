@@ -3,13 +3,11 @@ import {
   Component,
   DestroyRef,
   inject,
-  signal,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatDatepicker,
-  MatDatepickerInputEvent,
   MatDatepickerModule,
 } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -44,7 +42,7 @@ import {
   ],
   encapsulation: ViewEncapsulation.None,
   template: `
-    <div class="flex flex-col gap-6 -mb-6">
+    <div class="flex flex-col text-center gap-6 -mb-8">
       <div
         class="flex border-b align-items-center text-xl font-semibold text-sky-700  gap-2"
       >
@@ -54,7 +52,7 @@ import {
 
       <form [formGroup]="dateForm">
         <mat-form-field appearance="outline">
-          <mat-label>Month and Year</mat-label>
+          <mat-label>Date</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="date" />
           <mat-datepicker-toggle
             matIconSuffix

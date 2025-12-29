@@ -79,7 +79,8 @@ public class TransactionServiceImpl implements TransactionService {
             @CacheEvict(value = "category_transactions", allEntries = true),
             @CacheEvict(value = "category_transactions_by_month", allEntries = true),
             @CacheEvict(value = "single_transaction", allEntries = true),
-            @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
+            @CacheEvict(value = "user_categories", allEntries = true),
+            @CacheEvict(value = "user_categories_totals", allEntries = true),
     })
     public TransactionDto createTransaction(TransactionDto transactionDto, User user) {
         Category category = categoryService.findUserOneCategory(transactionDto.getCategoryId(), user.getId());
@@ -104,7 +105,8 @@ public class TransactionServiceImpl implements TransactionService {
             @CacheEvict(value = "category_transactions", allEntries = true),
             @CacheEvict(value = "category_transactions_by_month", allEntries = true),
             @CacheEvict(value = "single_transaction", allEntries = true),
-            @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
+            @CacheEvict(value = "user_categories", allEntries = true),
+            @CacheEvict(value = "user_categories_totals", allEntries = true),
     })
     public TransactionDto updateTransaction(Long transactionId, TransactionDto transactionDto, User user) {
         // Validate ownership and existence
@@ -134,7 +136,8 @@ public class TransactionServiceImpl implements TransactionService {
             @CacheEvict(value = "category_transactions", allEntries = true),
             @CacheEvict(value = "category_transactions_by_month", allEntries = true),
             @CacheEvict(value = "single_transaction", allEntries = true),
-            @CacheEvict(value = CategoryService.CATEGORY_CACHE, allEntries = true) // Clear dashboard totals
+            @CacheEvict(value = "user_categories", allEntries = true),
+            @CacheEvict(value = "user_categories_totals", allEntries = true),
     })
     public void deleteTransaction(Long transactionId, Long userId) {
         //Find the existing transaction and verify ownership/existence

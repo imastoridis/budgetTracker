@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -69,7 +70,7 @@ class CategoryServiceImplTest {
     void createCategory_shouldSaveAndReturnDto() {
         // Arrange
         // Input DTO doesn't have an ID (it's new)
-        CategoryDto inputDto = new CategoryDto(null, "Travel", testUser.getId(), CategoryType.INCOME);
+        CategoryDto inputDto = new CategoryDto(null, "Travel", testUser.getId(), CategoryType.INCOME, new BigDecimal("0"));
 
         // Mock the repository save operation to return the entity *with* the generated ID (10L)
         when(categoryRepository.save(any(Category.class))).thenReturn(category1);
@@ -143,7 +144,7 @@ class CategoryServiceImplTest {
     @Test
     void updateCategory_shouldUpdateNameAndReturnDto() {
         // Arrange
-        CategoryDto updateDto = new CategoryDto(10L, "New Name", 1L, CategoryType.INCOME);
+        CategoryDto updateDto = new CategoryDto(10L, "New Name", 1L, CategoryType.INCOME,  new BigDecimal("100"));
 
         // Mock repository to return existing category for find
         when(categoryRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(category1));

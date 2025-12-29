@@ -24,7 +24,7 @@ import { DashboardEventsService } from '../../services/dashboard-events.service'
       <div
         class="flex border-b align-items-center  text-xl font-semibold text-sky-700  gap-2"
       >
-        <mat-icon aria-label="face icon" fontIcon="calendar_month"></mat-icon>
+        <mat-icon aria-label="face icon" fontIcon="paid"></mat-icon>
         <h2>This month</h2>
       </div>
 

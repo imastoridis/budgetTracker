@@ -51,7 +51,7 @@ export class UpdateCategory {
   private categoriesService = inject(CategoriesService);
   private dialogRef = inject(MatDialogRef<UpdateCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
-  utils = inject(Utils);
+  private utils = inject(Utils);
   private categoryEventService = inject(CategoryEventsService);
 
   // Initialize the form using the imported factory function
@@ -60,7 +60,7 @@ export class UpdateCategory {
   /* Update category */
   updateCategory(): void {
     const updatedCategory: Category = this.categoryForm.getRawValue();
-
+    console.log('updatedCategory', updatedCategory);
     this.categoriesService
       .updateCategory(updatedCategory as Category)
       .subscribe({

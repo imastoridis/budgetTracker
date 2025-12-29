@@ -12,7 +12,7 @@ import { MaterialModule } from '../../../../shared/modules/material/material.mod
         class="flex border-b align-items-center  text-xl font-semibold text-sky-700  gap-2"
       >
         <mat-icon aria-label="face icon" fontIcon="pie_chart"></mat-icon>
-        <h2>Repartition</h2>
+        <h2>Chart</h2>
       </div>
 
       <div
