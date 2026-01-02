@@ -21,12 +21,34 @@ export class TransactionsService {
   }
 
   /**
-   * Gets transactions by category
+   * Gets all income transactions
    * @returns An Observable of the transactions response.
    */
-  getAllTransactionsByCategory(category: Category): Observable<Transaction[]> {
+  getAllTransactionsIncome(date: Date): Observable<Transaction[]> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+
     return this.http.get<Transaction[]>(
-      this.apiUrlTransactions + '/by-category/' + category.id,
+      this.apiUrlTransactions + '/income/by-month',
+      {
+        params: params,
+      },
+    );
+  }
+
+  /**
+   * Gets all expenses transactions
+   * @returns An Observable of the transactions response.
+   */
+  getAllTransactionsExpense(date: Date): Observable<Transaction[]> {
+    const formattedDate = date.toISOString().substring(0, 10);
+    const params = new HttpParams().set('date', formattedDate);
+
+    return this.http.get<Transaction[]>(
+      this.apiUrlTransactions + '/expense/by-month',
+      {
+        params: params,
+      },
     );
   }
 

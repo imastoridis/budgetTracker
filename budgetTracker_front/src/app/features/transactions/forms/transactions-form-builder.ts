@@ -18,7 +18,6 @@ export type TransactionForm = FormGroup<{
   description: FormControl<string | ''>;
   date: FormControl<Date>;
   categoryId: FormControl<number | null>;
-  userId: FormControl<number | null>;
 }>;
 
 /**
@@ -54,10 +53,6 @@ export function TransactionFormWithData(
       nonNullable: true,
       validators: [Validators.required],
     }),
-    userId: new FormControl<number | null>(initialData.userId, {
-      nonNullable: false,
-      validators: [Validators.required],
-    }),
   }) as TransactionForm;
 }
 
@@ -88,10 +83,6 @@ export function initTransactionForm(): TransactionForm {
       validators: [Validators.required],
     }),
     categoryId: new FormControl<number | null>(null, {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    userId: new FormControl<number | null>(null, {
       nonNullable: true,
       validators: [Validators.required],
     }),

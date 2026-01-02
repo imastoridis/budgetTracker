@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * Represents a spending or income category (e.g., Groceries, Rent, Salary).
@@ -14,6 +13,7 @@ import java.time.LocalDate;
  */
 @Setter
 @Getter
+
 @Entity
 @Table(
         name = "category",
@@ -34,7 +34,7 @@ public class Category {
 
     // Could be "INCOME" or "EXPENSE"
     @Enumerated(EnumType.STRING)
-    @Column(name = "type",nullable = false)
+    @Column(name = "type", nullable = false)
     private CategoryType type;
 
     /**
@@ -48,6 +48,8 @@ public class Category {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private BigDecimal totalAmount = BigDecimal.ZERO;
+
     // --- Constructors ---
     public Category() {
     }
@@ -55,11 +57,14 @@ public class Category {
     public Category(
             String name,
             User user,
-            CategoryType type
+            CategoryType type,
+            BigDecimal totalAmount
 
     ) {
         this.name = name;
         this.user = user;
         this.type = type;
+        this.totalAmount = totalAmount;
     }
+
 }

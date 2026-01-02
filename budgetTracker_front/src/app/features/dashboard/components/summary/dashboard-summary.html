@@ -4,11 +4,20 @@
         <h2>Monthly Budget</h2>
     </div>
 
-    <!-- Categories -->
-    <app-dashboard-summary-categories [allCategories]="allCategories()"></app-dashboard-summary-categories>
+    <div class="flex flex-col gap-3 h-full">
+        <!-- Categories -->
+        <app-dashboard-summary-categories [allCategories]="allCategories()"
+            class="h-[30%]"></app-dashboard-summary-categories>
 
-    <!-- Incomes list -->
-    <app-dashboard-summary-income-transactions [allCategories]="allCategories()">
-    </app-dashboard-summary-income-transactions>
+        <!-- Incomes list -->
+        <app-dashboard-summary-income-transactions [allCategories]="allCategories()"
+            [allTransactionsIncome]="allTransactionsIncome()" class=" h-[33%] overflow-y-auto">
+        </app-dashboard-summary-income-transactions>
+
+        <!-- Expenses list -->
+        <app-dashboard-summary-expense-transactions [allCategories]="allCategories()"
+            class="h-[33%] overflow-y-auto"></app-dashboard-summary-expense-transactions>
+    </div>
+
 
 </div>

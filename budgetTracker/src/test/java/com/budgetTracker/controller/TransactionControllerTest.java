@@ -1,5 +1,6 @@
 package com.budgetTracker.controller;
 
+import com.budgetTracker.dto.TransactionDataDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.model.entity.User;
@@ -67,6 +68,7 @@ public class TransactionControllerTest {
     private static final Long USER_ID = 1L;
     private static final Long MOCK_TRANSACTION_ID = 1L;
     private static final Long MOCK_CATEGORY_ID = 10L;
+    private static final String MOCK_CATEGORY_NAME = "Category1";
 
     // DTO1
     private static final TransactionDto dto1 = new TransactionDto(
@@ -86,6 +88,16 @@ public class TransactionControllerTest {
             "Description 2",
             MOCK_CATEGORY_ID,
             USER_ID
+    );
+
+    // DTO3 Record
+    private static final TransactionDataDto dto3 = new TransactionDataDto(
+            MOCK_TRANSACTION_ID,
+            new BigDecimal("150.00"),
+            LocalDate.of(2025, 10, 10),
+            "Description 2",
+            MOCK_CATEGORY_ID,
+            MOCK_CATEGORY_NAME
     );
 
 
@@ -125,7 +137,7 @@ public class TransactionControllerTest {
     void createTransaction_shouldReturnCreatedTransactionAnd201() throws Exception {
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);
-        when(transactionService.createTransaction(any(TransactionDto.class), any())).thenReturn(dto1);
+        when(transactionService.createTransaction(any(TransactionDto.class), any())).thenReturn(dto3);
 
         // Act & Assert
         mockMvc.perform(post(API_PATH)
@@ -150,9 +162,9 @@ public class TransactionControllerTest {
         // Mock security and service calls
         when(securityUtils.getAuthenticatedUserId(any())).thenReturn(USER_ID);
         when(transactionService.updateTransaction(eq(MOCK_TRANSACTION_ID), any(TransactionDto.class), any()))
-                .thenReturn(dto2);
+                .thenReturn(dto3);
 
-        TransactionDto test = transactionService.updateTransaction(eq(MOCK_TRANSACTION_ID), any(TransactionDto.class), any());
+        TransactionDataDto test = transactionService.updateTransaction(eq(MOCK_TRANSACTION_ID), any(TransactionDto.class), any());
         // log.info("updatedDto: {}", JsonUtils.toJsonString(test));
 
         // Act & Assert

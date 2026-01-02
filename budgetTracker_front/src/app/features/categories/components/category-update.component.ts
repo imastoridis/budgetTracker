@@ -60,7 +60,6 @@ export class UpdateCategory {
   /* Update category */
   updateCategory(): void {
     const updatedCategory: Category = this.categoryForm.getRawValue();
-    console.log('updatedCategory', updatedCategory);
     this.categoriesService
       .updateCategory(updatedCategory as Category)
       .subscribe({

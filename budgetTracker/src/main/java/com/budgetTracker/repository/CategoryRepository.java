@@ -49,7 +49,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "WHERE c.user.id = :userId " +
             "GROUP BY c.id, c.name, c.user.id, c.type " +
             "ORDER BY c.name ASC")
-    List<CategoryDto> findByUserIdOrderByNameAscWithAmount(
+    List<CategoryDto> findUserCategoriesWithTransactionsTotal(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate

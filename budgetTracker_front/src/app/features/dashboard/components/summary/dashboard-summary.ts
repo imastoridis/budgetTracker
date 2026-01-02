@@ -1,23 +1,11 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { Category } from '../../../categories/models/categories.models';
-import { MatDialog } from '@angular/material/dialog';
-import { UpdateCategory } from '../../../categories/components/category-update.component';
-import { DeleteCategory } from '../../../categories/components/category-delete.component';
-import { DetailsCategory } from '../../../categories/components/details/category-details.component';
-import { Utils } from '../../../../shared/utils/utils';
-import { TransactionsService } from '../../../transactions/services/transactions.service';
-import { DashboardEventsService } from '../../services/dashboard-events.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardSummaryCategories } from './components/categories';
 import { DashboardSummaryIncomeTransactions } from './components/income-transactions';
+import { DashboardSummaryExpenseTransactions } from './components/expense-transactions';
+import { Transaction } from '../../../transactions/models/transactions.models';
 @Component({
   selector: 'app-dashboard-summary',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,60 +14,12 @@ import { DashboardSummaryIncomeTransactions } from './components/income-transact
     ReactiveFormsModule,
     DashboardSummaryCategories,
     DashboardSummaryIncomeTransactions,
+    DashboardSummaryExpenseTransactions,
   ],
   templateUrl: './dashboard-summary.html',
 })
 export class DashboardSummary {
-  private dialog = inject(MatDialog);
-  utils = inject(Utils);
-  allCategories = input.required<Category[]>();
-  transactionsTotal = signal<number>(0);
-  private dashboardEventsService = inject(DashboardEventsService);
-  private date = signal<Date>(new Date());
-
-  /* Open Update category dialog*/
-  /*   openUpdateCategory(category: Category): void {
-    this.dialog.open(UpdateCategory, {
-      data: category,
-    });
-  } */
-
-  /* Open category details dialog */
-  /*   transactionsService = inject(TransactionsService);
-
-  openCategoryDetails(category: Category): void {
-    this.transactionsService
-      .getTransactionsByCategoryAndMonth(category, this.date())
-      .subscribe({
-        next: (transactions) => {
-          this.dialog.open(DetailsCategory, {
-            data: [this.allCategories(), transactions],
-            width: '1000px',
-            maxWidth: '1000px',
-          });
-        },
-        error: (err) => {
-          this.utils.openSnackBar(
-            'Error fetching transactions: ' + err.message,
-            '',
-          );
-        },
-      });
-  } */
-
-  /* Open Delete category dialog*/
-  /*  openDeleteCategory(category: Category): void {
-    this.dialog.open(DeleteCategory, {
-      data: category,
-    });
-  } */
-
-  constructor() {
-    /* On selected date change */
-    /*   this.dashboardEventsService.changedDate$
-      .pipe(takeUntilDestroyed())
-      .subscribe((newDate) => {
-        this.date.set(newDate);
-      }); */
-  }
+  readonly allCategories = input.required<Category[]>();
+  readonly allTransactionsIncome = input.required<Transaction[]>();
+  // readonly allTransactionsExpense = input.required<Transaction>();
 }

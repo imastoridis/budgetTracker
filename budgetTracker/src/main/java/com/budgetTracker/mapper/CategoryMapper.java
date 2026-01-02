@@ -14,6 +14,7 @@ public class CategoryMapper {
         dto.setName(category.getName());
         dto.setUserId(category.getUser().getId());
         dto.setType(category.getType());
+        dto.setTotalAmount(category.getTotalAmount());
         return dto;
     }
 

@@ -7,5 +7,4 @@ export interface Transaction {
   description: string | '';
   date: Date;
   categoryId: number | null;
-  userId: number | null;
 }

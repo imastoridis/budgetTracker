@@ -9,18 +9,17 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Utils } from '../../../../shared/utils/utils';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Category } from '../../models/categories.models';
+import { Category } from '../../../categories/models/categories.models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Transaction } from '../../../transactions/models/transactions.models';
-import { TransactionEventsService } from '../../../transactions/services/transaction-events.service';
-import { UpdateTransaction } from '../../../transactions/components/transaction-update.component';
-import { DeleteTransaction } from '../../../transactions/components/transaction-delete.component';
+import { Transaction } from '../../models/transactions.models';
+import { TransactionEventsService } from '../../services/transaction-events.service';
+import { UpdateTransaction } from '../transaction-update.component';
+import { DeleteTransaction } from '../transaction-delete.component';
 
 @Component({
-  selector: 'app-dialog-category-update',
+  selector: 'app-dialog-transaction-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MaterialModule,
@@ -29,15 +28,14 @@ import { DeleteTransaction } from '../../../transactions/components/transaction-
     DatePipe,
     CurrencyPipe,
   ],
-  templateUrl: './category-details.html',
+  templateUrl: './transaction-details.html',
 })
-export class DetailsCategory {
+export class TransactionDetailsCategory {
   readonly TRANSACTION_ARRAY = signal<Transaction[]>(
     inject(MAT_DIALOG_DATA)[1],
   );
   private allCategories: Category[] = inject(MAT_DIALOG_DATA)[0];
-  utils = inject(Utils);
-  transactionEventsService = inject(TransactionEventsService);
+  private transactionEventsService = inject(TransactionEventsService);
   private dialog = inject(MatDialog);
 
   /* Table */

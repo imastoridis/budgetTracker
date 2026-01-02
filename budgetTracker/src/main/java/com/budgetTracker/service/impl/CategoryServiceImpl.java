@@ -1,5 +1,6 @@
 package com.budgetTracker.service.impl;
 
+import com.budgetTracker.annotation.EvictCategoryCache;
 import com.budgetTracker.dto.CategoryDto;
 import com.budgetTracker.exception.DuplicateResourceException;
 import com.budgetTracker.mapper.CategoryMapper;
@@ -8,9 +9,7 @@ import com.budgetTracker.model.entity.User;
 import com.budgetTracker.repository.CategoryRepository;
 import com.budgetTracker.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.exception.ResourceNotFoundException;
@@ -74,10 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return The new category entity for the logged-in user.
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "user_categories", allEntries = true),
-            @CacheEvict(value = "user_categories_totals", allEntries = true),
-    })
+    @EvictCategoryCache
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto, User user) {
         Long userId = user.getId();
@@ -137,7 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
-        return categoryRepository.findByUserIdOrderByNameAscWithAmount(userId, startDate, endDate);
+        return categoryRepository.findUserCategoriesWithTransactionsTotal(userId, startDate, endDate);
     }
 
     /**
@@ -162,10 +158,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return The updated Category entity.
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "user_categories", allEntries = true),
-            @CacheEvict(value = "user_categories_totals", allEntries = true),
-    })
+    @EvictCategoryCache
     @Transactional
     public CategoryDto updateCategory(Long categoryId, CategoryDto categoryDto, Long userId) {
         log.info("Category ID {} updated. Evicting cache for user ID: {}", categoryId, userId);
@@ -181,9 +174,11 @@ public class CategoryServiceImpl implements CategoryService {
                     "Category name '%s' already exists for user ID %d", newName, userId));
         }
 
+
         // Update fields and save
         existingCategory.setName(categoryDto.getName());
         Category updatedCategory = categoryRepository.save(existingCategory);
+        updatedCategory.setTotalAmount(categoryDto.getTotalAmount());
 
         return CategoryMapper.toDto(updatedCategory);
     }
@@ -196,10 +191,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param userId     The ID of the owning user.
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "user_categories", allEntries = true),
-            @CacheEvict(value = "user_categories_totals", allEntries = true),
-    })
+    @EvictCategoryCache
     @Transactional
     public void deleteCategory(Long categoryId, Long userId) {
         log.info("Category ID {} deleted. Evicting cache for user ID: {}", categoryId, userId);

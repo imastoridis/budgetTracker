@@ -26,7 +26,7 @@ import { Category } from '../../../categories/models/categories.models';
 })
 export class AddExpenseBtn {
   dialog = inject(MatDialog);
-  allCategories = input.required<Category[]>();
+  readonly allCategories = input.required<Category[]>();
 
   /* Open add transaction dialog for expense */
   openDialogAddExpense(): void {
@@ -37,7 +37,8 @@ export class AddExpenseBtn {
 
   /* Gets filtered categories for expense*/
   private getFilteredExpenseCategories(): Category[] {
-    const categories = this.allCategories();
-    return categories.filter((category) => category.type === 'EXPENSE');
+    return this.allCategories().filter(
+      (category) => category.type === 'EXPENSE',
+    );
   }
 }

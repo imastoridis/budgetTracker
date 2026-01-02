@@ -26,6 +26,5 @@ export function initTransactionFormExpense(): TransactionForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    userId: new FormControl<number | null>(null),
   }) as TransactionForm;
 }

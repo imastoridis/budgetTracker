@@ -40,7 +40,6 @@ export class CategoriesService {
    * @returns An Observable of the added category response.
    */
   addCategory(category: Category): Observable<Category> {
-    console.log(category);
     return this.http.post<Category>(this.apiUrlCategories, category);
   }
 
@@ -50,7 +49,6 @@ export class CategoriesService {
    * @returns An Observable of the updated category response.
    */
   updateCategory(category: Category): Observable<Category> {
-    console.log(category);
     return this.http.put<Category>(
       this.apiUrlCategories + '/' + category.id,
       category,

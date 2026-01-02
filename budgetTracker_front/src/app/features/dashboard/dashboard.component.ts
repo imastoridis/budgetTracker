@@ -23,6 +23,7 @@ import { TransactionEventsService } from '../transactions/services/transaction-e
 import { DashboardHeader } from './components/dashboard-header';
 import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
 import { DashboardSummary } from './components/summary/dashboard-summary';
+import { TransactionType } from '../transactions/models/transaction-types.enum';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,6 +53,7 @@ export class DashboardComponent {
   getCategoriesWithTotal(date: Date): void {
     this.categoriesService.getCategoriesWithTotal(date).subscribe({
       next: (categories) => {
+        console.log('categories', categories);
         this.allCategories.set(categories);
       },
       error: (err) => {
@@ -68,17 +70,56 @@ export class DashboardComponent {
   private transactionsService = inject(TransactionsService);
   private transactionEventsService = inject(TransactionEventsService);
   readonly allTransactions = signal<Transaction[]>([]);
-  readonly allTransactions$ = signal<Transaction[]>([]);
 
   /* Get all transactoins for user */
-  getTransactions(): void {
+  /*   getTransactions(): void {
     this.transactionsService.getTransactions().subscribe({
       next: (transactions) => {
+        console.log('transactions', transactions);
         this.allTransactions.set(transactions);
       },
       error: (err) => {
         this.utils.openSnackBar(err.error.message, '');
         this.allTransactions.set([]);
+        return of([]);
+      },
+    });
+  } */
+
+  /**
+   * Income Transactions
+   */
+  readonly allTransactionsIncome = signal<Transaction[]>([]);
+
+  getAllTransactionsIncome(): void {
+    this.transactionsService.getAllTransactionsIncome(this.date()).subscribe({
+      next: (transactionsIncome) => {
+        console.log('transactions', transactionsIncome);
+        this.allTransactionsIncome.set(transactionsIncome);
+      },
+      error: (err) => {
+        this.utils.openSnackBar(err.error.message, '');
+        this.allTransactionsIncome.set([]);
+        return of([]);
+      },
+    });
+  }
+
+  /**
+   *  Expense transactions
+   * */
+
+  readonly allTransactionsExpense = signal<Transaction[]>([]);
+
+  getAllTransactionsExpense(): void {
+    this.transactionsService.getAllTransactionsExpense(this.date()).subscribe({
+      next: (transactionsExpense) => {
+        console.log('transactions', transactionsExpense);
+        this.allTransactionsExpense.set(transactionsExpense);
+      },
+      error: (err) => {
+        this.utils.openSnackBar(err.error.message, '');
+        this.allTransactionsExpense.set([]);
         return of([]);
       },
     });
@@ -140,57 +181,100 @@ export class DashboardComponent {
      * Uses the transaction-event.service to add, update or delete a transaction, updates to sum in categories
      */
 
-    /* Transaction added */
+    /**
+     * Transaction added
+     * Category total amount updated
+     * Income or expense transaction list updated
+     * @returns updated category list
+     * */
     this.transactionEventsService.addedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((addedTransaction) => {
-        // Update Categories Signal
         this.allCategories.update((categories) =>
-          categories.map((category) =>
-            category.id === addedTransaction.categoryId
-              ? this.updateCategoryTotal(category, 0, addedTransaction.amount)
-              : category,
-          ),
-        );
+          categories.map((category) => {
+            if (category.id === addedTransaction.categoryId) {
+              if (category.type === TransactionType.INCOME) {
+                // Update Transactions income Signal
+                this.allTransactionsIncome.update((transactionsIncome) => {
+                  return [...transactionsIncome, addedTransaction];
+                });
+              } else {
+                // Update Transactions expense Signal
+                this.allTransactionsExpense.update((transactionsEpense) => {
+                  return [...transactionsEpense, addedTransaction];
+                });
+              }
 
-        // Update Transactions Signal
-        this.allTransactions.update((transactions) => {
-          return [...transactions, addedTransaction];
-        });
+              //Update category total amount
+              return this.updateCategoryTotal(
+                category,
+                0,
+                addedTransaction.amount,
+              );
+            } else {
+              return category;
+            }
+          }),
+        );
       });
 
-    /* Transaction updated */
+    /**
+     * Transaction updated
+     * Category total amount updated
+     * Income or expense transaction list updated
+     * @returns updated category list
+     * */
+
     this.transactionEventsService.updatedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((updatedTransaction) => {
-        const oldTransaction = this.allTransactions().find(
+        const oldTransaction = this.allTransactionsIncome().find(
           (t) => t.id === updatedTransaction.id,
         );
+        console.log('Old Transaction', 'oldTransaction');
 
         if (oldTransaction) {
-          // Update Categories Signal
+          console.log('Old Transaction', oldTransaction);
           this.allCategories.update((categories) =>
-            categories.map((category) =>
-              category.id === updatedTransaction.categoryId
-                ? this.updateCategoryTotal(
-                    category,
-                    oldTransaction.amount,
-                    updatedTransaction.amount,
-                  )
-                : category,
-            ),
-          );
+            categories.map((category) => {
+              if (category.id === updatedTransaction.categoryId) {
+                console.log('Category', updatedTransaction);
+                if (category.type === TransactionType.INCOME) {
+                  // Update Transactions income Signal
+                  this.allTransactionsIncome.update((transactionsIncome) =>
+                    transactionsIncome.map((t) =>
+                      t.id === updatedTransaction.id ? updatedTransaction : t,
+                    ),
+                  );
+                } else {
+                  // Update Transactions expense Signal
+                  this.allTransactionsExpense.update((transactionsExpense) =>
+                    transactionsExpense.map((t) =>
+                      t.id === updatedTransaction.id ? updatedTransaction : t,
+                    ),
+                  );
+                }
 
-          // Update Transactions Signal
-          this.allTransactions.update((transactions) =>
-            transactions.map((t) =>
-              t.id === updatedTransaction.id ? updatedTransaction : t,
-            ),
+                // Update Categories total amount
+                return this.updateCategoryTotal(
+                  category,
+                  oldTransaction.amount,
+                  updatedTransaction.amount,
+                );
+              } else {
+                return category;
+              }
+            }),
           );
         }
       });
 
-    /* Transaction deleted */
+    /**
+     * Transaction deleted
+     * Category total amount updated
+     * Income or expense transaction list updated
+     * @returns updated category list
+     * */
     this.transactionEventsService.deletedTransaction$
       .pipe(takeUntilDestroyed())
       .subscribe((deletedTransaction) => {
@@ -218,7 +302,7 @@ export class DashboardComponent {
       .subscribe((newDate) => {
         this.date.set(newDate);
         this.getCategoriesWithTotal(this.date());
-        this.getTransactions();
+        this.getAllTransactionsIncome();
       });
 
     /**
@@ -226,7 +310,7 @@ export class DashboardComponent {
      */
     afterNextRender(() => {
       this.getCategoriesWithTotal(this.date());
-      this.getTransactions();
+      this.getAllTransactionsIncome();
     });
   }
 }

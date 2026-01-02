@@ -74,6 +74,9 @@ export class UpdateTransaction {
       });
   }
 
+  constructor() {
+    console.log('Initial Data', this.initialData);
+  }
   get amount() {
     return this.transactionFormUpdate.get('amount');
   }

@@ -1,5 +1,6 @@
 package com.budgetTracker.service;
 
+import com.budgetTracker.dto.TransactionDataDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.User;
 
@@ -19,7 +20,7 @@ public interface TransactionService {
      * @param user           The user.
      * @return The saved Transaction object.
      */
-    TransactionDto createTransaction(TransactionDto transactionDto, User user);
+    TransactionDataDto createTransaction(TransactionDto transactionDto, User user);
 
     /**
      * UPDATE: Updates the transaction
@@ -29,7 +30,7 @@ public interface TransactionService {
      * @param user           The user.
      * @return The updated transaction entity.
      */
-    TransactionDto updateTransaction(Long transactionId, TransactionDto transactionDto, User user);
+    TransactionDataDto updateTransaction(Long transactionId, TransactionDto transactionDto, User user);
 
     /**
      * GET ALL: Retrieves a list of all transactions belonging to a specific user ID.
@@ -56,17 +57,25 @@ public interface TransactionService {
      * @param date       The chosen month
      * @return A list of the user's transactions.
      */
-    List<TransactionDto> findUserTransactionsByCategoryIdAndMonth(Long userId, Long categoryId, LocalDate date);
+    List<TransactionDataDto> findUserTransactionsByCategoryIdAndMonth(Long userId, Long categoryId, LocalDate date);
 
     /**
-     * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.
-     * This is critical for security checks before allowing an update or delete.
+     * GET ALL: Retrieves a list of all income transactions by a chosen month.
      *
-     * @param transactionId The ID of the transaction.
-     * @param userId        The ID of the owning user.
-     * @return An Optional containing the Transaction if found and owned by the user.
+     * @param userId The ID of the owning user.
+     * @param date   The chosen month
+     * @return A list of the user's income transactions.
      */
-    TransactionDto findUserOneTransaction(Long transactionId, Long userId);
+    List<TransactionDataDto> findUserIncomeTransactionsByMonth(Long userId, LocalDate date);
+
+    /**
+     * GET ALL: Retrieves a list of all expense transactions by a chosen month.
+     *
+     * @param userId The ID of the owning user.
+     * @param date   The chosen month
+     * @return A list of the user's transactions.
+     */
+    List<TransactionDataDto> findUserExpenseTransactionsByMonth(Long userId, LocalDate date);
 
     /**
      * Deletes the specified transaction entity.
@@ -82,7 +91,7 @@ public interface TransactionService {
      * @param date   Date
      * @param userId The ID of the owning user.
      */
-    BigDecimal getTotalIncomeByUserIdAndMonth(Long userId, LocalDate date);
+    BigDecimal findSumIncomeByMonthByUserIdAndDate(Long userId, LocalDate date);
 
     /**
      * Get total expense
@@ -91,5 +100,5 @@ public interface TransactionService {
      * @param date   Date
      *
      */
-    BigDecimal getTotalExpenseByUserIdAndMonth(Long userId, LocalDate date);
+    BigDecimal findSumExpenseByUserIdAndMonth(Long userId, LocalDate date);
 }

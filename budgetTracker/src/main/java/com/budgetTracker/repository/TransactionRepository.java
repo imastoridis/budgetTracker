@@ -1,5 +1,8 @@
 package com.budgetTracker.repository;
 
+import com.budgetTracker.dto.ExpenseTransactionsDto;
+import com.budgetTracker.dto.TransactionDataDto;
+import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.Transaction;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Sort;
@@ -26,7 +29,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      */
     Optional<Transaction> findByIdAndUserId(Long id, Long userId);
 
-
     /**
      * Finds all transactions belonging to a specific user and category
      *
@@ -39,7 +41,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE t.user.id = :userId AND " +
             "t.category.id = :categoryId"
     )
-    List<Transaction> findUserTransactionsByCategoryId(
+    List<TransactionDto> findUserTransactionsByCategoryId(
             @Param("userId") Long userId,
             @Param("categoryId") Long categoryId,
             Sort sort
@@ -54,15 +56,62 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      * @param endDate    End month
      * @return List of transactions
      */
-    @Query("SELECT t " +
+    //"SELECT t " +
+    @Query("SELECT new com.budgetTracker.dto.TransactionDataDto(" +
+            "t.id, t.amount, t.date, t.description,t.category.id, c.name) " +
             "FROM Transaction t " +
+            "JOIN t.category c " +
             "WHERE t.user.id = :userId AND " +
-            "t.category.id = :categoryId AND " +
+            "c.id = :categoryId AND " +
             "t.date BETWEEN :startDate AND :endDate"
     )
-    List<Transaction> findUserTransactionsByCategoryIdAndMonth(
+    List<TransactionDataDto> findUserTransactionsByCategoryIdAndMonth(
             @Param("userId") Long userId,
             @Param("categoryId") Long categoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Sort sort
+    );
+
+    /**
+     * Finds all income transactions belonging to a specific user within the month of the given date.
+     *
+     * @param userId    The ID of the authenticated user.
+     * @param startDate Start month.
+     * @param endDate   End month
+     * @return TransactionDataDto
+     */
+    @Query("SELECT new com.budgetTracker.dto.TransactionDataDto(" +
+            "t.id, t.amount, t.date, t.description,t.category.id, c.name) " +
+            "FROM Transaction t " +
+            "JOIN t.category c " +
+            "WHERE t.user.id = :userId " +
+            "AND c.type = com.budgetTracker.model.enums.CategoryType.INCOME " +
+            "AND t.date BETWEEN :startDate AND :endDate")
+    List<TransactionDataDto> findUserIncomeTransactionsByMonth(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Sort sort
+    );
+
+    /**
+     * Finds all expense transactions belonging to a specific user within the month of the given date.
+     *
+     * @param userId    The ID of the authenticated user.
+     * @param startDate Start month.
+     * @param endDate   End month
+     * @return List of transactions
+     */
+    @Query("SELECT new com.budgetTracker.dto.TransactionDataDto(" +
+            "t.id, t.amount, t.date, t.description,t.category.id, c.name) " +
+            "FROM Transaction t " +
+            "JOIN t.category c " +
+            "WHERE t.user.id = :userId " +
+            "AND c.type = com.budgetTracker.model.enums.CategoryType.EXPENSE " +
+            "AND t.date BETWEEN :startDate AND :endDate")
+    List<TransactionDataDto> findUserExpenseTransactionsByMonth(
+            @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             Sort sort
@@ -82,7 +131,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE t.user.id = :userId AND " +
             "t.category.type = com.budgetTracker.model.enums.CategoryType.INCOME AND " +
             "t.date BETWEEN :startDate AND :endDate")
-    BigDecimal findIncomeByMonthByUserIdAndDate(
+    BigDecimal findSumIncomeByMonthByUserIdAndDate(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
@@ -102,7 +151,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE t.user.id = :userId AND " +
             "t.category.type = com.budgetTracker.model.enums.CategoryType.EXPENSE AND " +
             "t.date BETWEEN :startDate AND :endDate")
-    BigDecimal findExpenseByMonthByUserIdAndDate(
+    BigDecimal findSumExpenseByUserIdAndMonth(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate

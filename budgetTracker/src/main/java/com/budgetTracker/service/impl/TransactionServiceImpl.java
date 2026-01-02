@@ -1,5 +1,7 @@
 package com.budgetTracker.service.impl;
 
+import com.budgetTracker.annotation.EvictTransactionCache;
+import com.budgetTracker.dto.TransactionDataDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.exception.AccessDeniedException;
 import com.budgetTracker.exception.ResourceNotFoundException;
@@ -12,9 +14,7 @@ import com.budgetTracker.service.CategoryService;
 import com.budgetTracker.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -73,22 +73,14 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The new transaction entity for the logged-in user.
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
-            @CacheEvict(value = "user_transactions", allEntries = true),
-            @CacheEvict(value = "category_transactions", allEntries = true),
-            @CacheEvict(value = "category_transactions_by_month", allEntries = true),
-            @CacheEvict(value = "single_transaction", allEntries = true),
-            @CacheEvict(value = "user_categories", allEntries = true),
-            @CacheEvict(value = "user_categories_totals", allEntries = true),
-    })
-    public TransactionDto createTransaction(TransactionDto transactionDto, User user) {
+    @EvictTransactionCache
+    public TransactionDataDto createTransaction(TransactionDto transactionDto, User user) {
         Category category = categoryService.findUserOneCategory(transactionDto.getCategoryId(), user.getId());
 
         Transaction newTransaction = TransactionMapper.toEntity(transactionDto, user, category);
         Transaction savedTransaction = transactionRepository.save(newTransaction);
 
-        return TransactionMapper.toDto(savedTransaction);
+        return TransactionMapper.toRecord(savedTransaction, category);
     }
 
     /**
@@ -99,46 +91,28 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The updated transaction entity.
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
-            @CacheEvict(value = "user_transactions", allEntries = true),
-            @CacheEvict(value = "category_transactions", allEntries = true),
-            @CacheEvict(value = "category_transactions_by_month", allEntries = true),
-            @CacheEvict(value = "single_transaction", allEntries = true),
-            @CacheEvict(value = "user_categories", allEntries = true),
-            @CacheEvict(value = "user_categories_totals", allEntries = true),
-    })
-    public TransactionDto updateTransaction(Long transactionId, TransactionDto transactionDto, User user) {
+    @EvictTransactionCache
+    public TransactionDataDto updateTransaction(Long transactionId, TransactionDto transactionDto, User user) {
         // Validate ownership and existence
         Transaction existingTransaction = validateTransactionOwnedByUser(transactionDto.getId(), user.getId());
 
-        //Find category
         Category category = categoryService.findUserOneCategory(transactionDto.getCategoryId(), user.getId());
 
         // Update fields and save
         Transaction updatedTransactionEntity = TransactionMapper.toEntityUpdate(existingTransaction, transactionDto, category);
         Transaction updatedTransaction = transactionRepository.save(updatedTransactionEntity);
 
-        // Transform the updated entity into its DTO representation
-        return TransactionMapper.toDto(updatedTransaction);
+        return TransactionMapper.toRecord(updatedTransaction, category);
     }
 
     /**
-     * Deletes a new transaction.
+     * Deletes a transaction.
      *
      * @param transactionId The ID of the transaction.
      * @param userId        The ID of the owning user.
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "user_transactions_category_totals", allEntries = true),
-            @CacheEvict(value = "user_transactions", allEntries = true),
-            @CacheEvict(value = "category_transactions", allEntries = true),
-            @CacheEvict(value = "category_transactions_by_month", allEntries = true),
-            @CacheEvict(value = "single_transaction", allEntries = true),
-            @CacheEvict(value = "user_categories", allEntries = true),
-            @CacheEvict(value = "user_categories_totals", allEntries = true),
-    })
+    @EvictTransactionCache
     public void deleteTransaction(Long transactionId, Long userId) {
         //Find the existing transaction and verify ownership/existence
         Transaction transactionToDelete = transactionRepository.findByIdAndUserId(transactionId, userId)
@@ -170,20 +144,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * GET ONE: Finds a transaction by its ID, ensuring it belongs to the specified user.
-     *
-     * @param transactionId The ID of the transaction.
-     * @param userId        The ID of the user who owns the category.
-     * @return The categoryDto for the logged-in user.
-     */
-    @Override
-    @Cacheable(value = "single_transaction", key = "#transactionId")
-    public TransactionDto findUserOneTransaction(Long transactionId, Long userId) {
-        Transaction transaction = validateTransactionOwnedByUser(transactionId, userId);
-        return TransactionMapper.toDto(transaction);
-    }
-
-    /**
      * GET ALL: Retrieves all transactions for a given user by category id.
      *
      * @param userId     The userId
@@ -194,15 +154,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Cacheable(value = "category_transactions", key = "#userId + '-' + #categoryId")
     public List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId) {
-        List<Transaction> categoryEntities = transactionRepository.findUserTransactionsByCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
-
-        if (categoryEntities.isEmpty()) {
-            return List.of();
-        } else {
-            return categoryEntities.stream()
-                    .map(TransactionMapper::toDto)
-                    .collect(Collectors.toList());
-        }
+        return transactionRepository.findUserTransactionsByCategoryId(userId, categoryId, Sort.by(Sort.Direction.DESC, "date"));
     }
 
     /**
@@ -216,20 +168,45 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Cacheable(value = "category_transactions_by_month", key = "#userId + '-' + #categoryId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
-    public List<TransactionDto> findUserTransactionsByCategoryIdAndMonth(Long userId, Long categoryId, LocalDate date) {
+    public List<TransactionDataDto> findUserTransactionsByCategoryIdAndMonth(Long userId, Long categoryId, LocalDate date) {
 
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<Transaction> categoryEntities = transactionRepository.findUserTransactionsByCategoryIdAndMonth(userId, categoryId, startDate, endDate, Sort.by(Sort.Direction.DESC, "date"));
+        return transactionRepository.findUserTransactionsByCategoryIdAndMonth(userId, categoryId, startDate, endDate, Sort.by(Sort.Direction.DESC, "date"));
+    }
 
-        if (categoryEntities.isEmpty()) {
-            return List.of();
-        } else {
-            return categoryEntities.stream()
-                    .map(TransactionMapper::toDto)
-                    .collect(Collectors.toList());
-        }
+    /**
+     * GET ALL: Retrieves all income transactions for a given user by category id and chosen month
+     *
+     * @param userId The userId
+     * @param date   the chosen date
+     * @return The TransactionDataDto for the logged-in user.
+     */
+    @Override
+    @Cacheable(value = "category_transactions_income_by_month", key = "#userId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
+    public List<TransactionDataDto> findUserIncomeTransactionsByMonth(Long userId, LocalDate date) {
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+
+        return transactionRepository.findUserIncomeTransactionsByMonth(userId, startDate, endDate, Sort.by(Sort.Direction.DESC, "date"));
+    }
+
+    /**
+     * GET ALL: Retrieves all expense transactions for a given user by category id and chosen month
+     *
+     * @param userId The userId
+     * @param date   the chosen date
+     * @return The transactionDto for the logged-in user.
+     */
+    @Override
+    @Cacheable(value = "category_transactions_expense_by_month", key = "#userId + '-' + #date.getYear() + '-' + #date.getMonthValue()")
+    public List<TransactionDataDto> findUserExpenseTransactionsByMonth(Long userId, LocalDate date) {
+
+        LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
+
+        return transactionRepository.findUserExpenseTransactionsByMonth(userId, startDate, endDate, Sort.by(Sort.Direction.DESC, "date"));
     }
 
     /**
@@ -240,10 +217,10 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The total income
      */
     @Override
-    public BigDecimal getTotalIncomeByUserIdAndMonth(Long userId, LocalDate date) {
+    public BigDecimal findSumIncomeByMonthByUserIdAndDate(Long userId, LocalDate date) {
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
-        BigDecimal totalIncome = transactionRepository.findIncomeByMonthByUserIdAndDate(userId, startDate, endDate);
+        BigDecimal totalIncome = transactionRepository.findSumIncomeByMonthByUserIdAndDate(userId, startDate, endDate);
 
         return Objects.requireNonNullElseGet(totalIncome, () -> BigDecimal.valueOf(0));
     }
@@ -256,10 +233,10 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The total expenses
      */
     @Override
-    public BigDecimal getTotalExpenseByUserIdAndMonth(Long userId, LocalDate date) {
+    public BigDecimal findSumExpenseByUserIdAndMonth(Long userId, LocalDate date) {
         LocalDate startDate = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate endDate = date.with(TemporalAdjusters.lastDayOfMonth());
-        BigDecimal totalExpense = transactionRepository.findExpenseByMonthByUserIdAndDate(userId, startDate, endDate);
+        BigDecimal totalExpense = transactionRepository.findSumExpenseByUserIdAndMonth(userId, startDate, endDate);
 
         return Objects.requireNonNullElseGet(totalExpense, () -> BigDecimal.valueOf(0));
     }

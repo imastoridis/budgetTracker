@@ -1,5 +1,6 @@
 package com.budgetTracker.controller;
 
+import com.budgetTracker.dto.TransactionDataDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.User;
 import com.budgetTracker.service.TransactionService;
@@ -44,7 +45,7 @@ public class TransactionController {
      * @return the new transaction dto
      */
     @PostMapping
-    public ResponseEntity<TransactionDto> createTransaction(
+    public ResponseEntity<TransactionDataDto> createTransaction(
             @RequestBody TransactionDto transactionDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -53,7 +54,7 @@ public class TransactionController {
         // Get the authenticated User using the username principal
         User user = securityUtils.getAuthenticatedUser(userDetails);
         // Set fields and save
-        TransactionDto saveTransactionDto = transactionService.createTransaction(transactionDto, user);
+        TransactionDataDto saveTransactionDto = transactionService.createTransaction(transactionDto, user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -97,16 +98,46 @@ public class TransactionController {
      * @return the transactions associated with the logged-in user
      */
     @GetMapping("/by-category/by-month/{id}")
-    public ResponseEntity<List<TransactionDto>> getAllTransactionsByCategoryAndMonthAndUserId(
+    public ResponseEntity<List<TransactionDataDto>> getAllTransactionsByCategoryAndMonthAndUserId(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
-        List<TransactionDto> transactions = transactionService.findUserTransactionsByCategoryIdAndMonth(userId, id, date);
+        List<TransactionDataDto> transactions = transactionService.findUserTransactionsByCategoryIdAndMonth(userId, id, date);
         return ResponseEntity.ok(transactions);
     }
 
+    /**
+     * GET /api/transactions/income/by-month: Retrieves all income transactions for the currently authenticated user.
+     *
+     * @return the transactions associated with the logged-in user
+     */
+    @GetMapping(value = "/income/by-month")
+    public ResponseEntity<List<TransactionDataDto>> getAllIncomeTransactionsByMonthAndUserId(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        List<TransactionDataDto> transactions = transactionService.findUserIncomeTransactionsByMonth(userId, date);
+        return ResponseEntity.ok(transactions);
+    }
+
+    /**
+     * GET /api/transactions/expense: Retrieves all expense transactions for the currently authenticated user.
+     *
+     * @return the transactions associated with the logged-in user
+     */
+    @GetMapping("/expense/by-month")
+    public ResponseEntity<List<TransactionDataDto>> getAllExpenseTransactionsByMonthAndUserId(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = securityUtils.getAuthenticatedUserId(userDetails);
+        List<TransactionDataDto> transactions = transactionService.findUserExpenseTransactionsByMonth(userId, date);
+        return ResponseEntity.ok(transactions);
+    }
 
     /**
      * PUT /api/transactions/{id} : Updates a transaction
@@ -115,14 +146,14 @@ public class TransactionController {
      * @return the updated transaction Dto
      */
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionDto> updateTransaction(
+    public ResponseEntity<TransactionDataDto> updateTransaction(
             @PathVariable Long id,
             @RequestBody TransactionDto transactionDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         User user = securityUtils.getAuthenticatedUser(userDetails);
         transactionDto.setId(id);
-        TransactionDto updatedTransactionDto = transactionService.updateTransaction(id, transactionDto, user);
+        TransactionDataDto updatedTransactionDto = transactionService.updateTransaction(id, transactionDto, user);
         return ResponseEntity.ok(updatedTransactionDto);
     }
 
@@ -148,12 +179,12 @@ public class TransactionController {
      * @return the income associated with the logged-in user
      */
     @GetMapping("/total-income")
-    public ResponseEntity<BigDecimal> getTotalIncomeByMonth(
+    public ResponseEntity<BigDecimal> getSumIncomeByMonth(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
-        BigDecimal totalIncomeByMonth = transactionService.getTotalIncomeByUserIdAndMonth(userId, date);
+        BigDecimal totalIncomeByMonth = transactionService.findSumIncomeByMonthByUserIdAndDate(userId, date);
         return ResponseEntity.ok(totalIncomeByMonth);
     }
 
@@ -164,13 +195,13 @@ public class TransactionController {
      * @return the expense associated with the logged-in user
      */
     @GetMapping("/total-expense")
-    public ResponseEntity<BigDecimal> getTotalExpenseByMonth(
+    public ResponseEntity<BigDecimal> getSumExpenseByMonth(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         Long userId = securityUtils.getAuthenticatedUserId(userDetails);
 
-        BigDecimal totalExpenseByMonth = transactionService.getTotalExpenseByUserIdAndMonth(userId, date);
+        BigDecimal totalExpenseByMonth = transactionService.findSumExpenseByUserIdAndMonth(userId, date);
         return ResponseEntity.ok(totalExpenseByMonth);
     }
 }

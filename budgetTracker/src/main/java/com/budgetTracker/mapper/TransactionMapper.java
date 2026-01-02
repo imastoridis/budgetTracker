@@ -1,5 +1,6 @@
 package com.budgetTracker.mapper;
 
+import com.budgetTracker.dto.TransactionDataDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.Category;
 import com.budgetTracker.model.entity.Transaction;
@@ -19,6 +20,20 @@ public class TransactionMapper {
         dto.setCategoryId(transaction.getCategory().getId());
 
         return dto;
+    }
+
+    // Convert Entity to TransactionDataDto
+    public static TransactionDataDto toRecord(Transaction transaction, Category category) {
+        if (transaction == null) return null;
+
+        return new TransactionDataDto(
+                transaction.getId(),
+                transaction.getAmount(),
+                transaction.getDate(),
+                transaction.getDescription(),
+                transaction.getCategory().getId(),
+                category.getName()
+        );
     }
 
     // Convert DTO to Entity
