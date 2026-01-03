@@ -39,7 +39,13 @@ export class TransactionDetailsCategory {
   private dialog = inject(MatDialog);
 
   /* Table */
-  displayedColumns: string[] = ['id', 'date', 'amount', 'action'];
+  displayedColumns: string[] = [
+    'id',
+    'date',
+    'amount',
+    'description',
+    'action',
+  ];
   dataSource = this.TRANSACTION_ARRAY;
 
   /* Total amount for category */

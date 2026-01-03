@@ -38,7 +38,7 @@ import { TransactionType } from '../transactions/models/transaction-types.enum';
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {
-  utils = inject(Utils);
+  private utils = inject(Utils);
   readonly date = signal<Date>(new Date());
   private dashboardEventsService = inject(DashboardEventsService);
 
@@ -49,11 +49,10 @@ export class DashboardComponent {
   private categoriesService = inject(CategoriesService);
   readonly allCategories = signal<Category[]>([]);
 
-  /* Get all categories for user */
+  /* Get all categories for user with total amount of each category*/
   getCategoriesWithTotal(date: Date): void {
     this.categoriesService.getCategoriesWithTotal(date).subscribe({
       next: (categories) => {
-        console.log('categories', categories);
         this.allCategories.set(categories);
       },
       error: (err) => {
@@ -69,32 +68,13 @@ export class DashboardComponent {
    */
   private transactionsService = inject(TransactionsService);
   private transactionEventsService = inject(TransactionEventsService);
-  readonly allTransactions = signal<Transaction[]>([]);
 
-  /* Get all transactoins for user */
-  /*   getTransactions(): void {
-    this.transactionsService.getTransactions().subscribe({
-      next: (transactions) => {
-        console.log('transactions', transactions);
-        this.allTransactions.set(transactions);
-      },
-      error: (err) => {
-        this.utils.openSnackBar(err.error.message, '');
-        this.allTransactions.set([]);
-        return of([]);
-      },
-    });
-  } */
-
-  /**
-   * Income Transactions
-   */
+  /* Get Income Transactions*/
   readonly allTransactionsIncome = signal<Transaction[]>([]);
 
   getAllTransactionsIncome(): void {
     this.transactionsService.getAllTransactionsIncome(this.date()).subscribe({
       next: (transactionsIncome) => {
-        console.log('transactions', transactionsIncome);
         this.allTransactionsIncome.set(transactionsIncome);
       },
       error: (err) => {
@@ -105,16 +85,12 @@ export class DashboardComponent {
     });
   }
 
-  /**
-   *  Expense transactions
-   * */
-
+  /* Get Expense transactions   */
   readonly allTransactionsExpense = signal<Transaction[]>([]);
 
   getAllTransactionsExpense(): void {
     this.transactionsService.getAllTransactionsExpense(this.date()).subscribe({
       next: (transactionsExpense) => {
-        console.log('transactions', transactionsExpense);
         this.allTransactionsExpense.set(transactionsExpense);
       },
       error: (err) => {
@@ -126,8 +102,10 @@ export class DashboardComponent {
   }
 
   /**
-   * Calculates and returns a new category object with the updated total amount.
-   */
+   * Total amounts
+   * */
+
+  /* Calculates and returns a new category object with the updated total amount.   */
   private updateCategoryTotal(
     category: Category,
     oldAmount: number,
@@ -139,7 +117,40 @@ export class DashboardComponent {
     };
   }
 
-  /* Constructor */
+  /* Gets total of income for a month */
+  readonly totalIncome = signal<number>(0);
+
+  getTotalIncomeByMonth(date: Date): void {
+    this.transactionsService.getTotalIncomeByMonth(date).subscribe({
+      next: (totalIncome) => {
+        this.totalIncome.set(+totalIncome);
+      },
+      error: (err) => {
+        this.utils.openSnackBar(err.error, '');
+      },
+    });
+  }
+
+  /* Gets total of expense for a month */
+  readonly totalExpense = signal<number>(0);
+
+  getTotalExpensesByMonth(date: Date): void {
+    this.transactionsService.getTotalExpensesByMonth(date).subscribe({
+      next: (totalExpenses) => {
+        this.totalExpense.set(+totalExpenses);
+      },
+      error: (err) => {
+        this.utils.openSnackBar(err.error, '');
+      },
+    });
+  }
+
+  /* Gets total by month */
+  getTotalByMonth(date: Date) {
+    this.getTotalIncomeByMonth(date);
+    this.getTotalExpensesByMonth(date);
+  }
+
   constructor() {
     /**
      * Category  Events
@@ -205,6 +216,9 @@ export class DashboardComponent {
                 });
               }
 
+              // Update total income/expense
+              this.getTotalByMonth(this.date());
+
               //Update category total amount
               return this.updateCategoryTotal(
                 category,
@@ -231,14 +245,12 @@ export class DashboardComponent {
         const oldTransaction = this.allTransactionsIncome().find(
           (t) => t.id === updatedTransaction.id,
         );
-        console.log('Old Transaction', 'oldTransaction');
 
         if (oldTransaction) {
           console.log('Old Transaction', oldTransaction);
           this.allCategories.update((categories) =>
             categories.map((category) => {
               if (category.id === updatedTransaction.categoryId) {
-                console.log('Category', updatedTransaction);
                 if (category.type === TransactionType.INCOME) {
                   // Update Transactions income Signal
                   this.allTransactionsIncome.update((transactionsIncome) =>
@@ -254,6 +266,9 @@ export class DashboardComponent {
                     ),
                   );
                 }
+
+                // Update total income/expense
+                this.getTotalByMonth(this.date());
 
                 // Update Categories total amount
                 return this.updateCategoryTotal(
@@ -280,17 +295,35 @@ export class DashboardComponent {
       .subscribe((deletedTransaction) => {
         // Update Categories Signal
         this.allCategories.update((categories) =>
-          categories.map((category) =>
-            category.id === deletedTransaction.categoryId
-              ? this.updateCategoryTotal(category, deletedTransaction.amount, 0)
-              : category,
-          ),
-        );
+          categories.map((category) => {
+            if (category.id === deletedTransaction.categoryId) {
+              if (category.type === TransactionType.INCOME) {
+                this.allTransactionsIncome.update((transactionsIncome) =>
+                  transactionsIncome.filter(
+                    (transaction) => transaction.id !== deletedTransaction.id,
+                  ),
+                );
+              } else {
+                this.allTransactionsExpense.update((transactionsExpense) =>
+                  transactionsExpense.filter(
+                    (transaction) => transaction.id !== deletedTransaction.id,
+                  ),
+                );
+              }
 
-        this.allTransactions.update((transactions) =>
-          transactions.filter(
-            (transaction) => transaction.id !== deletedTransaction.id,
-          ),
+              // Update total income/expense
+              this.getTotalByMonth(this.date());
+
+              // Update category total amount
+              return this.updateCategoryTotal(
+                category,
+                deletedTransaction.amount,
+                0,
+              );
+            } else {
+              return category;
+            }
+          }),
         );
       });
 
@@ -303,6 +336,8 @@ export class DashboardComponent {
         this.date.set(newDate);
         this.getCategoriesWithTotal(this.date());
         this.getAllTransactionsIncome();
+        this.getAllTransactionsExpense();
+        this.getTotalByMonth(this.date());
       });
 
     /**
@@ -311,6 +346,8 @@ export class DashboardComponent {
     afterNextRender(() => {
       this.getCategoriesWithTotal(this.date());
       this.getAllTransactionsIncome();
+      this.getAllTransactionsExpense();
+      this.getTotalByMonth(this.date());
     });
   }
 }

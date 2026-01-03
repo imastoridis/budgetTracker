@@ -45,7 +45,10 @@ import { Category } from '../../../categories/models/categories.models';
       </div>
 
       <!-- This month total display -->
-      <app-total-month-display></app-total-month-display>
+      <app-total-month-display
+        [totalIncome]="totalIncome()"
+        [totalExpense]="totalExpense()"
+      ></app-total-month-display>
 
       <!-- Piechart -->
       <app-pie-chart-display></app-pie-chart-display>
@@ -57,4 +60,6 @@ import { Category } from '../../../categories/models/categories.models';
 })
 export class DashboardSidebar {
   allCategories = input.required<Category[]>();
+  totalIncome = input.required<number>();
+  totalExpense = input.required<number>();
 }

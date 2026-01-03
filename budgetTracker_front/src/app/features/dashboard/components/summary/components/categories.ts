@@ -15,8 +15,6 @@ import { TransactionDetailsCategory } from '../../../../transactions/components/
 import { Utils } from '../../../../../shared/utils/utils';
 import { TransactionsService } from '../../../../transactions/services/transactions.service';
 import { CurrencyPipe } from '@angular/common';
-import { DashboardEventsService } from '../../../services/dashboard-events.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard-summary-categories',
@@ -28,7 +26,6 @@ export class DashboardSummaryCategories {
   private dialog = inject(MatDialog);
   private utils = inject(Utils);
   readonly allCategories = input.required<Category[]>();
-  private dashboardEventsService = inject(DashboardEventsService);
   private date = signal<Date>(new Date());
 
   /* Open Update category dialog*/
@@ -45,7 +42,7 @@ export class DashboardSummaryCategories {
     });
   }
 
-  /* Open category details dialog */
+  /* Open transaction details dialog */
   transactionsService = inject(TransactionsService);
 
   openTransactionDetails(category: Category): void {
@@ -65,15 +62,6 @@ export class DashboardSummaryCategories {
             '',
           );
         },
-      });
-  }
-
-  constructor() {
-    /* On selected date change */
-    this.dashboardEventsService.changedDate$
-      .pipe(takeUntilDestroyed())
-      .subscribe((newDate) => {
-        this.date.set(newDate);
       });
   }
 }

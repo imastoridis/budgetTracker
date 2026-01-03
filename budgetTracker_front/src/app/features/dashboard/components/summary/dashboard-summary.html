@@ -11,13 +11,12 @@
 
         <!-- Incomes list -->
         <app-dashboard-summary-income-transactions [allCategories]="allCategories()"
-            [allTransactionsIncome]="allTransactionsIncome()" class=" h-[33%] overflow-y-auto">
+            [allTransactionsIncome]="allTransactionsIncome()" [totalIncome]="totalIncome()" class="h-[33%]">
         </app-dashboard-summary-income-transactions>
 
         <!-- Expenses list -->
         <app-dashboard-summary-expense-transactions [allCategories]="allCategories()"
-            class="h-[33%] overflow-y-auto"></app-dashboard-summary-expense-transactions>
+            [allTransactionsExpense]="allTransactionsExpense()" [totalExpense]="totalExpense()"
+            class="h-[33%]"></app-dashboard-summary-expense-transactions>
     </div>
-
-
 </div>

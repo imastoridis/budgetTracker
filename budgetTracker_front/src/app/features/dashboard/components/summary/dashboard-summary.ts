@@ -21,5 +21,7 @@ import { Transaction } from '../../../transactions/models/transactions.models';
 export class DashboardSummary {
   readonly allCategories = input.required<Category[]>();
   readonly allTransactionsIncome = input.required<Transaction[]>();
-  // readonly allTransactionsExpense = input.required<Transaction>();
+  readonly allTransactionsExpense = input.required<Transaction[]>();
+  readonly totalIncome = input.required<number>();
+  readonly totalExpense = input.required<number>();
 }

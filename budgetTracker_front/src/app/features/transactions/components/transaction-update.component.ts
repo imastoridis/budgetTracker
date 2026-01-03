@@ -88,4 +88,8 @@ export class UpdateTransaction {
   get date() {
     return this.transactionFormUpdate.get('date');
   }
+
+  get description() {
+    return this.transactionFormUpdate.get('description');
+  }
 }

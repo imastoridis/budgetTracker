@@ -1,19 +1,12 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  inject,
-  signal,
   computed,
-  afterNextRender,
+  input,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { TransactionsService } from '../../../transactions/services/transactions.service';
-import { Utils } from '../../../../shared/utils/utils';
-import { TransactionEventsService } from '../../../transactions/services/transaction-events.service';
 import { CurrencyPipe } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DashboardEventsService } from '../../services/dashboard-events.service';
 
 @Component({
   selector: 'app-total-month-display',
@@ -38,7 +31,7 @@ import { DashboardEventsService } from '../../services/dashboard-events.service'
         <div class="flex flex-row justify-between">
           <span class="text-gray-600">Total Expenses:</span>
           <span class="font-medium text-red-600">
-            {{ totalExpenses() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span
+            {{ totalExpense() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span
           >
         </div>
 
@@ -56,83 +49,9 @@ import { DashboardEventsService } from '../../services/dashboard-events.service'
   `,
 })
 export class TotalMonthDisplay {
-  private transactionsService = inject(TransactionsService);
-  private utils = inject(Utils);
-  private transactionEventsService = inject(TransactionEventsService);
-  private dashboardEventsService = inject(DashboardEventsService);
-  readonly totalIncome = signal<number>(0);
-  readonly totalExpenses = signal<number>(0);
+  readonly totalIncome = input.required<number>();
+  readonly totalExpense = input.required<number>();
   readonly balance = computed<number>(() => {
-    return this.totalIncome() - this.totalExpenses();
+    return this.totalIncome() - this.totalExpense();
   });
-
-  readonly date = signal<Date>(new Date());
-  //readonly date = new Date();
-
-  /* Gets total of income for a month */
-  getTotalIncomeByMonth(date: Date): void {
-    this.transactionsService.getTotalIncomeByMonth(date).subscribe({
-      next: (totalIncome) => {
-        this.totalIncome.set(+totalIncome);
-      },
-      error: (err) => {
-        this.utils.openSnackBar(err.error, '');
-      },
-    });
-  }
-
-  /* Gets total of expense for a month */
-  getTotalExpensesByMonth(date: Date): void {
-    this.transactionsService.getTotalExpensesByMonth(date).subscribe({
-      next: (totalExpenses) => {
-        this.totalExpenses.set(+totalExpenses);
-      },
-      error: (err) => {
-        this.utils.openSnackBar(err.error, '');
-      },
-    });
-  }
-
-  /* Gets total by month */
-  getTotalByMonth(date: Date) {
-    this.getTotalIncomeByMonth(date);
-    this.getTotalExpensesByMonth(date);
-  }
-
-  /* Constructor */
-  constructor() {
-    //Uses the category-event.service to add, update or delete a category
-    this.transactionEventsService.updatedTransaction$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.getTotalByMonth(this.date());
-      });
-
-    this.transactionEventsService.addedTransaction$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.getTotalByMonth(this.date());
-      });
-
-    this.transactionEventsService.deletedTransaction$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.getTotalByMonth(this.date());
-      });
-
-    /**
-     * On change date
-     */
-    this.dashboardEventsService.changedDate$
-      .pipe(takeUntilDestroyed())
-      .subscribe((newDate) => {
-        this.date.set(newDate);
-        this.getTotalByMonth(this.date());
-      });
-
-    afterNextRender(() => {
-      //Get total income for current month
-      this.getTotalByMonth(this.date());
-    });
-  }
 }

@@ -38,6 +38,7 @@ export class AddIncomeBtn {
     });
   }
 
+  /* Gets filtered categories for income*/
   private getFilteredIncomeCategories(): Category[] {
     const categories = this.allCategories();
     return categories.filter((category) => category.type === 'INCOME');

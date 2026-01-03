@@ -22,11 +22,11 @@ export class TransactionsService {
 
   /**
    * Gets all income transactions
+   * @param date
    * @returns An Observable of the transactions response.
    */
   getAllTransactionsIncome(date: Date): Observable<Transaction[]> {
-    const formattedDate = date.toISOString().substring(0, 10);
-    const params = new HttpParams().set('date', formattedDate);
+    const params = this.setDateParams(date);
 
     return this.http.get<Transaction[]>(
       this.apiUrlTransactions + '/income/by-month',
@@ -38,11 +38,11 @@ export class TransactionsService {
 
   /**
    * Gets all expenses transactions
+   * @param date
    * @returns An Observable of the transactions response.
    */
   getAllTransactionsExpense(date: Date): Observable<Transaction[]> {
-    const formattedDate = date.toISOString().substring(0, 10);
-    const params = new HttpParams().set('date', formattedDate);
+    const params = this.setDateParams(date);
 
     return this.http.get<Transaction[]>(
       this.apiUrlTransactions + '/expense/by-month',
@@ -54,14 +54,15 @@ export class TransactionsService {
 
   /**
    * Gets transactions by category and selected month
+   * @param date
+   * @param category
    * @returns An Observable of the transactions response.
    */
   getTransactionsByCategoryAndMonth(
     category: Category,
     date: Date,
   ): Observable<Transaction[]> {
-    const formattedDate = date.toISOString().substring(0, 10);
-    const params = new HttpParams().set('date', formattedDate);
+    const params = this.setDateParams(date);
 
     return this.http.get<Transaction[]>(
       this.apiUrlTransactions + '/by-category/by-month/' + category.id,
@@ -70,6 +71,7 @@ export class TransactionsService {
       },
     );
   }
+
   /**
    * Adds a new transaction
    * @param transaction
@@ -103,12 +105,12 @@ export class TransactionsService {
   }
 
   /**
-   * Gets total income based on the month
+   * Gets total of income transactions based on the month
+   * @param date
    * @returns An Observable of the total income response.
    */
   getTotalIncomeByMonth(date: Date): Observable<string> {
-    const formattedDate = date.toISOString().substring(0, 10);
-    const params = new HttpParams().set('date', formattedDate);
+    const params = this.setDateParams(date);
 
     return this.http.get<string>(this.apiUrlTransactions + '/total-income', {
       params: params,
@@ -116,15 +118,24 @@ export class TransactionsService {
   }
 
   /**
-   * Gets total expenses based on the month
+   * Gets total of expenses transactions based on the month
+   * @param date
    * @returns An Observable of the total expense response.
    */
   getTotalExpensesByMonth(date: Date): Observable<string> {
-    const formattedDate = date.toISOString().substring(0, 10);
-    const params = new HttpParams().set('date', formattedDate);
-
+    const params = this.setDateParams(date);
     return this.http.get<string>(this.apiUrlTransactions + '/total-expense', {
       params: params,
     });
+  }
+
+  /**
+   *  Set the date params
+   * @param date
+   * @returns HttpParams
+   */
+  private setDateParams(date: Date): HttpParams {
+    const formattedDate = date.toISOString().substring(0, 10);
+    return new HttpParams().set('date', formattedDate);
   }
 }
