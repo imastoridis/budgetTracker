@@ -2,16 +2,16 @@ import {
   Component,
   ChangeDetectionStrategy,
   computed,
-  input,
+  inject,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { CurrencyPipe } from '@angular/common';
+import { TransactionsStateService } from '../../../../shared/services/state/transactionsStateService';
 
 @Component({
   selector: 'app-total-month-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MaterialModule, ReactiveFormsModule, CurrencyPipe],
+  imports: [MaterialModule, CurrencyPipe],
   template: `
     <div class="flex flex-col gap-4">
       <div
@@ -49,8 +49,9 @@ import { CurrencyPipe } from '@angular/common';
   `,
 })
 export class TotalMonthDisplay {
-  readonly totalIncome = input.required<number>();
-  readonly totalExpense = input.required<number>();
+  private transactionsState = inject(TransactionsStateService);
+  readonly totalIncome = this.transactionsState.totalIncome;
+  readonly totalExpense = this.transactionsState.totalExpense;
   readonly balance = computed<number>(() => {
     return this.totalIncome() - this.totalExpense();
   });

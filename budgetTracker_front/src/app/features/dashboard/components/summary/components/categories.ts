@@ -2,8 +2,8 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  input,
   signal,
+  effect,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../../shared/modules/material/material.module';
@@ -15,6 +15,7 @@ import { TransactionDetailsCategory } from '../../../../transactions/components/
 import { Utils } from '../../../../../shared/utils/utils';
 import { TransactionsService } from '../../../../transactions/services/transactions.service';
 import { CurrencyPipe } from '@angular/common';
+import { CategoriesStateService } from '../../../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dashboard-summary-categories',
@@ -25,8 +26,10 @@ import { CurrencyPipe } from '@angular/common';
 export class DashboardSummaryCategories {
   private dialog = inject(MatDialog);
   private utils = inject(Utils);
-  readonly allCategories = input.required<Category[]>();
   private date = signal<Date>(new Date());
+
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
 
   /* Open Update category dialog*/
   openUpdateCategory(category: Category): void {
@@ -51,7 +54,7 @@ export class DashboardSummaryCategories {
       .subscribe({
         next: (transactions) => {
           this.dialog.open(TransactionDetailsCategory, {
-            data: [this.allCategories(), transactions],
+            data: transactions,
             width: '1000px',
             maxWidth: '1000px',
           });
@@ -63,5 +66,11 @@ export class DashboardSummaryCategories {
           );
         },
       });
+  }
+
+  constructor() {
+    effect(() => {
+      console.log('Categories updated in UI:', this.allCategories());
+    });
   }
 }

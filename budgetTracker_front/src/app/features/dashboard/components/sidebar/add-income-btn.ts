@@ -4,6 +4,7 @@ import {
   inject,
   output,
   input,
+  computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -11,6 +12,7 @@ import { Transaction } from '../../../transactions/models/transactions.models';
 import { AddTransactionIncome } from '../../../transactions/components/income/transaction-add-income.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Category } from '../../../categories/models/categories.models';
+import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-add-income-btn',
@@ -27,10 +29,10 @@ import { Category } from '../../../categories/models/categories.models';
   `,
 })
 export class AddIncomeBtn {
-  categoryAdded = output<Transaction>();
   dialog = inject(MatDialog);
-  allCategories = input.required<Category[]>();
-
+  //allCategories = input.required<Category[]>();
+  private categoriesState = inject(CategoriesStateService);
+  allCategories = this.categoriesState.categories();
   /* Open add transaction dialog for income */
   openDialogAddIncome(): void {
     this.dialog.open(AddTransactionIncome, {
@@ -39,8 +41,12 @@ export class AddIncomeBtn {
   }
 
   /* Gets filtered categories for income*/
-  private getFilteredIncomeCategories(): Category[] {
+  readonly getFilteredIncomeCategories = computed(() => {
+    return this.allCategories.filter((category) => category.type === 'INCOME');
+  });
+
+  /*   private getFilteredIncomeCategories(): Category[] {
     const categories = this.allCategories();
     return categories.filter((category) => category.type === 'INCOME');
-  }
+  } */
 }

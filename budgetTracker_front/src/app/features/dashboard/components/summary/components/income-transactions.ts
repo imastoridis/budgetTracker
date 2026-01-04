@@ -2,7 +2,6 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  input,
   computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -12,7 +11,8 @@ import { Transaction } from '../../../../transactions/models/transactions.models
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateTransaction } from '../../../../transactions/components/transaction-update.component';
 import { DeleteTransaction } from '../../../../transactions/components/transaction-delete.component';
-import { Category } from '../../../../categories/models/categories.models';
+import { CategoriesStateService } from '../../../../../shared/services/state/categoriesStateService';
+import { TransactionsStateService } from '../../../../../shared/services/state/transactionsStateService';
 
 @Component({
   selector: 'app-dashboard-summary-income-transactions',
@@ -22,9 +22,13 @@ import { Category } from '../../../../categories/models/categories.models';
 })
 export class DashboardSummaryIncomeTransactions {
   private dialog = inject(MatDialog);
-  readonly allCategories = input.required<Category[]>();
-  readonly allTransactionsIncome = input.required<Transaction[]>();
-  readonly totalIncome = input.required<number>();
+
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories();
+
+  private transactionsState = inject(TransactionsStateService);
+  readonly allTransactionsIncome = this.transactionsState.transactionsIncome;
+  readonly totalIncome = this.transactionsState.totalIncome;
 
   /* Table */
   dataSource = computed(() => this.allTransactionsIncome());
@@ -41,7 +45,7 @@ export class DashboardSummaryIncomeTransactions {
   /* Open Update transaction dialog*/
   openUpdateTransaction(transaction: Transaction): void {
     this.dialog.open(UpdateTransaction, {
-      data: [this.allCategories(), transaction],
+      data: transaction,
     });
   }
 

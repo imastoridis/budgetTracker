@@ -5,7 +5,7 @@ import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
 import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
-import { CategoryEventsService } from '../services/category-events.service';
+import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-add-category',
@@ -60,9 +60,9 @@ import { CategoryEventsService } from '../services/category-events.service';
 })
 export class AddCategory {
   private categoriesService = inject(CategoriesService);
+  private categoriesState = inject(CategoriesStateService);
   readonly categoryForm: CategoryForm = initCategoryForm();
   private utils = inject(Utils);
-  private categoryEventService = inject(CategoryEventsService);
 
   /* Add category */
   addCategory(): void {
@@ -70,7 +70,7 @@ export class AddCategory {
     this.categoriesService.addCategory(categoryData).subscribe({
       next: (response) => {
         this.categoryForm.reset();
-        this.categoryEventService.notifyCategoryAdded(response);
+        this.categoriesState.addCategory(response);
         this.utils.openSnackBar('Category added successfully', '');
       },
       error: (err) => {

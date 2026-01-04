@@ -15,7 +15,6 @@ import {
   TransactionFormWithData,
   TransactionForm,
 } from '../forms/transactions-form-builder';
-import { TransactionEventsService } from '../services/transaction-events.service';
 import { Utils } from '../../../shared/utils/utils';
 import {
   DateAdapter,
@@ -23,6 +22,8 @@ import {
   MAT_DATE_FORMATS,
 } from '@angular/material/core';
 import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
+import { TransactionsStateService } from '../../../shared/services/state/transactionsStateService';
+import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-transaction-update',
@@ -43,14 +44,15 @@ import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
 })
 export class UpdateTransaction {
   private transactionService = inject(TransactionsService);
-  private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<UpdateTransaction>);
-  private initialData = inject(MAT_DIALOG_DATA)[1] as Transaction;
-  readonly allCategories = inject(MAT_DIALOG_DATA)[0];
   private utils = inject(Utils);
+  private initialData = inject(MAT_DIALOG_DATA) as Transaction;
   readonly transactionFormUpdate: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
+  private transactionsState = inject(TransactionsStateService);
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
 
   /* Update transaction */
   updateTransaction(): void {
@@ -61,8 +63,16 @@ export class UpdateTransaction {
       .updateTransaction(updatedTransaction as Transaction)
       .subscribe({
         next: (response) => {
+          this.allCategories().map((category) => {
+            if (category.id === response.categoryId) {
+              if (category.type === 'INCOME') {
+                this.transactionsState.updateTransactionIncome(response);
+              } else {
+                this.transactionsState.updateTransactionExpense(response);
+              }
+            }
+          });
           this.dialogRef.close(response);
-          this.transactionEventService.notifyTransactionUpdated(response);
           this.utils.openSnackBar('Transaction updated successfully', '');
         },
         error: (err) => {
@@ -74,9 +84,6 @@ export class UpdateTransaction {
       });
   }
 
-  constructor() {
-    console.log('Initial Data', this.initialData);
-  }
   get amount() {
     return this.transactionFormUpdate.get('amount');
   }

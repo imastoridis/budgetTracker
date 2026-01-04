@@ -2,17 +2,17 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  input,
   computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../../shared/modules/material/material.module';
-import { Category } from '../../../../categories/models/categories.models';
 import { MatDialog } from '@angular/material/dialog';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Transaction } from '../../../../transactions/models/transactions.models';
 import { UpdateTransaction } from '../../../../transactions/components/transaction-update.component';
 import { DeleteTransaction } from '../../../../transactions/components/transaction-delete.component';
+import { CategoriesStateService } from '../../../../../shared/services/state/categoriesStateService';
+import { TransactionsStateService } from '../../../../../shared/services/state/transactionsStateService';
 
 @Component({
   selector: 'app-dashboard-summary-expense-transactions',
@@ -22,10 +22,14 @@ import { DeleteTransaction } from '../../../../transactions/components/transacti
 })
 export class DashboardSummaryExpenseTransactions {
   private dialog = inject(MatDialog);
-  readonly allCategories = input.required<Category[]>();
-  readonly allTransactionsExpense = input.required<Transaction[]>();
-  readonly totalExpense = input.required<number>();
+  // readonly allCategories = input.required<Category[]>();
 
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories();
+  private transactionsState = inject(TransactionsStateService);
+  readonly allTransactionsExpense = this.transactionsState.transactionsExpense;
+  readonly totalIncome = this.transactionsState.totalIncome;
+  readonly totalExpense = this.transactionsState.totalExpense;
   /* Table */
   dataSource = computed(() => this.allTransactionsExpense());
 
@@ -41,7 +45,7 @@ export class DashboardSummaryExpenseTransactions {
   /* Open Update transaction dialog*/
   openUpdateTransaction(transaction: Transaction): void {
     this.dialog.open(UpdateTransaction, {
-      data: [this.allCategories(), transaction],
+      data: [this.allCategories, transaction],
     });
   }
 

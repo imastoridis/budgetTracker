@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../services/transactions.service';
 import { Transaction } from '../../models/transactions.models';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TransactionForm } from '../../forms/transactions-form-builder';
 import { initTransactionFormExpense } from '../../forms/transactions-expense-form-builder';
 import {
@@ -14,8 +13,8 @@ import {
 } from '@angular/material/core';
 import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
 import { Utils } from '../../../../shared/utils/utils';
-import { Category } from '../../../categories/models/categories.models';
 import { TransactionEventsService } from '../../services/transaction-events.service';
+import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
 @Component({
   selector: 'app-add-transaction-expense',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,7 +31,13 @@ export class AddTransactionExpense {
   private transactionEventsService = inject(TransactionEventsService);
   readonly transactionFormExpense: TransactionForm =
     initTransactionFormExpense();
-  allCategories: Category[] = inject(MAT_DIALOG_DATA);
+
+  /* Categories */
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
+  readonly allCategoriesFiltered = this.allCategories().filter(
+    (category) => category.type === 'EXPENSE',
+  );
 
   /* Add transaction */
   addTransaction(): void {
@@ -43,6 +48,7 @@ export class AddTransactionExpense {
       next: (newTransaction) => {
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormExpense.reset();
+
         this.transactionEventsService.notifyTransactionAdded(newTransaction);
       },
       error: (err) => {

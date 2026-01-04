@@ -11,12 +11,12 @@ import { MaterialModule } from '../../../../shared/modules/material/material.mod
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Category } from '../../../categories/models/categories.models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Transaction } from '../../models/transactions.models';
 import { TransactionEventsService } from '../../services/transaction-events.service';
 import { UpdateTransaction } from '../transaction-update.component';
 import { DeleteTransaction } from '../transaction-delete.component';
+import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-transaction-details',
@@ -31,10 +31,11 @@ import { DeleteTransaction } from '../transaction-delete.component';
   templateUrl: './transaction-details.html',
 })
 export class TransactionDetailsCategory {
-  readonly TRANSACTION_ARRAY = signal<Transaction[]>(
-    inject(MAT_DIALOG_DATA)[1],
-  );
-  private allCategories: Category[] = inject(MAT_DIALOG_DATA)[0];
+  readonly TRANSACTION_ARRAY = signal<Transaction[]>(inject(MAT_DIALOG_DATA));
+
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
+
   private transactionEventsService = inject(TransactionEventsService);
   private dialog = inject(MatDialog);
 

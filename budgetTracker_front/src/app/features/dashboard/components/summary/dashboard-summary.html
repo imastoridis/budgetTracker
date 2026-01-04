@@ -6,17 +6,12 @@
 
     <div class="flex flex-col gap-3 h-full">
         <!-- Categories -->
-        <app-dashboard-summary-categories [allCategories]="allCategories()"
-            class="h-[30%]"></app-dashboard-summary-categories>
+        <app-dashboard-summary-categories class="h-[30%]"></app-dashboard-summary-categories>
 
         <!-- Incomes list -->
-        <app-dashboard-summary-income-transactions [allCategories]="allCategories()"
-            [allTransactionsIncome]="allTransactionsIncome()" [totalIncome]="totalIncome()" class="h-[33%]">
-        </app-dashboard-summary-income-transactions>
+        <app-dashboard-summary-income-transactions class="h-[33%]"></app-dashboard-summary-income-transactions>
 
         <!-- Expenses list -->
-        <app-dashboard-summary-expense-transactions [allCategories]="allCategories()"
-            [allTransactionsExpense]="allTransactionsExpense()" [totalExpense]="totalExpense()"
-            class="h-[33%]"></app-dashboard-summary-expense-transactions>
+        <app-dashboard-summary-expense-transactions class="h-[33%]"></app-dashboard-summary-expense-transactions>
     </div>
 </div>

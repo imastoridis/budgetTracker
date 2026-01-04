@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { TransactionsService } from '../../services/transactions.service';
 import { Transaction } from '../../models/transactions.models';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TransactionForm } from '../../forms/transactions-form-builder';
 import { initTransactionFormIncome } from '../../forms/transactions-income-form-builder';
 import { TransactionType } from '../../models/transaction-types.enum';
@@ -15,8 +14,8 @@ import {
 } from '@angular/material/core';
 import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
 import { Utils } from '../../../../shared/utils/utils';
-import { Category } from '../../../categories/models/categories.models';
-import { TransactionEventsService } from '../../services/transaction-events.service';
+import { TransactionsStateService } from '../../../../shared/services/state/transactionsStateService';
+import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-add-transaction-income',
@@ -30,13 +29,14 @@ import { TransactionEventsService } from '../../services/transaction-events.serv
 })
 export class AddTransactionIncome {
   private transactionService = inject(TransactionsService);
-  private transactionEventService = inject(TransactionEventsService);
   private utils = inject(Utils);
 
   readonly transactionFormIncome: TransactionForm = initTransactionFormIncome();
   readonly transactionTypes = Object.values(TransactionType);
 
-  allCategories: Category[] = inject(MAT_DIALOG_DATA);
+  private transactionsState = inject(TransactionsStateService);
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
 
   /* Add transaction */
   addTransaction(): void {
@@ -47,10 +47,19 @@ export class AddTransactionIncome {
       next: (response) => {
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormIncome.reset();
-        this.transactionEventService.notifyTransactionAdded(response);
+
+        this.allCategories().map((category) => {
+          if (category.id === response.categoryId) {
+            if (category.type === 'INCOME') {
+              this.transactionsState.addTransactionIncome(response);
+            } else {
+              this.transactionsState.addTransactionExpense(response);
+            }
+          }
+        });
       },
       error: (err) => {
-        this.utils.openSnackBar(err.message, '');
+        this.utils.openSnackBar('Error adding transaction:' + err.error, '');
       },
     });
   }

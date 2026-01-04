@@ -15,8 +15,9 @@ import {
 } from '../forms/transactions-form-builder';
 import { Transaction } from '../models/transactions.models';
 import { TransactionsService } from '../services/transactions.service';
-import { TransactionEventsService } from '../services/transaction-events.service';
 import { Utils } from '../../../shared/utils/utils';
+import { TransactionsStateService } from '../../../shared/services/state/transactionsStateService';
+import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-transaction-delete',
@@ -42,13 +43,17 @@ import { Utils } from '../../../shared/utils/utils';
 })
 export class DeleteTransaction {
   private transactionService = inject(TransactionsService);
-  private transactionEventService = inject(TransactionEventsService);
   private dialogRef = inject(MatDialogRef<DeleteTransaction>);
-  private initialData = inject(MAT_DIALOG_DATA) as Transaction;
   private utils = inject(Utils);
+
+  private initialData = inject(MAT_DIALOG_DATA) as Transaction;
   readonly transactionForm: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
+
+  private transactionsState = inject(TransactionsStateService);
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
 
   /* Update transaction */
   deleteTransaction(): void {
@@ -57,9 +62,20 @@ export class DeleteTransaction {
       .deleteTransaction(deletedTransaction as Transaction)
       .subscribe({
         next: (deletedTransaction) => {
-          this.transactionEventService.notifyTransactionDeleted(
-            this.initialData,
-          );
+          this.allCategories().map((category) => {
+            if (category.id === this.initialData.categoryId) {
+              if (category.type === 'INCOME') {
+                this.transactionsState.deleteTransactionIncome(
+                  this.initialData,
+                );
+              } else {
+                this.transactionsState.deleteTransactionExpense(
+                  this.initialData,
+                );
+              }
+            }
+          });
+
           this.utils.openSnackBar('Transaction deleted successfully', '');
           this.dialogRef.close(deletedTransaction);
         },

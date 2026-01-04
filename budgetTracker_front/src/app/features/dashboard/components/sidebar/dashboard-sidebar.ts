@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 import { AddIncomeBtn } from './add-income-btn';
 import { AddExpenseBtn } from './add-expense-btn';
@@ -7,13 +6,11 @@ import { TotalMonthDisplay } from './total-month-display';
 import { PieChartDisplay } from './pie-chart-display';
 import { AddCategory } from '../../../categories/components/category-add.component';
 import { DatePickerSidebar } from './datepicker';
-import { Category } from '../../../categories/models/categories.models';
 @Component({
   selector: 'app-dashboard-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MaterialModule,
-    ReactiveFormsModule,
     AddCategory,
     AddIncomeBtn,
     AddExpenseBtn,
@@ -35,20 +32,13 @@ import { Category } from '../../../categories/models/categories.models';
           <h2>Transactions</h2>
         </div>
         <!-- Add income btn -->
-        <app-add-income-btn
-          [allCategories]="allCategories()"
-        ></app-add-income-btn>
+        <app-add-income-btn></app-add-income-btn>
         <!-- Add expense btn -->
-        <app-add-expense-btn
-          [allCategories]="allCategories()"
-        ></app-add-expense-btn>
+        <app-add-expense-btn></app-add-expense-btn>
       </div>
 
       <!-- This month total display -->
-      <app-total-month-display
-        [totalIncome]="totalIncome()"
-        [totalExpense]="totalExpense()"
-      ></app-total-month-display>
+      <app-total-month-display></app-total-month-display>
 
       <!-- Piechart -->
       <app-pie-chart-display></app-pie-chart-display>
@@ -58,8 +48,4 @@ import { Category } from '../../../categories/models/categories.models';
     </div>
   `,
 })
-export class DashboardSidebar {
-  allCategories = input.required<Category[]>();
-  totalIncome = input.required<number>();
-  totalExpense = input.required<number>();
-}
+export class DashboardSidebar {}

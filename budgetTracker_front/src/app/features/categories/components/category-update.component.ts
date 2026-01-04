@@ -11,7 +11,7 @@ import {
 } from '../forms/category-form-builder';
 import { Utils } from '../../../shared/utils/utils';
 import { CategoriesService } from '../services/categories.service';
-import { CategoryEventsService } from '../services/category-events.service';
+import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-category-update',
@@ -49,10 +49,10 @@ import { CategoryEventsService } from '../services/category-events.service';
 })
 export class UpdateCategory {
   private categoriesService = inject(CategoriesService);
+  private categoriesState = inject(CategoriesStateService);
   private dialogRef = inject(MatDialogRef<UpdateCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
   private utils = inject(Utils);
-  private categoryEventService = inject(CategoryEventsService);
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -65,7 +65,7 @@ export class UpdateCategory {
       .subscribe({
         next: (response) => {
           this.dialogRef.close();
-          this.categoryEventService.notifyCategoryUpdated(response);
+          this.categoriesState.updateCategory(response);
           this.utils.openSnackBar('Category updated successfully', '');
         },
         error: (err) => {
