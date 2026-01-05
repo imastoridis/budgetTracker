@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
-import { MaterialModule } from '../../shared/modules/material/material.module';
-import { Utils } from '../../shared/utils/utils';
+import { MaterialModule } from '@shared/modules/material/material.module';
+import { Utils } from '@shared/utils/utils';
 import { DashboardEventsService } from './services/dashboard-events.service';
 /* Categories */
 import { CategoriesService } from '../categories/services/categories.service';
@@ -18,14 +18,13 @@ import { TransactionsService } from '../transactions/services/transactions.servi
 import { DashboardHeader } from './components/dashboard-header';
 import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
 import { DashboardSummary } from './components/summary/dashboard-summary';
-import { CategoriesStateService } from '../../shared/services/state/categoriesStateService';
-import { TransactionsStateService } from '../../shared/services/state/transactionsStateService';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
+import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
 
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    //CommonModule,
     MaterialModule,
     DashboardHeader,
     DashboardSidebar,
@@ -110,7 +109,7 @@ export class DashboardComponent {
   getTotalExpensesByMonth(date: Date): void {
     this.transactionsService.getTotalExpensesByMonth(date).subscribe({
       next: (totalExpenses) => {
-        this.transactionsState.setTotalIncome(+totalExpenses);
+        this.transactionsState.setTotalExpense(+totalExpenses);
       },
       error: (err) => {
         this.utils.openSnackBar(err.error, '');
@@ -119,9 +118,7 @@ export class DashboardComponent {
   }
 
   constructor() {
-    /**
-     * On selected date change
-     */
+    /* On selected date change */
     this.dashboardEventsService.changedDate$
       .pipe(takeUntilDestroyed())
       .subscribe((newDate) => {
@@ -133,9 +130,7 @@ export class DashboardComponent {
         this.getTotalExpensesByMonth(this.date());
       });
 
-    /**
-     *  Initial data load
-     */
+    /* Initial data load */
     afterNextRender(() => {
       this.getCategoriesWithTotal(this.date());
       this.getAllTransactionsIncome();

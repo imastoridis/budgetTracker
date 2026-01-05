@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
-import { AuthService } from '../../../core/auth/services/auth.service';
+import { MaterialModule } from '@shared/modules/material/material.module';
+import { AuthService } from '@app/core/auth/services/auth.service';
 
 @Component({
   selector: 'app-dashboard-header',

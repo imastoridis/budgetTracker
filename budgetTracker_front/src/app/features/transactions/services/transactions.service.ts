@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Transaction } from '../models/transactions.models';
-import { Category } from '../../categories/models/categories.models';
 
 @Injectable({
   providedIn: 'root',
@@ -46,26 +45,6 @@ export class TransactionsService {
 
     return this.http.get<Transaction[]>(
       this.apiUrlTransactions + '/expense/by-month',
-      {
-        params: params,
-      },
-    );
-  }
-
-  /**
-   * Gets transactions by category and selected month
-   * @param date
-   * @param category
-   * @returns An Observable of the transactions response.
-   */
-  getTransactionsByCategoryAndMonth(
-    category: Category,
-    date: Date,
-  ): Observable<Transaction[]> {
-    const params = this.setDateParams(date);
-
-    return this.http.get<Transaction[]>(
-      this.apiUrlTransactions + '/by-category/by-month/' + category.id,
       {
         params: params,
       },

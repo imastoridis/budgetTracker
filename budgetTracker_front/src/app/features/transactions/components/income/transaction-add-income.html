@@ -5,8 +5,9 @@
             <!-- Amοunt -->
             <mat-form-field appearance="outline" class="!align-center">
                 <mat-label>Amount</mat-label>
-                <mat-icon matSuffix fontIcon="euro_symbol" class="!me-2"></mat-icon>
-                <input matInput cdkFocusInitial formControlName="amount" required />
+                <mat-icon matSuffix fontIcon="euro_symbol"></mat-icon>
+                <input matInput cdkFocusInitial formControlName="amount" required #amountInput
+                    (focus)="$any($event.target).select()" />
                 @if (transactionFormIncome.controls.amount.hasError('hasText')) {
                 <mat-error> Add an amount </mat-error>
                 }
@@ -14,8 +15,8 @@
             <!-- category -->
             <mat-form-field appearance="outline">
                 <mat-label>Categories</mat-label>
-                <mat-select formControlName="categoryId">
-                    @for (category of allCategories(); track category) {
+                <mat-select formControlName="categoryId" required>
+                    @for (category of filteredCategoriesIncome(); track category) {
                     <mat-option [value]="category.id">{{
                         category.name
                         }}</mat-option>
@@ -25,7 +26,7 @@
             <!-- Description -->
             <mat-form-field appearance="outline">
                 <mat-label>Description</mat-label>
-                <textarea matInput></textarea>
+                <textarea matInput formControlName="description"></textarea>
             </mat-form-field>
             <!-- Date -->
             <mat-form-field appearance="outline">

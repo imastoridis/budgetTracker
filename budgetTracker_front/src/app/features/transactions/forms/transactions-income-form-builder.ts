@@ -17,7 +17,10 @@ export function initTransactionFormIncome(): TransactionForm {
         Validators.min(0.01),
       ],
     }),
-    description: new FormControl<string>(''),
+    description: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [],
+    }),
     date: new FormControl<Date>(new Date(), {
       nonNullable: true,
       validators: [Validators.required],

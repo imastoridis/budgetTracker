@@ -11,16 +11,15 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Credentials } from '../../models/auth.models';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, MaterialModule],
+  imports: [ReactiveFormsModule, RouterLink, MaterialModule],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {

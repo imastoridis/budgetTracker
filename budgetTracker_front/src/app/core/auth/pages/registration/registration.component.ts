@@ -11,17 +11,16 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
-import { AuthService } from '../../../../core/auth/services/auth.service';
+import { AuthService } from '@app/core/auth/services/auth.service';
 import { Credentials } from '../../models/auth.models';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 
 @Component({
   selector: 'app-registration',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './registration.component.html',
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, MaterialModule],
+  imports: [ReactiveFormsModule, RouterLink, MaterialModule],
 })
 export class RegistrationComponent {
   private authService = inject(AuthService);

@@ -50,16 +50,6 @@ public interface TransactionService {
     List<TransactionDto> findUserTransactionsByCategoryId(Long userId, Long categoryId);
 
     /**
-     * GET ALL: Retrieves a list of all transactions belonging to a specific category ID by a chosen month.
-     *
-     * @param userId     The ID of the owning user.
-     * @param categoryId The ID of the category.
-     * @param date       The chosen month
-     * @return A list of the user's transactions.
-     */
-    List<TransactionDataDto> findUserTransactionsByCategoryIdAndMonth(Long userId, Long categoryId, LocalDate date);
-
-    /**
      * GET ALL: Retrieves a list of all income transactions by a chosen month.
      *
      * @param userId The ID of the owning user.

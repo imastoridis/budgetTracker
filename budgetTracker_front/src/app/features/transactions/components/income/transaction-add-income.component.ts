@@ -1,21 +1,26 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { TransactionsService } from '../../services/transactions.service';
 import { Transaction } from '../../models/transactions.models';
 import { TransactionForm } from '../../forms/transactions-form-builder';
 import { initTransactionFormIncome } from '../../forms/transactions-income-form-builder';
-import { TransactionType } from '../../models/transaction-types.enum';
 import {
   DateAdapter,
   NativeDateAdapter,
   MAT_DATE_FORMATS,
   MatNativeDateModule,
 } from '@angular/material/core';
-import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
-import { Utils } from '../../../../shared/utils/utils';
-import { TransactionsStateService } from '../../../../shared/services/state/transactionsStateService';
-import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
+import { CUSTOM_DATE_FORMATS } from '@shared/utils/date-formats';
+import { Utils } from '@shared/utils/utils';
+import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-add-transaction-income',
@@ -29,14 +34,17 @@ import { CategoriesStateService } from '../../../../shared/services/state/catego
 })
 export class AddTransactionIncome {
   private transactionService = inject(TransactionsService);
+  private transactionsState = inject(TransactionsStateService);
   private utils = inject(Utils);
 
   readonly transactionFormIncome: TransactionForm = initTransactionFormIncome();
-  readonly transactionTypes = Object.values(TransactionType);
 
-  private transactionsState = inject(TransactionsStateService);
+  /* Gets filtered categories for income*/
   private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories;
+  readonly filteredCategoriesIncome = this.categoriesState.categoriesIncome;
+
+  /* Focus on amount after reset of form */
+  @ViewChild('amountInput') amountInput!: ElementRef<HTMLInputElement>;
 
   /* Add transaction */
   addTransaction(): void {
@@ -47,16 +55,8 @@ export class AddTransactionIncome {
       next: (response) => {
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormIncome.reset();
-
-        this.allCategories().map((category) => {
-          if (category.id === response.categoryId) {
-            if (category.type === 'INCOME') {
-              this.transactionsState.addTransactionIncome(response);
-            } else {
-              this.transactionsState.addTransactionExpense(response);
-            }
-          }
-        });
+        this.transactionsState.addTransactionIncome(response);
+        this.amountInput.nativeElement.focus();
       },
       error: (err) => {
         this.utils.openSnackBar('Error adding transaction:' + err.error, '');
@@ -64,6 +64,7 @@ export class AddTransactionIncome {
     });
   }
 
+  /* Form control */
   get amount() {
     return this.transactionFormIncome.get('amount');
   }
@@ -74,5 +75,9 @@ export class AddTransactionIncome {
 
   get date() {
     return this.transactionFormIncome.get('date');
+  }
+
+  get description() {
+    return this.transactionFormIncome.get('description');
   }
 }

@@ -10,7 +10,7 @@ import { Transaction } from '../models/transactions.models';
 
 /**
  * Defines the structure for the Transaction FormGroup.
- * This type is exported to ensure type safety when accessing form values
+ * Ensures type safety when accessing form values
  */
 export type TransactionForm = FormGroup<{
   id: FormControl<number | null>;

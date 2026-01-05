@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { AddTransactionExpense } from '../../../transactions/components/expense/transaction-add-expense.component';
+import { MaterialModule } from '@shared/modules/material/material.module';
+import { AddTransactionExpense } from '@app/features/transactions/components/expense/transaction-add-expense.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({

@@ -7,30 +7,31 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
-/* import {
+import { MaterialModule } from '@shared/modules/material/material.module';
+import {
   ChartComponent,
+  ApexLegend,
   NgApexchartsModule,
   ApexNonAxisChartSeries,
   ApexResponsive,
   ApexChart,
   ChartType,
-} from 'ng-apexcharts'; */
+} from 'ng-apexcharts';
 
 import { Category } from '../../../categories/models/categories.models';
-import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
-/* export type ChartOptions = {
+export type ChartOptions = {
   series: ApexNonAxisChartSeries;
   chart: ApexChart;
   responsive: ApexResponsive[];
   labels: any;
-}; */
+};
 
 @Component({
   selector: 'app-pie-chart-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MaterialModule],
+  imports: [MaterialModule, NgApexchartsModule],
   template: `
     <div>
       <div
@@ -41,16 +42,16 @@ import { CategoriesStateService } from '../../../../shared/services/state/catego
       </div>
 
       <div
-        class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500"
+        class="w-full h-100 bg-gray-100 flex items-center justify-center text-gray-500"
         id="chart"
       >
-        <!--    <apx-chart
+        <apx-chart
           [series]="chartSeries()"
           [chart]="chartDetails"
           [labels]="chartLabels()"
+          [legend]="chartLegend"
         >
-          </apx-chart 
-        >-->
+        </apx-chart>
       </div>
     </div>
   `,
@@ -63,8 +64,13 @@ export class PieChartDisplay {
     this.allCategories().map((c) => c.totalAmount || 0),
   );
   chartLabels = computed(() => this.allCategories().map((c) => c.name));
-  /*   chartDetails: ApexChart = {
+  chartDetails: ApexChart = {
     type: 'donut' as ChartType,
     width: '100%',
-  }; */
+    height: 370,
+  };
+  chartLegend: ApexLegend = {
+    position: 'bottom',
+    horizontalAlign: 'center',
+  };
 }

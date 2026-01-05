@@ -1,11 +1,11 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
 import { initCategoryForm, CategoryForm } from '../forms/category-form-builder';
-import { Utils } from '../../../shared/utils/utils';
-import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
+import { Utils } from '@shared/utils/utils';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-add-category',

@@ -1,6 +1,5 @@
 package com.budgetTracker.repository;
 
-import com.budgetTracker.dto.ExpenseTransactionsDto;
 import com.budgetTracker.dto.TransactionDataDto;
 import com.budgetTracker.dto.TransactionDto;
 import com.budgetTracker.model.entity.Transaction;
@@ -44,32 +43,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<TransactionDto> findUserTransactionsByCategoryId(
             @Param("userId") Long userId,
             @Param("categoryId") Long categoryId,
-            Sort sort
-    );
-
-    /**
-     * Finds all transactions belonging to a specific user and category within the month of the given date.
-     *
-     * @param userId     The ID of the authenticated user.
-     * @param categoryId category Id
-     * @param startDate  Start month.
-     * @param endDate    End month
-     * @return List of transactions
-     */
-    //"SELECT t " +
-    @Query("SELECT new com.budgetTracker.dto.TransactionDataDto(" +
-            "t.id, t.amount, t.date, t.description,t.category.id, c.name) " +
-            "FROM Transaction t " +
-            "JOIN t.category c " +
-            "WHERE t.user.id = :userId AND " +
-            "c.id = :categoryId AND " +
-            "t.date BETWEEN :startDate AND :endDate"
-    )
-    List<TransactionDataDto> findUserTransactionsByCategoryIdAndMonth(
-            @Param("userId") Long userId,
-            @Param("categoryId") Long categoryId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
             Sort sort
     );
 

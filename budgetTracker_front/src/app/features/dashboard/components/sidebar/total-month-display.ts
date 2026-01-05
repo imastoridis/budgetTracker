@@ -4,9 +4,9 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { CurrencyPipe } from '@angular/common';
-import { TransactionsStateService } from '../../../../shared/services/state/transactionsStateService';
+import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
 
 @Component({
   selector: 'app-total-month-display',

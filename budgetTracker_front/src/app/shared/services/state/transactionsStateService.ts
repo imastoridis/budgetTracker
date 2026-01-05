@@ -14,6 +14,7 @@ export class TransactionsStateService {
   readonly allCategories = this.categoriesState.categories;
 
   // The public read-only signal that components consume
+  readonly transactions = this._transactions.asReadonly();
   readonly transactionsIncome = this._transactionsIncome.asReadonly();
   readonly transactionsExpense = this._transactionsExpense.asReadonly();
   readonly totalIncome = this._totalIncome.asReadonly();
@@ -50,7 +51,7 @@ export class TransactionsStateService {
     );
 
     // Update total income/expense
-    this._totalIncome.update(() => newTransaction.amount);
+    this._totalIncome.update(() => this._totalIncome() + newTransaction.amount);
   }
 
   /* Transaction expense added */
@@ -66,7 +67,9 @@ export class TransactionsStateService {
     );
 
     // Update total income/expense
-    this._totalIncome.update(() => newTransaction.amount);
+    this._totalExpense.update(
+      () => this._totalExpense() + newTransaction.amount,
+    );
   }
 
   /* Transaction income updated */
@@ -88,7 +91,7 @@ export class TransactionsStateService {
         updatedTransaction.amount,
       );
 
-      // Update total income/expense
+      // Update total income
       this._totalIncome.update(
         (total) => total - oldTransaction.amount + updatedTransaction.amount,
       );
@@ -102,7 +105,7 @@ export class TransactionsStateService {
     );
 
     if (oldTransaction) {
-      this._transactionsIncome.update((transactionsExpense) =>
+      this._transactionsExpense.update((transactionsExpense) =>
         transactionsExpense.map((t) =>
           t.id === updatedTransaction.id ? updatedTransaction : t,
         ),
@@ -114,8 +117,10 @@ export class TransactionsStateService {
         updatedTransaction.amount,
       );
 
-      // Update total income/expense
-      this._totalIncome.update(() => updatedTransaction.amount);
+      // Update total expense
+      this._totalExpense.update(
+        (total) => total - oldTransaction.amount + updatedTransaction.amount,
+      );
     }
   }
 
@@ -133,8 +138,10 @@ export class TransactionsStateService {
       0,
     );
 
-    // Update total income/expense
-    this._totalIncome.update(() => deletedTransaction.amount);
+    // Update total income
+    this._totalIncome.update(
+      () => this._totalIncome() - deletedTransaction.amount,
+    );
   }
 
   /* Transaction expense deleted */
@@ -150,7 +157,9 @@ export class TransactionsStateService {
       0,
     );
 
-    // Update total income/expense
-    this._totalIncome.update(() => deletedTransaction.amount);
+    // Update total expense
+    this._totalExpense.update(
+      () => this._totalExpense() - deletedTransaction.amount,
+    );
   }
 }

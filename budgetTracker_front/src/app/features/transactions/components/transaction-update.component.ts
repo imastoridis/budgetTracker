@@ -1,6 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { TransactionsService } from '../services/transactions.service';
 import { Transaction } from '../models/transactions.models';
 import {
@@ -15,15 +20,16 @@ import {
   TransactionFormWithData,
   TransactionForm,
 } from '../forms/transactions-form-builder';
-import { Utils } from '../../../shared/utils/utils';
+import { Utils } from '@shared/utils/utils';
 import {
   DateAdapter,
   NativeDateAdapter,
   MAT_DATE_FORMATS,
 } from '@angular/material/core';
-import { CUSTOM_DATE_FORMATS } from '../../../shared/utils/date-formats';
-import { TransactionsStateService } from '../../../shared/services/state/transactionsStateService';
-import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
+import { CUSTOM_DATE_FORMATS } from '@shared/utils/date-formats';
+import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
+import { Category } from '@app/features/categories/models/categories.models';
 
 @Component({
   selector: 'app-dialog-transaction-update',
@@ -54,6 +60,32 @@ export class UpdateTransaction {
   private categoriesState = inject(CategoriesStateService);
   readonly allCategories = this.categoriesState.categories;
 
+  /*  Filters the categories for select  */
+  readonly filteredCategories = signal<Category[]>([]);
+  readonly filteredCategoriesIncome = this.categoriesState.categoriesIncome;
+  readonly filteredCategoriesExpense = this.categoriesState.categoriesExpense;
+
+  /* Finds transaction type*/
+  getTransactionType() {
+    return this.allCategories().find((category) => {
+      return category.id === this.initialData.categoryId;
+    })?.type;
+  }
+
+  /* Gets filtered categories */
+  getFilteredCategories() {
+    if (this.getTransactionType() === 'INCOME') {
+      this.filteredCategories.set(this.filteredCategoriesIncome());
+    } else {
+      this.filteredCategories.set(this.filteredCategoriesExpense());
+    }
+  }
+
+  readonly transactionType = this.allCategories().find((category) => {
+    return category.id === this.initialData.categoryId;
+  })?.type;
+
+  /* Close dialog */
   /* Update transaction */
   updateTransaction(): void {
     const updatedTransaction: Transaction =
@@ -63,17 +95,11 @@ export class UpdateTransaction {
       .updateTransaction(updatedTransaction as Transaction)
       .subscribe({
         next: (response) => {
-          this.allCategories().map((category) => {
-            if (category.id === response.categoryId) {
-              if (category.type === 'INCOME') {
-                this.transactionsState.updateTransactionIncome(response);
-              } else {
-                this.transactionsState.updateTransactionExpense(response);
-              }
-            }
-          });
           this.dialogRef.close(response);
           this.utils.openSnackBar('Transaction updated successfully', '');
+          return this.getTransactionType() === 'INCOME'
+            ? this.transactionsState.updateTransactionIncome(response)
+            : this.transactionsState.updateTransactionExpense(response);
         },
         error: (err) => {
           this.utils.openSnackBar(
@@ -84,6 +110,7 @@ export class UpdateTransaction {
       });
   }
 
+  /* Form control */
   get amount() {
     return this.transactionFormUpdate.get('amount');
   }
@@ -98,5 +125,10 @@ export class UpdateTransaction {
 
   get description() {
     return this.transactionFormUpdate.get('description');
+  }
+
+  constructor() {
+    this.getTransactionType();
+    this.getFilteredCategories();
   }
 }

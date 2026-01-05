@@ -5,18 +5,19 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Transaction } from '../../models/transactions.models';
-import { TransactionEventsService } from '../../services/transaction-events.service';
 import { UpdateTransaction } from '../transaction-update.component';
 import { DeleteTransaction } from '../transaction-delete.component';
-import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
+import { TransactionsStateService } from '@app/shared/services/state/transactionsStateService';
+import { TransactionsService } from '../../services/transactions.service';
+import { Category } from '@app/features/categories/models/categories.models';
 
 @Component({
   selector: 'app-dialog-transaction-details',
@@ -31,13 +32,27 @@ import { CategoriesStateService } from '../../../../shared/services/state/catego
   templateUrl: './transaction-details.html',
 })
 export class TransactionDetailsCategory {
-  readonly TRANSACTION_ARRAY = signal<Transaction[]>(inject(MAT_DIALOG_DATA));
-
-  private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories;
-
-  private transactionEventsService = inject(TransactionEventsService);
   private dialog = inject(MatDialog);
+  readonly category = signal<Category>(inject(MAT_DIALOG_DATA));
+
+  /* Open transaction details dialog */
+  transactionsService = inject(TransactionsService);
+  private transactionState = inject(TransactionsStateService);
+  private transactionsIncome = this.transactionState.transactionsIncome;
+  private transactionsExpense = this.transactionState.transactionsExpense;
+
+  /* Filters transactions */
+  private TRANSACTION_ARRAY = computed(() => {
+    if (this.category().type === 'INCOME') {
+      return this.transactionsIncome().filter(
+        (transaction) => this.category().id === transaction.categoryId,
+      );
+    } else {
+      return this.transactionsExpense().filter(
+        (transaction) => this.category().id === transaction.categoryId,
+      );
+    }
+  });
 
   /* Table */
   displayedColumns: string[] = [
@@ -59,7 +74,7 @@ export class TransactionDetailsCategory {
   /* Open Update transaction dialog*/
   openUpdateTransaction(transaction: Transaction): void {
     this.dialog.open(UpdateTransaction, {
-      data: [this.allCategories, transaction],
+      data: transaction,
     });
   }
 
@@ -68,31 +83,5 @@ export class TransactionDetailsCategory {
     this.dialog.open(DeleteTransaction, {
       data: transaction,
     });
-  }
-
-  constructor() {
-    /* On Update transaction */
-    this.transactionEventsService.updatedTransaction$
-      .pipe(takeUntilDestroyed())
-      .subscribe((updatedTransaction) => {
-        this.TRANSACTION_ARRAY.update((transactions) =>
-          transactions.map((transaction) =>
-            transaction.id === updatedTransaction.id
-              ? updatedTransaction
-              : transaction,
-          ),
-        );
-      });
-
-    /* On delete transaction */
-    this.transactionEventsService.deletedTransaction$
-      .pipe(takeUntilDestroyed())
-      .subscribe((deletedTransaction) => {
-        this.TRANSACTION_ARRAY.update((transactions) =>
-          transactions.filter(
-            (transaction) => transaction.id !== deletedTransaction.id,
-          ),
-        );
-      });
   }
 }

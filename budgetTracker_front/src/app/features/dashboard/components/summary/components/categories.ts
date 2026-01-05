@@ -1,21 +1,13 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  signal,
-  effect,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../../shared/modules/material/material.module';
-import { Category } from '../../../../categories/models/categories.models';
+import { MaterialModule } from '@shared/modules/material/material.module';
+import { Category } from '@app/features/categories/models/categories.models';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateCategory } from '../../../../categories/components/category-update.component';
-import { DeleteCategory } from '../../../../categories/components/category-delete.component';
-import { TransactionDetailsCategory } from '../../../../transactions/components/details/transaction-details.component';
-import { Utils } from '../../../../../shared/utils/utils';
-import { TransactionsService } from '../../../../transactions/services/transactions.service';
+import { UpdateCategory } from '@app/features/categories/components/category-update.component';
+import { DeleteCategory } from '@app/features/categories/components/category-delete.component';
+import { TransactionDetailsCategory } from '@app/features/transactions/components/details/transaction-details.component';
 import { CurrencyPipe } from '@angular/common';
-import { CategoriesStateService } from '../../../../../shared/services/state/categoriesStateService';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dashboard-summary-categories',
@@ -25,8 +17,6 @@ import { CategoriesStateService } from '../../../../../shared/services/state/cat
 })
 export class DashboardSummaryCategories {
   private dialog = inject(MatDialog);
-  private utils = inject(Utils);
-  private date = signal<Date>(new Date());
 
   private categoriesState = inject(CategoriesStateService);
   readonly allCategories = this.categoriesState.categories;
@@ -45,32 +35,12 @@ export class DashboardSummaryCategories {
     });
   }
 
-  /* Open transaction details dialog */
-  transactionsService = inject(TransactionsService);
-
+  /* Open transactions details */
   openTransactionDetails(category: Category): void {
-    this.transactionsService
-      .getTransactionsByCategoryAndMonth(category, this.date())
-      .subscribe({
-        next: (transactions) => {
-          this.dialog.open(TransactionDetailsCategory, {
-            data: transactions,
-            width: '1000px',
-            maxWidth: '1000px',
-          });
-        },
-        error: (err) => {
-          this.utils.openSnackBar(
-            'Error fetching transactions: ' + err.message,
-            '',
-          );
-        },
-      });
-  }
-
-  constructor() {
-    effect(() => {
-      console.log('Categories updated in UI:', this.allCategories());
+    this.dialog.open(TransactionDetailsCategory, {
+      data: category,
+      width: '1000px',
+      maxWidth: '1000px',
     });
   }
 }

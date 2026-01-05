@@ -1,6 +1,12 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { TransactionsService } from '../../services/transactions.service';
 import { Transaction } from '../../models/transactions.models';
 import { TransactionForm } from '../../forms/transactions-form-builder';
@@ -11,10 +17,10 @@ import {
   MAT_DATE_FORMATS,
   MatNativeDateModule,
 } from '@angular/material/core';
-import { CUSTOM_DATE_FORMATS } from '../../../../shared/utils/date-formats';
-import { Utils } from '../../../../shared/utils/utils';
-import { TransactionEventsService } from '../../services/transaction-events.service';
-import { CategoriesStateService } from '../../../../shared/services/state/categoriesStateService';
+import { CUSTOM_DATE_FORMATS } from '@shared/utils/date-formats';
+import { Utils } from '@shared/utils/utils';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
+import { TransactionsStateService } from '@app/shared/services/state/transactionsStateService';
 @Component({
   selector: 'app-add-transaction-expense',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,17 +33,18 @@ import { CategoriesStateService } from '../../../../shared/services/state/catego
 })
 export class AddTransactionExpense {
   private transactionService = inject(TransactionsService);
+  private transactionsState = inject(TransactionsStateService);
   private utils = inject(Utils);
-  private transactionEventsService = inject(TransactionEventsService);
+
   readonly transactionFormExpense: TransactionForm =
     initTransactionFormExpense();
 
-  /* Categories */
+  /* Filtered Categories */
   private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories;
-  readonly allCategoriesFiltered = this.allCategories().filter(
-    (category) => category.type === 'EXPENSE',
-  );
+  readonly filteredCategoriesExpense = this.categoriesState.categoriesExpense;
+
+  /* Focus on amount after reset of form */
+  @ViewChild('amountInput') amountInput!: ElementRef<HTMLInputElement>;
 
   /* Add transaction */
   addTransaction(): void {
@@ -48,16 +55,16 @@ export class AddTransactionExpense {
       next: (newTransaction) => {
         this.utils.openSnackBar('Transaction added successfully', '');
         this.transactionFormExpense.reset();
-
-        this.transactionEventsService.notifyTransactionAdded(newTransaction);
+        this.transactionsState.addTransactionExpense(newTransaction);
+        this.amountInput.nativeElement.focus();
       },
       error: (err) => {
-        this.utils.openSnackBar(err.message, '');
+        this.utils.openSnackBar('Error adding transaction:' + err.error, '');
       },
     });
   }
 
-  /* Functions for forms */
+  /* Form control */
   get amount() {
     return this.transactionFormExpense.get('amount');
   }
@@ -66,5 +73,9 @@ export class AddTransactionExpense {
   }
   get date() {
     return this.transactionFormExpense.get('date');
+  }
+
+  get description() {
+    return this.transactionFormExpense.get('description');
   }
 }

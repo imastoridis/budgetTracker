@@ -5,14 +5,14 @@ import {
   computed,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Transaction } from '../../../../transactions/models/transactions.models';
+import { Transaction } from '@app/features/transactions/models/transactions.models';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateTransaction } from '../../../../transactions/components/transaction-update.component';
-import { DeleteTransaction } from '../../../../transactions/components/transaction-delete.component';
-import { CategoriesStateService } from '../../../../../shared/services/state/categoriesStateService';
-import { TransactionsStateService } from '../../../../../shared/services/state/transactionsStateService';
+import { UpdateTransaction } from '@app/features/transactions/components/transaction-update.component';
+import { DeleteTransaction } from '@app/features/transactions/components/transaction-delete.component';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
+import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
 
 @Component({
   selector: 'app-dashboard-summary-income-transactions',

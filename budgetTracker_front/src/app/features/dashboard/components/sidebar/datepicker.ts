@@ -17,14 +17,11 @@ import {
   NativeDateAdapter,
   MAT_DATE_FORMATS,
 } from '@angular/material/core';
-import { CUSTOM_MONTH_YEAR_DATE_FORMATS } from '../../../../shared/utils/date-formats';
-import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { CUSTOM_MONTH_YEAR_DATE_FORMATS } from '@shared/utils/date-formats';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardEventsService } from '../../services/dashboard-events.service';
-import {
-  DateForm,
-  initDateForm,
-} from '../../../../shared/forms/date-form-builder';
+import { DateForm, initDateForm } from '@shared/forms/date-form-builder';
 @Component({
   selector: 'app-datepicker-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,8 +78,6 @@ export class DatePickerSidebar {
     datepicker: MatDatepicker<Date>,
   ) {
     const ctrlValue: Date = this.dateForm.getRawValue().date;
-    console.log('Selected month and year:', ctrlValue);
-    //const ctrlValue = this.dateForm.value || new Date();
 
     ctrlValue.setMonth(normalizedMonthAndYear.getMonth());
     ctrlValue.setFullYear(normalizedMonthAndYear.getFullYear());
@@ -95,16 +90,10 @@ export class DatePickerSidebar {
     this.dateForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newDate) => {
-        console.log('Date form changed to:', newDate.date);
         if (newDate.date) {
           this.dashBoardEventsService.notifyDateChanged(newDate.date);
         }
       });
-  }
-
-  onDateChanged(selectedDate: Date) {
-    console.log('Date changed to:', selectedDate);
-    // Add your logic here, such as fetching new data for the dashboard
   }
 
   get date() {

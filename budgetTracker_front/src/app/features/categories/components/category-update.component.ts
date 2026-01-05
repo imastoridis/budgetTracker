@@ -2,16 +2,16 @@
 
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../shared/modules/material/material.module';
+import { MaterialModule } from '@shared/modules/material/material.module';
 import { Category } from '../models/categories.models';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   buildCategoryForm,
   CategoryForm,
 } from '../forms/category-form-builder';
-import { Utils } from '../../../shared/utils/utils';
+import { Utils } from '@shared/utils/utils';
 import { CategoriesService } from '../services/categories.service';
-import { CategoriesStateService } from '../../../shared/services/state/categoriesStateService';
+import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-category-update',
