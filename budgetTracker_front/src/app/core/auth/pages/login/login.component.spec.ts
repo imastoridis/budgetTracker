@@ -17,7 +17,6 @@ const mockAuthService = {
 };
 
 describe('LoginComponent', () => {
-  /* 
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authService: AuthService;
@@ -113,5 +112,5 @@ describe('LoginComponent', () => {
     );
     // Check spinner disabled after error
     expect(component.spinnerDisabled()).toBe(false);
-  }); */
+  });
 });

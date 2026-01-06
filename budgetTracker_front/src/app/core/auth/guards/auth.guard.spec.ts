@@ -17,16 +17,14 @@ const mockAuthService = {
 };
 
 describe('AuthGuard', () => {
-  /* 
   let router: Router;
-  //let authService: typeof mockAuthService;
   let authService: AuthService;
 
   beforeEach(() => {
     // Configure TestBed with mocks
     TestBed.configureTestingModule({
       imports: [
-        // Use RouterTestingModule to mock the router dependencies
+        // RouterTestingModule to mock the router dependencies
         RouterTestingModule.withRoutes([]),
       ],
       providers: [{ provide: AuthService, useValue: mockAuthService }],
@@ -59,17 +57,19 @@ describe('AuthGuard', () => {
 
   // --- Test 2: Unauthenticated User ---
   it('should redirect an unauthenticated user to the login page', () => {
-    // Arrange: Set the isAuthenticated signal to return false (not authenticated)
-    (authService.isAuthenticated as unknown as Mock).mockReturnValue(false);
+    // 1. The mock returns false (user is not logged in)
+    const isAuthenticatedMock = authService.isAuthenticated as unknown as Mock;
+    isAuthenticatedMock.mockReturnValue(false);
 
-    // Act: Call the guard function
+    // 2. Execute the guard in the injection context
     const result = TestBed.runInInjectionContext(() =>
       authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
     );
 
-    // Assert: Expect the guard to return a UrlTree that points to the login page
-    expect(router.parseUrl).toHaveBeenCalledWith('/auth/login');
-    // Check that the result is the UrlTree object we returned from the mock
-    expect(result).toEqual({ path: '/auth/login' } as unknown as UrlTree);
-  }); */
+    // 3. Functional guards in Angular return the UrlTree to perform the redirect.
+    expect(result).toBeInstanceOf(UrlTree);
+
+    const urlTree = result as UrlTree;
+    expect(urlTree.toString()).toContain('/auth/login');
+  });
 });

@@ -18,7 +18,7 @@ const mockAuthService = {
 };
 
 describe('RegistrationComponent', () => {
-  /* let component: RegistrationComponent;
+  let component: RegistrationComponent;
   let fixture: ComponentFixture<RegistrationComponent>;
   let authService: AuthService;
 
@@ -104,5 +104,4 @@ describe('RegistrationComponent', () => {
     // Check post-submission state changes (in the 'complete' block)
     expect(component.spinnerDisabled()).toBe(false);
   });
- */
 });

@@ -18,9 +18,7 @@ export const authGuard: CanActivateFn = () => {
   if (authService.isAuthenticated()) {
     // If the token signal has a value (is authenticated), allow access.
     return true;
-  } else {
-    // If not authenticated, redirect the user to the login page.
-    console.log('Access denied. Redirecting to login.');
-    return router.createUrlTree(['/auth/login']);
   }
+
+  return router.createUrlTree(['/auth/login']);
 };
