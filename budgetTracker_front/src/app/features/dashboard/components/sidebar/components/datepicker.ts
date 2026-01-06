@@ -20,7 +20,7 @@ import {
 import { CUSTOM_MONTH_YEAR_DATE_FORMATS } from '@shared/utils/date-formats';
 import { MaterialModule } from '@shared/modules/material/material.module';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DashboardEventsService } from '../../services/dashboard-events.service';
+import { DashboardEventsService } from '../../../services/dashboard-events.service';
 import { DateForm, initDateForm } from '@shared/forms/date-form-builder';
 @Component({
   selector: 'app-datepicker-sidebar',
@@ -68,7 +68,7 @@ import { DateForm, initDateForm } from '@shared/forms/date-form-builder';
   `,
 })
 export class DatePickerSidebar {
-  // dateControl = new FormControl(new Date());
+  /* Sets datepicker to only show month and year in selection */
   private destroyRef = inject(DestroyRef);
   private dashBoardEventsService = inject(DashboardEventsService);
   readonly dateForm: DateForm = initDateForm();

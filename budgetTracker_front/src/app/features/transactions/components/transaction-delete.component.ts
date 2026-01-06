@@ -1,14 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@shared/modules/material/material.module';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   TransactionFormWithData,
   TransactionForm,
@@ -17,47 +10,29 @@ import { Transaction } from '../models/transactions.models';
 import { TransactionsService } from '../services/transactions.service';
 import { Utils } from '@shared/utils/utils';
 import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
-import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-transaction-delete',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MaterialModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    ReactiveFormsModule,
-  ],
-  template: ` <h2 mat-dialog-title>Delete transaction</h2>
-    <form [formGroup]="transactionForm">
-      <mat-dialog-content
-        >Are you sure you want to delete this transaction</mat-dialog-content
-      >
-      <mat-dialog-actions>
-        <button matButton mat-dialog-close>Close</button>
-        <button matButton (click)="deleteTransaction()">Ok</button>
-      </mat-dialog-actions>
-    </form>`,
+  imports: [MaterialModule, ReactiveFormsModule],
+  templateUrl: './transaction-delete.html',
 })
 export class DeleteTransaction {
   private transactionService = inject(TransactionsService);
+  private transactionsState = inject(TransactionsStateService);
   private dialogRef = inject(MatDialogRef<DeleteTransaction>);
   private utils = inject(Utils);
 
+  /* Form data */
   private initialData = inject(MAT_DIALOG_DATA) as Transaction;
   readonly transactionForm: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
 
-  private transactionsState = inject(TransactionsStateService);
-  private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories;
-
-  readonly transactionType = this.allCategories().find((category) => {
-    return category.id === this.initialData.categoryId;
-  })?.type;
+  /* Finds the type of transaction */
+  readonly transactionType = this.transactionsState.findTransactionType(
+    this.initialData,
+  );
 
   /* Update transaction */
   deleteTransaction(): void {

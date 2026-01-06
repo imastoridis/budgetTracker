@@ -12,14 +12,6 @@ export class CategoriesService {
   readonly allCategories = signal<Category[]>([]);
 
   /**
-   * Gets categories
-   * @returns An Observable of the categories response.
-   */
-  /*   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.apiUrlCategories);
-  } */
-
-  /**
    * Gets categories with category total for a specific date
    * @returns An Observable of the categories response.
    */

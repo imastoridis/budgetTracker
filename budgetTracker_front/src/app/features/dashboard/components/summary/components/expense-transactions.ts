@@ -11,7 +11,6 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Transaction } from '@app/features/transactions/models/transactions.models';
 import { UpdateTransaction } from '@app/features/transactions/components/transaction-update.component';
 import { DeleteTransaction } from '@app/features/transactions/components/transaction-delete.component';
-import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
 
 @Component({
@@ -22,9 +21,6 @@ import { TransactionsStateService } from '@shared/services/state/transactionsSta
 })
 export class DashboardSummaryExpenseTransactions {
   private dialog = inject(MatDialog);
-
-  private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories();
 
   private transactionsState = inject(TransactionsStateService);
   readonly allTransactionsExpense = this.transactionsState.transactionsExpense;

@@ -1,15 +1,11 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  ViewChild,
-  input,
-  effect,
   computed,
   inject,
 } from '@angular/core';
 import { MaterialModule } from '@shared/modules/material/material.module';
 import {
-  ChartComponent,
   ApexLegend,
   NgApexchartsModule,
   ApexNonAxisChartSeries,
@@ -18,7 +14,6 @@ import {
   ChartType,
 } from 'ng-apexcharts';
 
-import { Category } from '../../../categories/models/categories.models';
 import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 
 export type ChartOptions = {
@@ -60,15 +55,22 @@ export class PieChartDisplay {
   private categoriesState = inject(CategoriesStateService);
   readonly allCategories = this.categoriesState.categories;
 
+  /* Series */
   chartSeries = computed(() =>
     this.allCategories().map((c) => c.totalAmount || 0),
   );
+
+  /* Labels */
   chartLabels = computed(() => this.allCategories().map((c) => c.name));
+
+  /* Details */
   chartDetails: ApexChart = {
     type: 'donut' as ChartType,
     width: '100%',
     height: 370,
   };
+
+  /* Legend */
   chartLegend: ApexLegend = {
     position: 'bottom',
     horizontalAlign: 'center',

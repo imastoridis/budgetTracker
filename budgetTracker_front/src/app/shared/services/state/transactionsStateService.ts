@@ -11,39 +11,42 @@ export class TransactionsStateService {
   private _totalIncome = signal<number>(0);
   private _totalExpense = signal<number>(0);
   private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories;
 
-  // The public read-only signal that components consume
+  // Read-only signal that components consume
   readonly transactions = this._transactions.asReadonly();
   readonly transactionsIncome = this._transactionsIncome.asReadonly();
   readonly transactionsExpense = this._transactionsExpense.asReadonly();
   readonly totalIncome = this._totalIncome.asReadonly();
   readonly totalExpense = this._totalExpense.asReadonly();
 
-  /* Set transactions income/expense */
+  /* Set transactions income */
   setTransactionsIncome(transactions: Transaction[]) {
     this._transactionsIncome.set(transactions);
   }
 
+  /* Set transactions expense */
   setTransactionsExpense(transactions: Transaction[]) {
     this._transactionsExpense.set(transactions);
   }
 
-  /* Set total income/expense */
+  /* Set total income */
   setTotalIncome(totalIncome: number) {
     this._totalIncome.set(totalIncome);
   }
 
+  /* Set total expense */
   setTotalExpense(totalExpense: number) {
     this._totalExpense.set(totalExpense);
   }
 
   /* Transaction income added */
   addTransactionIncome(newTransaction: Transaction) {
+    //updates transasctions
     this._transactionsIncome.update((transactionsIncome) => {
       return [...transactionsIncome, newTransaction];
     });
 
+    // Update category amount
     this.categoriesState.updateCategoryAmount(
       newTransaction.categoryId,
       0,
@@ -161,5 +164,12 @@ export class TransactionsStateService {
     this._totalExpense.update(
       () => this._totalExpense() - deletedTransaction.amount,
     );
+  }
+
+  /* Finds the transaction type income/expense */
+  findTransactionType(transaction: Transaction) {
+    return this.categoriesState.categories().find((category) => {
+      return category.id === transaction.categoryId;
+    })?.type;
   }
 }

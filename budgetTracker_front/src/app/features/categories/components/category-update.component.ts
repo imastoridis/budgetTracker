@@ -17,35 +17,7 @@ import { CategoriesStateService } from '@shared/services/state/categoriesStateSe
   selector: 'app-dialog-category-update',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
-  template: ` <h2 mat-dialog-title>Update category</h2>
-    <form [formGroup]="categoryForm">
-      <mat-dialog-content>
-        <mat-form-field
-          appearance="outline"
-          class="!mt-5"
-          [class.valid-green-border]="type?.valid"
-        >
-          <mat-label>Category</mat-label>
-          <input matInput formControlName="name" cdkFocusInitial required />
-          <!-- Validation Feedback -->
-          @if (name?.touched && name?.hasError('required')) {
-            <mat-error> Category name is required. </mat-error>
-          }
-        </mat-form-field>
-      </mat-dialog-content>
-      <mat-dialog-actions>
-        <button matButton [mat-dialog-close] class="!text-red-700">
-          Cancel
-        </button>
-        <button
-          matButton
-          (click)="updateCategory()"
-          [disabled]="categoryForm.invalid"
-        >
-          Ok
-        </button>
-      </mat-dialog-actions>
-    </form>`,
+  templateUrl: './category-update.html',
 })
 export class UpdateCategory {
   private categoriesService = inject(CategoriesService);
@@ -54,7 +26,6 @@ export class UpdateCategory {
   private initialData = inject(MAT_DIALOG_DATA) as Category;
   private utils = inject(Utils);
 
-  // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
 
   /* Update category */
@@ -74,6 +45,7 @@ export class UpdateCategory {
       });
   }
 
+  /* Form control */
   get name() {
     return this.categoryForm.get('name');
   }

@@ -16,16 +16,7 @@ import { CategoriesStateService } from '@shared/services/state/categoriesStateSe
   selector: 'app-dialog-category-delete',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
-  template: ` <h2 mat-dialog-title>Delete category</h2>
-    <form [formGroup]="categoryForm">
-      <mat-dialog-content
-        >Are you sure you want to delete this category?</mat-dialog-content
-      >
-      <mat-dialog-actions>
-        <button matButton mat-dialog-close>Close</button>
-        <button matButton (click)="deleteCategory()">Ok</button>
-      </mat-dialog-actions>
-    </form>`,
+  templateUrl: './category-delete.html',
 })
 export class DeleteCategory {
   private categoriesService = inject(CategoriesService);

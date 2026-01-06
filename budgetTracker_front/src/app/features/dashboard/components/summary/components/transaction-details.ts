@@ -12,11 +12,11 @@ import { MaterialModule } from '@shared/modules/material/material.module';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Transaction } from '../../models/transactions.models';
-import { UpdateTransaction } from '../transaction-update.component';
-import { DeleteTransaction } from '../transaction-delete.component';
+import { Transaction } from '../../../../transactions/models/transactions.models';
+import { UpdateTransaction } from '../../../../transactions/components/transaction-update.component';
+import { DeleteTransaction } from '../../../../transactions/components/transaction-delete.component';
 import { TransactionsStateService } from '@app/shared/services/state/transactionsStateService';
-import { TransactionsService } from '../../services/transactions.service';
+import { TransactionsService } from '../../../../transactions/services/transactions.service';
 import { Category } from '@app/features/categories/models/categories.models';
 
 @Component({
@@ -58,6 +58,7 @@ export class TransactionDetailsCategory {
   displayedColumns: string[] = [
     'id',
     'date',
+    'categoryName',
     'amount',
     'description',
     'action',

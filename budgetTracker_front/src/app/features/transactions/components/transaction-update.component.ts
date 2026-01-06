@@ -50,46 +50,37 @@ import { Category } from '@app/features/categories/models/categories.models';
 })
 export class UpdateTransaction {
   private transactionService = inject(TransactionsService);
+  private transactionsState = inject(TransactionsStateService);
+  private categoriesState = inject(CategoriesStateService);
   private dialogRef = inject(MatDialogRef<UpdateTransaction>);
   private utils = inject(Utils);
+
+  /* Form data */
   private initialData = inject(MAT_DIALOG_DATA) as Transaction;
   readonly transactionFormUpdate: TransactionForm = TransactionFormWithData(
     this.initialData,
   );
-  private transactionsState = inject(TransactionsStateService);
-  private categoriesState = inject(CategoriesStateService);
-  readonly allCategories = this.categoriesState.categories;
 
   /*  Filters the categories for select  */
   readonly filteredCategories = signal<Category[]>([]);
   readonly filteredCategoriesIncome = this.categoriesState.categoriesIncome;
   readonly filteredCategoriesExpense = this.categoriesState.categoriesExpense;
 
-  /* Finds transaction type*/
-  getTransactionType() {
-    return this.allCategories().find((category) => {
-      return category.id === this.initialData.categoryId;
-    })?.type;
-  }
+  /* Finds the type of transaction */
+  readonly transactionType = this.transactionsState.findTransactionType(
+    this.initialData,
+  );
 
-  /* Gets filtered categories */
-  getFilteredCategories() {
-    if (this.getTransactionType() === 'INCOME') {
-      this.filteredCategories.set(this.filteredCategoriesIncome());
-    } else {
-      this.filteredCategories.set(this.filteredCategoriesExpense());
-    }
-  }
-
-  readonly transactionType = this.allCategories().find((category) => {
-    return category.id === this.initialData.categoryId;
-  })?.type;
-
-  /* Close dialog */
   /* Update transaction */
   updateTransaction(): void {
-    const updatedTransaction: Transaction =
-      this.transactionFormUpdate.getRawValue();
+    const rawValues = this.transactionFormUpdate.getRawValue();
+
+    //Modifiy date for back
+    const dateValue = rawValues.date as string | Date;
+    const updatedTransaction: Transaction = {
+      ...rawValues,
+      date: this.utils.formatDate(new Date(dateValue)) as unknown as Date,
+    };
 
     this.transactionService
       .updateTransaction(updatedTransaction as Transaction)
@@ -97,7 +88,7 @@ export class UpdateTransaction {
         next: (response) => {
           this.dialogRef.close(response);
           this.utils.openSnackBar('Transaction updated successfully', '');
-          return this.getTransactionType() === 'INCOME'
+          return this.transactionType === 'INCOME'
             ? this.transactionsState.updateTransactionIncome(response)
             : this.transactionsState.updateTransactionExpense(response);
         },
@@ -108,6 +99,15 @@ export class UpdateTransaction {
           );
         },
       });
+  }
+
+  /* Gets filtered categories */
+  getFilteredCategories() {
+    if (this.transactionType === 'INCOME') {
+      this.filteredCategories.set(this.filteredCategoriesIncome());
+    } else {
+      this.filteredCategories.set(this.filteredCategoriesExpense());
+    }
   }
 
   /* Form control */
@@ -128,7 +128,6 @@ export class UpdateTransaction {
   }
 
   constructor() {
-    this.getTransactionType();
     this.getFilteredCategories();
   }
 }

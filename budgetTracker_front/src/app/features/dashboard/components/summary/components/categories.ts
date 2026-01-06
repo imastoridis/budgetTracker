@@ -5,7 +5,7 @@ import { Category } from '@app/features/categories/models/categories.models';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateCategory } from '@app/features/categories/components/category-update.component';
 import { DeleteCategory } from '@app/features/categories/components/category-delete.component';
-import { TransactionDetailsCategory } from '@app/features/transactions/components/details/transaction-details.component';
+import { TransactionDetailsCategory } from '@app/features/dashboard/components/summary/components/transaction-details';
 import { CurrencyPipe } from '@angular/common';
 import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 

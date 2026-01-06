@@ -15,7 +15,7 @@ import { CategoriesService } from '../categories/services/categories.service';
 /* Transactions */
 import { TransactionsService } from '../transactions/services/transactions.service';
 /* Dashboard children*/
-import { DashboardHeader } from './components/dashboard-header';
+import { DashboardHeader } from './components/header/dashboard-header';
 import { DashboardSidebar } from './components/sidebar/dashboard-sidebar';
 import { DashboardSummary } from './components/summary/dashboard-summary';
 import { CategoriesStateService } from '@shared/services/state/categoriesStateService';

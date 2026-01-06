@@ -11,52 +11,7 @@ import { CategoriesStateService } from '@shared/services/state/categoriesStateSe
   selector: 'app-add-category',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, ReactiveFormsModule],
-  template: `
-    <div class="flex flex-col gap-4">
-      <div
-        class="flex border-b align-items-center  text-xl font-semibold text-sky-700 gap-2"
-      >
-        <mat-icon aria-label="face icon" fontIcon="category"></mat-icon>
-        <h2>Category</h2>
-      </div>
-      <form [formGroup]="categoryForm" appearance="outline">
-        <mat-accordion class="example-headers-align" multi>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title> Add Category </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="flex flex-col gap-2 ">
-              <mat-form-field
-                appearance="outline"
-                [class.valid-green-border]="name?.valid"
-              >
-                <mat-label>Category name</mat-label>
-                <input
-                  matInput
-                  formControlName="name"
-                  required
-                  cdkFocusInitial
-                />
-              </mat-form-field>
-              <mat-form-field
-                appearance="outline"
-                [class.valid-green-border]="type?.valid"
-              >
-                <mat-label>Categories</mat-label>
-                <mat-select formControlName="type" required>
-                  <mat-option value="INCOME">Income</mat-option>
-                  <mat-option value="EXPENSE">Expense</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-dialog-actions class="text-end">
-                <button matButton (click)="addCategory()">Add</button>
-              </mat-dialog-actions>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </form>
-    </div>
-  `,
+  templateUrl: './category-add.html',
 })
 export class AddCategory {
   private categoriesService = inject(CategoriesService);

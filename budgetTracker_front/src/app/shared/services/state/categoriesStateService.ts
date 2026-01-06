@@ -17,7 +17,7 @@ export class CategoriesStateService {
   setCategories(categories: Category[]) {
     this._categories.set(categories);
 
-    this.updateCategories(categories);
+    this.updateCategoriesTotals(categories);
   }
 
   setCategoriesIncome(categories: Category[]) {
@@ -53,7 +53,7 @@ export class CategoriesStateService {
       return updated.sort((a, b) => a.name.localeCompare(b.name));
     });
 
-    this.updateCategories(this._categories());
+    this.updateCategoriesTotals(this._categories());
   }
 
   /* Category updated */
@@ -64,7 +64,7 @@ export class CategoriesStateService {
       ),
     );
 
-    this.updateCategories(this._categories());
+    this.updateCategoriesTotals(this._categories());
   }
 
   /* Category deleted */
@@ -73,11 +73,11 @@ export class CategoriesStateService {
       categories.filter((category) => category.id !== deletedCategory.id),
     );
 
-    this.updateCategories(this._categories());
+    this.updateCategoriesTotals(this._categories());
   }
 
   /* Update the categoriesIncome and categoriesExpense */
-  private updateCategories(categories: Category[]) {
+  private updateCategoriesTotals(categories: Category[]) {
     this.setCategoriesIncome([]);
     this.setCategoriesExpense([]);
 
