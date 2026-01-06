@@ -56,12 +56,10 @@ export class RegistrationComponent {
 
     this.authService.register(credentials).subscribe({
       error: (err) => {
-        console.error('Registration failed:', err);
         this.registrationError.set('Registration failed: ' + err.error);
         this.spinnerDisabled.set(false);
       },
       complete: () => {
-        console.log('Registration successful');
         this.spinnerDisabled.set(false);
       },
     });

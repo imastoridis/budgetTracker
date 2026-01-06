@@ -1,18 +1,13 @@
-import { defineConfig } from 'vitest/config';
-import angular from '@vitejs/plugin-angular';
+import { defineConfig, mergeConfig } from 'vitest/config';
+import viteConfig from './vite.config';
 
-export default defineConfig({
-  plugins: [angular()],
-  test: {
-    // 1. Enable globals (vi, describe, it, etc.) for a familiar Jest/Jasmine syntax
-    globals: true,
-    // 2. Use jsdom to simulate a browser environment for Angular components
-    environment: 'jsdom',
-    // 3. Set the setup file created previously (assuming it's at src/test.setup.ts)
-    setupFiles: ['src/test.setup.ts'],
-    // 4. Optionally, exclude node_modules and the standard Angular 'e2e' folder
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'e2e'],
-    // 5. Specify test file patterns (Angular convention uses .spec.ts)
-    include: ['src/**/*.spec.ts'],
-  },
-});
+export default defineConfig((configEnv) =>
+  mergeConfig(
+    viteConfig(configEnv),
+    defineConfig({
+      test: {
+        exclude: ['packages/template/*'],
+      },
+    }),
+  ),
+);
