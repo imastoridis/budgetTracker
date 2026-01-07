@@ -47,6 +47,7 @@ export class DashboardComponent {
   getCategoriesWithTotal(date: Date): void {
     this.categoriesService.getCategoriesWithTotal(date).subscribe({
       next: (categories) => {
+        console.log(categories);
         this.categoriesState.setCategories(categories);
       },
       error: (err) => {

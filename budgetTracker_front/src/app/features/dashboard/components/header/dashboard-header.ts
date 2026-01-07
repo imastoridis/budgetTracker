@@ -9,7 +9,7 @@ import { AuthService } from '@app/core/auth/services/auth.service';
   imports: [MaterialModule, ReactiveFormsModule],
   template: `
     <header
-      class="p-4 border-b border-gray-200 mb-6 flex flex-row justify-between items-center bg-white w-screen shadow-xl h-[10%]"
+      class="p-4 border-b border-gray-200 mb-1 xl:mb-6 flex flex-row justify-between items-center bg-white w-full shadow-xl h-16"
     >
       <h1 class="text-xl font-extrabold text-cyan-800">
         Budget Tracker Dashboard

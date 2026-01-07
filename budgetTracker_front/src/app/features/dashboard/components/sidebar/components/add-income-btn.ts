@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
     <button
       (click)="openDialogAddIncome()"
       mat-raised-button
-      class="!bg-green-700 hover:!bg-green-800 !text-white  !w-full"
+      class="!bg-green-700 hover:!bg-green-800 !text-white !w-full xl:!text-lg"
     >
       Add income
     </button>

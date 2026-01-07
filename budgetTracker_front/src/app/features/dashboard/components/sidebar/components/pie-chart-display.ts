@@ -28,25 +28,29 @@ export type ChartOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MaterialModule, NgApexchartsModule],
   template: `
-    <div>
+    <div class="flex flex-col h-full">
       <div
-        class="flex border-b align-items-center  text-xl font-semibold text-sky-700  gap-2"
+        class="flex-none flex border-b align-items-center text-base xl:text-xl font-semibold text-sky-700 gap-2"
       >
         <mat-icon aria-label="face icon" fontIcon="pie_chart"></mat-icon>
         <h2>Chart</h2>
       </div>
 
       <div
-        class="w-full h-100 bg-gray-100 flex items-center justify-center text-gray-500"
+        class="flex-grow w-full bg-gray-100 flex items-center justify-center text-gray-500 overflow-hidden"
         id="chart"
       >
-        <apx-chart
-          [series]="chartSeries()"
-          [chart]="chartDetails"
-          [labels]="chartLabels()"
-          [legend]="chartLegend"
-        >
-        </apx-chart>
+        @if (chartSeries().length > 0) {
+          <apx-chart
+            class="w-full h-full"
+            [series]="chartSeries()"
+            [chart]="chartDetails"
+            [labels]="chartLabels()"
+            [legend]="chartLegend"
+          ></apx-chart>
+        } @else {
+          <p class="text-sm italic">No data available for this month</p>
+        }
       </div>
     </div>
   `,
@@ -55,19 +59,27 @@ export class PieChartDisplay {
   private categoriesState = inject(CategoriesStateService);
   readonly allCategories = this.categoriesState.categories;
 
-  /* Series */
-  chartSeries = computed(() =>
-    this.allCategories().map((c) => c.totalAmount || 0),
-  );
+  /* Chart data , filters categories with totalAmount = 0*/
+  readonly chartData = computed(() => {
+    const active = this.allCategories().filter((c) => (c.totalAmount || 0) > 0);
+    return {
+      series: active.map((c) => c.totalAmount || 0),
+      labels: active.map((c) => c.name),
+    };
+  });
 
-  /* Labels */
-  chartLabels = computed(() => this.allCategories().map((c) => c.name));
+  chartSeries = computed(() => this.chartData().series);
+  chartLabels = computed(() => this.chartData().labels);
 
   /* Details */
   chartDetails: ApexChart = {
     type: 'donut' as ChartType,
     width: '100%',
-    height: 370,
+    height: '100%', // Changed from 'auto' to '100%'
+    sparkline: {
+      enabled: false, // Ensure this is false so the chart doesn't collapse
+    },
+    parentHeightOffset: 0,
   };
 
   /* Legend */

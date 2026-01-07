@@ -1,6 +1,6 @@
-<div class="flex my-4 gap-1 text-green-600 ">
+<div class="flex gap-1 text-green-600 ">
     <mat-icon aria-label="face icon" fontIcon="payments"></mat-icon>
-    <div class="text-xl">Income transactions
+    <div class="text-base xl:text-xl">Income transactions
         <span class="font-semibold ">: {{
             totalIncome()|
             currency :
@@ -8,7 +8,7 @@
             '1.2-2' }}</span>
     </div>
 </div>
-<div class=" w-full  overflow-y-auto h-[80%]">
+<div class="w-full overflow-y-auto h-[80%]">
     <div class="flex flex-col text-center">
         <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8 !bg-white">
 

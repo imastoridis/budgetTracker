@@ -1,4 +1,4 @@
-<div class="p-4 bg-white shadow-xl rounded-xl flex flex-col gap-10 h-[90vh]  justify-between">
+<div class="p-4 bg-white shadow-xl rounded-xl flex flex-col gap-9 overflow-y-auto h-full">
     <!-- Datepicker -->
     <app-datepicker-sidebar></app-datepicker-sidebar>
 
@@ -6,10 +6,10 @@
     <app-total-month-display></app-total-month-display>
 
     <!-- Add Transaction (Income/Expense)-->
-    <div class="flex flex-col gap-4 text-xl font-semibold text-sky-700">
+    <div class="flex flex-col gap-4 font-semibold text-sky-700">
         <div class="flex border-b align-items-center  gap-2">
             <mat-icon aria-label="face icon" fontIcon="add_circle"></mat-icon>
-            <h2>Transactions</h2>
+            <h2 class="text-sm xl:text-xl">Transactions</h2>
         </div>
         <!-- Add income btn -->
         <app-add-income-btn></app-add-income-btn>
@@ -22,5 +22,5 @@
     <app-add-category></app-add-category>
 
     <!-- Piechart -->
-    <app-pie-chart-display></app-pie-chart-display>
+    <app-pie-chart-display class="h-100"></app-pie-chart-display>
 </div>

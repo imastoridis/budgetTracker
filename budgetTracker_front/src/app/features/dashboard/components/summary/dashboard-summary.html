@@ -1,17 +1,19 @@
-<div class="p-4 flex flex-col bg-white shadow-xl rounded-xl h-[90vh]">
+<div class="p-4 flex flex-col bg-white shadow-xl rounded-xl h-full">
     <div class="flex border-b align-items-center text-xl font-semibold text-sky-700">
         <mat-icon aria-label="face icon" fontIcon="business_center"></mat-icon>
-        <h2>Monthly Budget</h2>
+        <h2 class="text-base xl:text-xl">Monthly Budget</h2>
     </div>
 
-    <div class="flex flex-col gap-3 h-full">
+    <div class="flex flex-col h-full justify-between">
         <!-- Categories -->
-        <app-dashboard-summary-categories class="h-[30%]"></app-dashboard-summary-categories>
+        <app-dashboard-summary-categories class="h-[40%] xl:h-[40%]"></app-dashboard-summary-categories>
 
         <!-- Incomes list -->
-        <app-dashboard-summary-income-transactions class="h-[33%]"></app-dashboard-summary-income-transactions>
+        <app-dashboard-summary-income-transactions
+            class="h-[25%] xl:h-[20%]"></app-dashboard-summary-income-transactions>
 
         <!-- Expenses list -->
-        <app-dashboard-summary-expense-transactions class="h-[33%]"></app-dashboard-summary-expense-transactions>
+        <app-dashboard-summary-expense-transactions
+            class="h-[30%] xl:h-[35%]"></app-dashboard-summary-expense-transactions>
     </div>
 </div>

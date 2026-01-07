@@ -18,25 +18,25 @@ import { TransactionsStateService } from '@shared/services/state/transactionsSta
         class="flex border-b align-items-center  text-xl font-semibold text-sky-700  gap-2"
       >
         <mat-icon aria-label="face icon" fontIcon="paid"></mat-icon>
-        <h2>This month</h2>
+        <h2 class="text-base xl:text-xl">This month</h2>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <div class="flex flex-row justify-between">
+      <div class="flex flex-col gap-2 text-sm xl:text-lg">
+        <div class="flex flex-row justify-between ">
           <span class="text-gray-600">Total Income:</span>
           <span class="font-medium text-green-600">{{
             totalIncome() | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
         </div>
         <div class="flex flex-row justify-between">
-          <span class="text-gray-600">Total Expenses:</span>
+          <span class="text-gray-600 ">Total Expenses:</span>
           <span class="font-medium text-red-600">
             {{ totalExpense() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span
           >
         </div>
 
         <div
-          class="flex flex-row justify-between border-t pt-2  text-xl font-semibold"
+          class="flex flex-row justify-between border-t pt-2 font-semibold text-sm xl:text-xl"
           [class]="balance() >= 0 ? 'text-green-600' : 'text-red-600'"
         >
           <span>Balance:</span>

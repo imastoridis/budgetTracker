@@ -44,13 +44,18 @@ import { DateForm, initDateForm } from '@shared/forms/date-form-builder';
         class="flex border-b align-items-center text-xl font-semibold text-sky-700  gap-2"
       >
         <mat-icon aria-label="face icon" fontIcon="calendar_month"></mat-icon>
-        <h2>Current Month</h2>
+        <h2 class="text-sm xl:text-xl">Current Month</h2>
       </div>
 
       <form [formGroup]="dateForm">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label>Date</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="date" />
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="date"
+            class="w-full"
+          />
           <mat-datepicker-toggle
             matIconSuffix
             [for]="picker"

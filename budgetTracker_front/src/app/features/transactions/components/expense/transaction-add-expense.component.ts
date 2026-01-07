@@ -51,17 +51,20 @@ export class AddTransactionExpense {
     const transactionData: Transaction =
       this.transactionFormExpense.getRawValue();
 
-    this.transactionService.addTransaction(transactionData).subscribe({
-      next: (newTransaction) => {
-        this.utils.openSnackBar('Transaction added successfully', '');
-        this.transactionFormExpense.reset();
-        this.transactionsState.addTransactionExpense(newTransaction);
-        this.amountInput.nativeElement.focus();
-      },
-      error: (err) => {
-        this.utils.openSnackBar('Error adding transaction:' + err.error, '');
-      },
-    });
+    this.transactionService
+      .addTransaction(transactionData)
+
+      .subscribe({
+        next: (newTransaction) => {
+          this.utils.openSnackBar('Transaction added successfully', '');
+          this.transactionFormExpense.reset();
+          this.transactionsState.addTransactionExpense(newTransaction);
+          this.amountInput.nativeElement.focus();
+        },
+        error: (err) => {
+          this.utils.openSnackBar('Error adding transaction:' + err.error, '');
+        },
+      });
   }
 
   /* Form control */

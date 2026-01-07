@@ -44,4 +44,47 @@ describe('CategoriesStateService', () => {
     expect(service.categoriesExpense()[0].type).toBe(TransactionType.EXPENSE);
     expect(service.categoriesExpense()[0].totalAmount).toBe(0);
   });
+
+  /* Add category */
+  it('should add a new category to the list', () => {
+    // 1. Arrange: Initial state with some categories
+    const mockDataInitialList: Category[] = [
+      {
+        id: 1,
+        name: 'Salary',
+        userId: 1,
+        type: TransactionType.INCOME,
+        totalAmount: 0,
+      },
+      {
+        id: 2,
+        name: 'Rent',
+        userId: 1,
+        type: TransactionType.EXPENSE,
+        totalAmount: 0,
+      },
+    ];
+
+    service.setCategories(mockDataInitialList);
+
+    // 2. Act: Add the new category
+    const mockDataNewcategory: Category = {
+      id: 10,
+      name: 'Activities',
+      userId: 1,
+      type: TransactionType.INCOME,
+      totalAmount: 0,
+    };
+    service.addCategory(mockDataNewcategory);
+
+    expect(service.categories()).toHaveLength(3);
+    expect(service.categories()[2].id).toBe(10);
+    expect(service.categories()[2].name).toBe('Activities');
+    expect(service.categories()[2].type).toBe(TransactionType.INCOME);
+    expect(service.categories()[2].totalAmount).toBe(0);
+    //Alphabetical order
+    expect(service.categories()[0].name).toBe('Activities');
+    expect(service.categories()[1].name).toBe('Rent');
+    expect(service.categories()[2].name).toBe('Salary');
+  });
 });
