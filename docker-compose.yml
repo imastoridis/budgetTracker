@@ -19,8 +19,6 @@ services:
     depends_on:
       app-dev:
         condition: service_started
-      #app-prod:
-      # condition: service_started
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
@@ -32,11 +30,10 @@ services:
   # FRONTEND (Development Mode with Live Reload)
   # ---------------------------------------------
   frontend-dev:
-    # Use the 'build-stage' from your DockerFile, which has Node and NPM
     build:
       context: ./budgetTracker_front
       dockerfile: DockerFile
-      target: build-stage # Use the Node image for ng serve
+      target: build-stage
     container_name: frontend-dev
 
     # 1. Volume Mount: Mount local source code to container's working directory
@@ -66,9 +63,12 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: budget_db
+      #POSTGRES_USER: user
+      #POSTGRES_PASSWORD: password
+      #POSTGRES_DB: budget_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
@@ -106,7 +106,6 @@ services:
   # ---------------------------------------------
   app-dev:
     build:
-      # FIX: Point to the 'backend' folder
       context: ./budgetTracker
       dockerfile: Dockerfile.dev
     container_name: budget-tracker-api-dev
@@ -119,7 +118,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       # Debugger enabled
-      #MAVEN_OPTS: "-Dspring-boot.run.fork=false -Dspring.devtools.restart.enabled=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       MAVEN_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
@@ -138,8 +136,6 @@ services:
       - backend_network
 
     # Use fully qualified maven goal
-    #command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker"
-    #command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=docker -Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005'"
     command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn spring-boot:run -Dspring-boot.run.profiles=docker"
 
   # ---------------------------------------------
