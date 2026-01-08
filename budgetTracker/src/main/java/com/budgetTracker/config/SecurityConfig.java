@@ -76,7 +76,7 @@ public class SecurityConfig {
                                 // 2. Swagger UI Resources (Webjars, custom path, and default path)
                                 "/webjars/**",
                                 "/swagger-ui/**",
-                                "/documentation/**" // custom path
+                                "/documentation/**"
                         ).permitAll()
 
                         // PUBLIC ENDPOINTS: Allow access to all authentication paths

@@ -15,6 +15,7 @@ import {
 } from 'ng-apexcharts';
 
 import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
+import { TransactionType } from '@app/features/transactions/models/transaction-types.enum';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -30,10 +31,14 @@ export type ChartOptions = {
   template: `
     <div class="flex flex-col h-full">
       <div
-        class="flex-none flex border-b align-items-center text-base xl:text-xl font-semibold text-sky-700 gap-2"
+        class="flex-none flex border-b align-items-center text-sm xl:text-xl font-semibold text-sky-700 xl:gap-2"
       >
-        <mat-icon aria-label="face icon" fontIcon="pie_chart"></mat-icon>
-        <h2>Chart</h2>
+        <mat-icon
+          aria-label="face icon"
+          fontIcon="pie_chart"
+          class="!text-sm xl:!text-xl"
+        ></mat-icon>
+        <h2>Expenses Chart</h2>
       </div>
 
       <div
@@ -59,9 +64,11 @@ export class PieChartDisplay {
   private categoriesState = inject(CategoriesStateService);
   readonly allCategories = this.categoriesState.categories;
 
-  /* Chart data , filters categories with totalAmount = 0*/
+  /* Chart data , filters categories with totalAmount > 0*/
   readonly chartData = computed(() => {
-    const active = this.allCategories().filter((c) => (c.totalAmount || 0) > 0);
+    const active = this.allCategories().filter(
+      (c) => (c.totalAmount || 0) > 0 && c.type !== TransactionType.INCOME,
+    );
     return {
       series: active.map((c) => c.totalAmount || 0),
       labels: active.map((c) => c.name),

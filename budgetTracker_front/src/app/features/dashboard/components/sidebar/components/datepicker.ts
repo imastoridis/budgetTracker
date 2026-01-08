@@ -39,12 +39,16 @@ import { DateForm, initDateForm } from '@shared/forms/date-form-builder';
   ],
   encapsulation: ViewEncapsulation.None,
   template: `
-    <div class="flex flex-col text-center gap-6 -mb-8">
+    <div class="flex flex-col text-center gap-3 xl:gap-6 -mb-8">
       <div
-        class="flex border-b align-items-center text-xl font-semibold text-sky-700  gap-2"
+        class="flex border-b align-items-center text-sm xl:text-xl font-semibold text-sky-700 xl:gap-2"
       >
-        <mat-icon aria-label="face icon" fontIcon="calendar_month"></mat-icon>
-        <h2 class="text-sm xl:text-xl">Current Month</h2>
+        <mat-icon
+          aria-label="face icon"
+          fontIcon="calendar_month"
+          class="!text-sm xl:!text-xl"
+        ></mat-icon>
+        <h2>Date</h2>
       </div>
 
       <form [formGroup]="dateForm">

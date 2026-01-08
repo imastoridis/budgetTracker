@@ -4,6 +4,13 @@ Welcome to my Budget Tracker application! This is a secure, multi-user RESTful A
 
 The application is live at https://imastoridis/budgetTracker
 
+The documentation is available at https://imastoridis/budgetTracker/documentation/swagger-ui/index.html
+
+## Testing the application
+You can test the application with these credentials
+- Username: test_user 
+- Password: 1234Test!
+
 ## Technology stack
 
 - Docker
@@ -22,8 +29,9 @@ The application is live at https://imastoridis/budgetTracker
 ***FrontEnd***
 - Angular 21
 - TypeScript
-- Tailwind CSS
+- TailwindCSS
 - Angular Material
+- Vitest
 
 ## Table of Contents
 
@@ -60,18 +68,19 @@ The project is structured into two main directories:
 ```
 Unit, Integration and End-to-end tests are available in ```budgetTracker/test/java```
 
-## 3\. Setup and Run Locally 
+## 3\. Setup and Run 
 
+### 3.1\. Locally
 This is the easiest way to get the application running, as the default configuration uses an **in-memory H2 database** (`src/main/resources/application.dev.properties`).
 
-### Step 1: Clone the Repository
+#### Step 1: Clone the Repository
 
 ```
 git clone https://github.com/imastoridis/budgetTracker.git
 cd budgetTracker
 ```
 
-### Step 2: Build the Project
+#### Step 2: Build the Project
 
 Use Maven to compile the code and package it into a runnable JAR file.
 
@@ -80,7 +89,7 @@ mvn clean install
 
 ```
 
-### Step 3: Run the Application
+#### Step 3: Run the Application
 
 Execute the packaged JAR file.
 
@@ -91,21 +100,16 @@ java -jar target/budget-tracker-1.0-SNAPSHOT.jar
 
 The application will start on `http://localhost:8080`.
 
-**Database Access (H2 Console):** While the application is running, you can view the in-memory database via the H2 Console:
-
--   **URL:** `http://localhost:8080/h2-console`
-
--   **JDBC URL:** `jdbc:h2:mem:budgetdb`
-
--   **User/Password:** `user`/`password`
-
-## 4\. Run with Docker 
+### 3.2\. Run with Docker 
 
 To run the entire stack, you only need Docker and Docker Compose installed on your system.
 
 Use this for active coding, rapid restarts, and debugging.
 
-### 1. Development Mode (Recommended for Coding)
+#### 1. Download the image
+
+
+#### 2. Development Mode (Recommended for Coding)
 
 This mode is optimized for rapid iteration. The app-dev service mounts your local backend code volume, enabling instant code changes without rebuilding the Docker image.
 
@@ -121,7 +125,7 @@ docker compose up --build app-dev frontend-dev
 - Starts the app-dev (Backend) service, waiting for the database and Redis to be healthy.
 - Starts the frontend (Angular) service with live reloading.
 
-### 2. Production Mode (For Testing the Final Build)
+#### 2. Production Mode (For Testing the Final Build)
 
 While the full docker compose up -d command starts both the development (app-dev) and production (app-prod) APIs, you can run only the production environment components if needed:
 
@@ -187,5 +191,5 @@ docker compose down --volumes
 
 Documentation is accessible here:
 ```
-http://localhost:8080/documentation/swagger-ui.html
+https://imastoridis/budgetTracker/documentation/swagger-ui/index.html
 ```

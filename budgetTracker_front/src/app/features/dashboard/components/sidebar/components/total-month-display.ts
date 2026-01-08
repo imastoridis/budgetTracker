@@ -15,10 +15,14 @@ import { TransactionsStateService } from '@shared/services/state/transactionsSta
   template: `
     <div class="flex flex-col gap-4">
       <div
-        class="flex border-b align-items-center  text-xl font-semibold text-sky-700  gap-2"
+        class="flex border-b align-items-center text-sm xl:text-xl font-semibold text-sky-700 xl:gap-2"
       >
-        <mat-icon aria-label="face icon" fontIcon="paid"></mat-icon>
-        <h2 class="text-base xl:text-xl">This month</h2>
+        <mat-icon
+          aria-label="face icon"
+          fontIcon="paid"
+          class="!text-sm xl:!text-xl"
+        ></mat-icon>
+        <h2>This month</h2>
       </div>
 
       <div class="flex flex-col gap-2 text-sm xl:text-lg">
