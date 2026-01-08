@@ -75,7 +75,7 @@ This is the easiest way to get the application running, as the default configura
 
 #### Step 1: Clone the Repository
 
-```
+```bash
 git clone https://github.com/imastoridis/budgetTracker.git
 cd budgetTracker
 ```
@@ -84,7 +84,7 @@ cd budgetTracker
 
 Use Maven to compile the code and package it into a runnable JAR file.
 
-```
+```bash
 mvn clean install
 
 ```
@@ -93,7 +93,7 @@ mvn clean install
 
 Execute the packaged JAR file.
 
-```
+```bash
 java -jar target/budget-tracker-1.0-SNAPSHOT.jar
 ** Note: The JAR name must match your project's artifactId and version from pom.xml**
 ```
@@ -114,7 +114,7 @@ Use this for active coding, rapid restarts, and debugging.
 This mode is optimized for rapid iteration. The app-dev service mounts your local backend code volume, enabling instant code changes without rebuilding the Docker image.
 
 Command:
-```
+```bash
 docker compose up --build app-dev frontend-dev
 ```
 
@@ -129,7 +129,7 @@ docker compose up --build app-dev frontend-dev
 
 While the full docker compose up -d command starts both the development (app-dev) and production (app-prod) APIs, you can run only the production environment components if needed:
 
-```
+```bash
 docker compose up --build app-prod frontend-prod
 ```
 
@@ -137,7 +137,7 @@ docker compose up --build app-prod frontend-prod
 
 This command maps both the application port (8080) and the default remote debugging port (5005), allowing you to connect your IDE.
 
-```
+```bash
 docker run -p 8080:8080 -p 5005:5005 budget-tracker-dev
 ```
 
@@ -178,18 +178,18 @@ The API requires a registered user to access most resources. Registration/Authen
 To stop all running containers, remove them, and delete the associated volumes (which contain your database and Redis data):
 
 #### Stops and removes all containers, networks, and images
-```
+```bash
 docker compose down
 ```
 
 #### Stops, removes containers, networks, images, AND deletes database/redis data volumes
-```
+```bash
 docker compose down --volumes
 ```
 
 ## 6\. Documentation
 
 Documentation is accessible here:
-```
+```bash
 https://imastoridis/budgetTracker/documentation/swagger-ui/index.html
 ```
