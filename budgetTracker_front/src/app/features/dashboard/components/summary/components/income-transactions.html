@@ -10,30 +10,30 @@
 </div>
 <div class="w-full overflow-y-auto h-[80%]">
     <div class="flex flex-col text-center">
-        <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8 !bg-white">
+        <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8 bg-white!">
 
             <!-- id Column -->
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef> No. </th>
-                <td mat-cell *matCellDef="let element" class="!w-[5%]"> {{element.id}} </td>
+                <td mat-cell *matCellDef="let element" class="w-[5%]!"> {{element.id}} </td>
             </ng-container>
 
             <!-- Date Column -->
             <ng-container matColumnDef="date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-                <td mat-cell *matCellDef="let element" class="!w-[15%]"> {{element.date | date : 'shortDate'}} </td>
+                <td mat-cell *matCellDef="let element" class="w-[15%]!"> {{element.date | date : 'shortDate'}} </td>
             </ng-container>
 
             <!-- Category Column -->
             <ng-container matColumnDef="categoryName" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef> Category </th>
-                <td mat-cell *matCellDef="let element" class="!w-[15%]"> {{element.categoryName}} </td>
+                <td mat-cell *matCellDef="let element" class="w-[15%]!"> {{element.categoryName}} </td>
             </ng-container>
 
             <!-- Amount Column -->
             <ng-container matColumnDef="amount" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef> Amount </th>
-                <td mat-cell *matCellDef="let element" class="!w-[20%]"> {{element.amount | currency: 'EUR' : 'symbol' :
+                <td mat-cell *matCellDef="let element" class="w-[20%]!"> {{element.amount | currency: 'EUR' : 'symbol' :
                     '1.2-2'}}
                 </td>
             </ng-container>
@@ -41,19 +41,19 @@
             <!-- Description Column -->
             <ng-container matColumnDef="description">
                 <th mat-header-cell *matHeaderCellDef> Description </th>
-                <td mat-cell *matCellDef="let element" class="!w-[30%]"> {{element.description}} </td>
+                <td mat-cell *matCellDef="let element" class="w-[30%]!"> {{element.description}} </td>
             </ng-container>
 
             <!-- Action column  -->
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef> Action </th>
-                <td mat-cell *matCellDef="let element" class="!w-[5%]">
-                    <span class="flex flex row gap-2">
+                <td mat-cell *matCellDef="let element" class="w-[5%]!">
+                    <span class="flex row gap-2">
                         <button mat-icon-button aria-label="Update category" (click)="openUpdateTransaction(element)">
-                            <mat-icon fontIcon="autorenew" class="!text-indigo-700"></mat-icon>
+                            <mat-icon fontIcon="autorenew" class="text-indigo-700!"></mat-icon>
                         </button>
                         <button mat-icon-button aria-label="Delete category">
-                            <mat-icon fontIcon="delete" class="!text-red-700"
+                            <mat-icon fontIcon="delete" class="text-red-700!"
                                 (click)="openDeleteTransaction(element)"></mat-icon>
                         </button>
                     </span>

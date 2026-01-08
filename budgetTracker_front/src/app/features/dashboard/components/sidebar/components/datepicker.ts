@@ -46,7 +46,7 @@ import { DateForm, initDateForm } from '@shared/forms/date-form-builder';
         <mat-icon
           aria-label="face icon"
           fontIcon="calendar_month"
-          class="!text-sm xl:!text-xl"
+          class="text-sm! xl:text-xl!"
         ></mat-icon>
         <h2>Date</h2>
       </div>

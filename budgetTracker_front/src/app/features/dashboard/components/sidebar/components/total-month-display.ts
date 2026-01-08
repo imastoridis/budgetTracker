@@ -20,7 +20,7 @@ import { TransactionsStateService } from '@shared/services/state/transactionsSta
         <mat-icon
           aria-label="face icon"
           fontIcon="paid"
-          class="!text-sm xl:!text-xl"
+          class="text-sm! xl:!text-xl"
         ></mat-icon>
         <h2>This month</h2>
       </div>

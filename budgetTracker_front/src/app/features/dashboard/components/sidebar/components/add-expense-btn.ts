@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
     <button
       (click)="openDialogAddExpense()"
       mat-raised-button
-      class="!bg-red-700 hover:!bg-red-800 !text-white !w-full xl:!text-lg"
+      class="bg-red-700! hover:bg-red-800! text-white! w-full! xl:!text-lg"
     >
       Add expense
     </button>

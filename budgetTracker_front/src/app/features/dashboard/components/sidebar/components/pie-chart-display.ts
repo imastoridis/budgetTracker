@@ -36,13 +36,13 @@ export type ChartOptions = {
         <mat-icon
           aria-label="face icon"
           fontIcon="pie_chart"
-          class="!text-sm xl:!text-xl"
+          class="text-sm! xl:text-xl!"
         ></mat-icon>
         <h2>Expenses Chart</h2>
       </div>
 
       <div
-        class="flex-grow w-full bg-gray-100 flex items-center justify-center text-gray-500 overflow-hidden"
+        class="grow w-full bg-gray-100 flex items-center justify-center text-gray-500 overflow-hidden"
         id="chart"
       >
         @if (chartSeries().length > 0) {
