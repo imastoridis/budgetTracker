@@ -20,18 +20,18 @@
 
             <!-- Date Column -->
             <ng-container matColumnDef="date">
-                <th mat-header-cell *matHeaderCellDef> Date </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
                 <td mat-cell *matCellDef="let element" class="!w-[15%]"> {{element.date | date : 'shortDate'}} </td>
             </ng-container>
 
             <!-- Category Column -->
-            <ng-container matColumnDef="categoryName">
+            <ng-container matColumnDef="categoryName" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef> Category </th>
                 <td mat-cell *matCellDef="let element" class="!w-[15%]"> {{element.categoryName}} </td>
             </ng-container>
 
             <!-- Amount Column -->
-            <ng-container matColumnDef="amount">
+            <ng-container matColumnDef="amount" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef> Amount </th>
                 <td mat-cell *matCellDef="let element" class="!w-[20%]"> {{element.amount | currency: 'EUR' : 'symbol' :
                     '1.2-2'}}

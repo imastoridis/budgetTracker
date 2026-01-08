@@ -13,11 +13,18 @@ import { UpdateTransaction } from '@app/features/transactions/components/transac
 import { DeleteTransaction } from '@app/features/transactions/components/transaction-delete.component';
 import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
 import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-dashboard-summary-income-transactions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MaterialModule, ReactiveFormsModule, CurrencyPipe, DatePipe],
+  imports: [
+    MaterialModule,
+    MatTableModule,
+    ReactiveFormsModule,
+    CurrencyPipe,
+    DatePipe,
+  ],
   templateUrl: './income-transactions.html',
 })
 export class DashboardSummaryIncomeTransactions {

@@ -12,11 +12,18 @@ import { Transaction } from '@app/features/transactions/models/transactions.mode
 import { UpdateTransaction } from '@app/features/transactions/components/transaction-update.component';
 import { DeleteTransaction } from '@app/features/transactions/components/transaction-delete.component';
 import { TransactionsStateService } from '@shared/services/state/transactionsStateService';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-dashboard-summary-expense-transactions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MaterialModule, ReactiveFormsModule, CurrencyPipe, DatePipe],
+  imports: [
+    MaterialModule,
+    MatTableModule,
+    ReactiveFormsModule,
+    CurrencyPipe,
+    DatePipe,
+  ],
   templateUrl: './expense-transactions.html',
 })
 export class DashboardSummaryExpenseTransactions {

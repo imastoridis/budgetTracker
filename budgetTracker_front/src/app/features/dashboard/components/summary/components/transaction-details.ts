@@ -18,12 +18,14 @@ import { DeleteTransaction } from '../../../../transactions/components/transacti
 import { TransactionsStateService } from '@app/shared/services/state/transactionsStateService';
 import { TransactionsService } from '../../../../transactions/services/transactions.service';
 import { Category } from '@app/features/categories/models/categories.models';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-dialog-transaction-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MaterialModule,
+    MatTableModule,
     ReactiveFormsModule,
     MatNativeDateModule,
     DatePipe,
