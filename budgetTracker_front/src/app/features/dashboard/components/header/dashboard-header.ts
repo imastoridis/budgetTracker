@@ -18,7 +18,7 @@ import { AuthService } from '@app/core/auth/services/auth.service';
         (click)="logout()"
         mat-raised-button
         aria-label="Log out of the application"
-        class="text-white! !bg-red-700! hover:bg-red-800! "
+        class="text-white! !bg-red-700 hover:bg-red-800! "
       >
         Logout
       </button>
