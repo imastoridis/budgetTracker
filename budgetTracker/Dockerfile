@@ -30,4 +30,5 @@ EXPOSE 5005
 COPY --from=build /app/target/budget-tracker-1.0-SNAPSHOT.jar /app/app.jar
 
 # Activates the 'docker' profile for PostgreSQL/Redis configuration
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
+#ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
+ENTRYPOINT exec java $JAVA_OPTS -jar app.jar --spring.profiles.active=docker
