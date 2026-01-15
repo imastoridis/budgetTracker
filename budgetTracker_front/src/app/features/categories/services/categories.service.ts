@@ -2,12 +2,13 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Category } from '../models/categories.models';
+import { environment } from '../../../shared/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriesService {
-  private readonly apiUrlCategories = 'http://localhost:8080/api/categories';
+  private readonly apiUrlCategories = environment.apiUrl + '/categories';
   private http = inject(HttpClient);
   readonly allCategories = signal<Category[]>([]);
 

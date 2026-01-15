@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { Credentials, AuthResponse } from '../models/auth.models';
+import { environment } from '../../../shared/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrlLogin = 'http://localhost:8080/api/auth/login';
-  private readonly apiUrlRegister = 'http://localhost:8080/api/auth/register';
+  private readonly apiUrlLogin = environment.apiUrl + '/auth/login';
+  private readonly apiUrlRegister = environment.apiUrl + '/auth/register';
 
   // State Management: Signal for tracking the authentication status.
   private readonly jwtToken: WritableSignal<string | null> = signal(

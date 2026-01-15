@@ -2,13 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Transaction } from '../models/transactions.models';
+import { environment } from '../../../shared/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionsService {
-  private readonly apiUrlTransactions =
-    'http://localhost:8080/api/transactions';
+  private readonly apiUrlTransactions = environment.apiUrl + '/transactions';
   private http = inject(HttpClient);
 
   /**
