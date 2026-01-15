@@ -156,9 +156,16 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <excludeDevtools>false</excludeDevtools>
-                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                    <!--<outputDirectory>${project.build.directory}/classes</outputDirectory>-->
                     <mainClass>com.budgetTracker.BudgetTrackerApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- FIX 2: Explicitly configure maven-compiler-plugin for local Mvn commands -->
