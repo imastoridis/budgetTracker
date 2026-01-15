@@ -8,7 +8,8 @@ WORKDIR /app
 
 # Copy everything necessary for the build
 COPY pom.xml .
-COPY src /app/src
+#COPY src /app/src
+COPY src ./src
 
 # Build the final executable JAR
 RUN mvn clean package -DskipTests
