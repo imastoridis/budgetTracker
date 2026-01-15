@@ -47,12 +47,12 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody AuthRequest registerRequest) {
-        // 1. Check if user already exists
+        // 1. Check if a user already exists
         if (userService.findByUsername(registerRequest.getUsername()).isPresent()) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
 
-        // 2. Create and save new user
+        // 2. Create and save a new user
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());

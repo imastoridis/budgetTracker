@@ -1,6 +1,7 @@
 package com.budgetTracker.config;
 
 import com.budgetTracker.filter.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Configuration class for Spring Security.
@@ -58,24 +60,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 0. Enable CORS
+                // Enable CORS
                 .cors(Customizer.withDefaults())
-                // 1. Disable CSRF (Cross-Site Request Forgery) protection
+                // Disable CSRF (Cross-Site Request Forgery) protection
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 2. Configure Session Management for Stateless REST API
+                // Configure Session Management for Stateless REST API
                 // JWT authentication relies on sending a token with every request, not sessions.
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // 3. Configure Exception Handling
+                // Configure Exception Handling
                 // This ensures unauthenticated users get a 401 instead of a default 403
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
 
-                // 3. Configure Authorization Rules
+                // Configure Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize
                         //DOC endpoints
                         .requestMatchers(
@@ -94,20 +96,25 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // 4. Add the custom JWT filter before Spring Security's standard filter
+                // Add the custom JWT filter before Spring Security's standard filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+
+    /**
+     * CORS Configuration
+     */
+    @Value("${app.cors.origins}")
+    private String allowedOrigin;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow your specific domain
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://imastoridis.com",
-                "http://localhost:4200"
-        ));
+        // Allow specific domains
+        configuration.setAllowedOrigins(Collections.singletonList(allowedOrigin));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);
