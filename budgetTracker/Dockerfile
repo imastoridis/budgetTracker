@@ -11,7 +11,7 @@ COPY pom.xml .
 COPY src /app/src
 
 # Build the final executable JAR
-RUN mvn package -DskipTests
+RUN mvn clean package -DskipTests
 
 # --------------------
 # Stage 2: Minimal Runtime Image (Final Image)
