@@ -2,9 +2,9 @@
 
 Welcome to my Budget Tracker application! This is a secure, multi-user RESTful API built with Spring Boot, Spring Security, and Spring Data JPA. It uses Angular 21 for the frontend.
 
-The application is live at https://imastoridis/budgetTracker
+The application is live at https://imastoridis.com/budgetTracker
 
-The documentation is available at https://imastoridis/budgetTracker/documentation/swagger-ui/index.html
+The documentation is available at https://imastoridis.com/budgetTracker/documentation/swagger-ui/index.html
 
 ## Testing the application
 You can test the application with these credentials

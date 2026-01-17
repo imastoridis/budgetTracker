@@ -50,8 +50,7 @@ services:
       - backend_network
 
     # 3. Command: Run the Angular Development Server
-    # The --host 0.0.0.0 is crucial for Docker networking
-    command: npm run start -- --host 0.0.0.0
+    command: npm run start -- --host 0.0.0.0 --poll 500
 
     depends_on:
       app-dev:
@@ -63,9 +62,6 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      #POSTGRES_USER: user
-      #POSTGRES_PASSWORD: password
-      #POSTGRES_DB: budget_db
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
@@ -76,7 +72,8 @@ services:
     networks:
       - backend_network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d budget_db" ]
+      #test: [ "CMD-SHELL", "pg_isready -U user -d budget_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -113,9 +110,10 @@ services:
       - "8080:8080"
       - "5005:5005"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_PROFILES_ACTIVE: "docker"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       # Debugger enabled
       SPRING_DATA_REDIS_HOST: redis
@@ -137,7 +135,6 @@ services:
 
     # Use fully qualified maven goal
     command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn spring-boot:run -Dspring-boot.run.profiles=docker"
-
   # ---------------------------------------------
   # Spring Boot API Service (PRODUCTION Mode)
   # ---------------------------------------------
@@ -152,9 +149,9 @@ services:
     environment:
       JAVA_OPTS: "-Xmx1024m -Xms512m"
       SPRING_PROFILES_ACTIVE: "docker"
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD_PROD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
