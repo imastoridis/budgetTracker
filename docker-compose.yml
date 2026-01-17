@@ -16,7 +16,7 @@ services:
       - backend_network
 
     depends_on:
-      app-dev:
+      app-prod:
         condition: service_started
 
     healthcheck:
