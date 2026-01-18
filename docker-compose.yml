@@ -89,8 +89,8 @@ services:
       - ~/.m2:/root/.m2
     networks:
       backend_network:
-          aliases:
-            - backend
+        aliases:
+          - backend
 
     # Use fully qualified maven goal
     command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn spring-boot:run -Dspring-boot.run.profiles=docker"
@@ -127,7 +127,7 @@ services:
     networks:
       backend_network :
         - aliases:
-            - backend
+          - backend
 
   # ---------------------------------------------
   # PostgreSQL Database Service
