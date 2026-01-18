@@ -88,7 +88,9 @@ services:
       - ./budgetTracker:/app
       - ~/.m2:/root/.m2
     networks:
-      - backend_network
+      backend_network:
+          aliases:
+            - backend
 
     # Use fully qualified maven goal
     command: sh -c "/usr/local/bin/wait-for-it.sh db 5432 -- /usr/local/bin/wait-for-it.sh redis 6379 -- mvn spring-boot:run -Dspring-boot.run.profiles=docker"
@@ -123,7 +125,9 @@ services:
         condition: service_healthy
 
     networks:
-      - backend_network
+      backend_network :
+        - aliases:
+            - backend
 
   # ---------------------------------------------
   # PostgreSQL Database Service
