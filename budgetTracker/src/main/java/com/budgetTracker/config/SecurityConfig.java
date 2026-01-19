@@ -91,7 +91,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // PUBLIC ENDPOINTS: Allow access to all authentication paths
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("budgetTracker/api/auth/**").permitAll()
 
                         // All other requests MUST be authenticated (require a valid JWT)
                         .anyRequest().authenticated()
