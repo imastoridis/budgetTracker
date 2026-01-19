@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@shared/modules/material/material.module';
 import { CategoriesService } from '../services/categories.service';
 import { Category } from '../models/categories.models';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import {
   buildCategoryForm,
   CategoryForm,
@@ -21,9 +21,9 @@ import { CategoriesStateService } from '@shared/services/state/categoriesStateSe
 export class DeleteCategory {
   private categoriesService = inject(CategoriesService);
   private categoriesState = inject(CategoriesStateService);
-  private dialogRef = inject(MatDialogRef<DeleteCategory>);
   private initialData = inject(MAT_DIALOG_DATA) as Category;
   private utils = inject(Utils);
+  private dialog = inject(MatDialog);
 
   // Initialize the form using the imported factory function
   readonly categoryForm: CategoryForm = buildCategoryForm(this.initialData);
@@ -46,9 +46,9 @@ export class DeleteCategory {
           }
         }),
         tap(() => {
+          this.dialog.closeAll();
           this.categoriesState.deleteCategory(deletedCategory);
           this.utils.openSnackBar('Category deleted successfully', '');
-          this.dialogRef.close();
         }),
       )
       .subscribe({

@@ -3,8 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@shared/modules/material/material.module';
 import { Category } from '@app/features/categories/models/categories.models';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateCategory } from '@app/features/categories/components/category-update.component';
-import { DeleteCategory } from '@app/features/categories/components/category-delete.component';
+
 import { TransactionDetailsCategory } from '@app/features/dashboard/components/summary/components/transaction-details';
 import { CurrencyPipe } from '@angular/common';
 import { CategoriesStateService } from '@shared/services/state/categoriesStateService';
@@ -21,24 +20,10 @@ export class DashboardSummaryCategories {
   private categoriesState = inject(CategoriesStateService);
   readonly allCategories = this.categoriesState.categories;
 
-  /* Open Update category dialog*/
-  openUpdateCategory(category: Category): void {
-    this.dialog.open(UpdateCategory, {
-      data: category,
-    });
-  }
-
-  /* Open Delete category dialog*/
-  openDeleteCategory(category: Category): void {
-    this.dialog.open(DeleteCategory, {
-      data: category,
-    });
-  }
-
   /* Open transactions details */
   openTransactionDetails(category: Category): void {
     this.dialog.open(TransactionDetailsCategory, {
-      data: category,
+      data: category.id,
       width: '1000px',
       maxWidth: '1000px',
     });

@@ -17,8 +17,10 @@ import { UpdateTransaction } from '../../../../transactions/components/transacti
 import { DeleteTransaction } from '../../../../transactions/components/transaction-delete.component';
 import { TransactionsStateService } from '@app/shared/services/state/transactionsStateService';
 import { TransactionsService } from '../../../../transactions/services/transactions.service';
-import { Category } from '@app/features/categories/models/categories.models';
 import { MatTableModule } from '@angular/material/table';
+import { UpdateCategory } from '@app/features/categories/components/category-update.component';
+import { DeleteCategory } from '@app/features/categories/components/category-delete.component';
+import { CategoriesStateService } from '@app/shared/services/state/categoriesStateService';
 
 @Component({
   selector: 'app-dialog-transaction-details',
@@ -35,7 +37,15 @@ import { MatTableModule } from '@angular/material/table';
 })
 export class TransactionDetailsCategory {
   private dialog = inject(MatDialog);
-  readonly category = signal<Category>(inject(MAT_DIALOG_DATA));
+  readonly categoryId = signal<number>(inject(MAT_DIALOG_DATA));
+
+  private categoriesState = inject(CategoriesStateService);
+  readonly allCategories = this.categoriesState.categories;
+
+  //Computed category details for up-to-date info
+  readonly computedCategory = computed(
+    () => this.allCategories().filter((cat) => cat.id === this.categoryId())[0],
+  );
 
   /* Open transaction details dialog */
   transactionsService = inject(TransactionsService);
@@ -45,16 +55,34 @@ export class TransactionDetailsCategory {
 
   /* Filters transactions */
   private TRANSACTION_ARRAY = computed(() => {
-    if (this.category().type === 'INCOME') {
+    if (!this.computedCategory()) {
+      return [];
+    }
+
+    if (this.computedCategory().type === 'INCOME') {
       return this.transactionsIncome().filter(
-        (transaction) => this.category().id === transaction.categoryId,
+        (transaction) => this.computedCategory().id === transaction.categoryId,
       );
     } else {
       return this.transactionsExpense().filter(
-        (transaction) => this.category().id === transaction.categoryId,
+        (transaction) => this.computedCategory().id === transaction.categoryId,
       );
     }
   });
+
+  /* Open Update category dialog*/
+  openUpdateCategory(): void {
+    this.dialog.open(UpdateCategory, {
+      data: this.computedCategory(),
+    });
+  }
+
+  /* Open Delete category dialog*/
+  openDeleteCategory(): void {
+    this.dialog.open(DeleteCategory, {
+      data: this.computedCategory(),
+    });
+  }
 
   /* Table */
   displayedColumns: string[] = [
@@ -86,5 +114,9 @@ export class TransactionDetailsCategory {
     this.dialog.open(DeleteTransaction, {
       data: transaction,
     });
+  }
+
+  constructor() {
+    console.log(this.computedCategory());
   }
 }

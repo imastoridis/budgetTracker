@@ -13,15 +13,7 @@
                 <mat-icon aria-label="face icon" fontIcon="label" class="text-cyan-700!"></mat-icon>
                 <span class="text-cyan-700 text-base xl:text-xl">{{ category.name }}</span>
             </span>
-            <span class="flex row ">
-                <button mat-icon-button aria-label="Update category" class="-me-2"
-                    (click)="openUpdateCategory(category)">
-                    <mat-icon fontIcon="autorenew" class="text-indigo-700!"></mat-icon>
-                </button>
-                <button mat-icon-button aria-label="Delete category">
-                    <mat-icon fontIcon="delete" class="text-red-700!" (click)="openDeleteCategory(category)"></mat-icon>
-                </button>
-            </span>
+
         </div>
         <div>
             <div class="text-indigo-600 font-medium">Total : {{category.totalAmount| currency: 'EUR' : 'symbol' :
