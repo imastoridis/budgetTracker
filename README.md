@@ -4,7 +4,7 @@ Welcome to my Budget Tracker application! This is a secure, multi-user RESTful A
 
 The application is live at https://imastoridis.com/budgetTracker
 
-The documentation is available at https://imastoridis.com/budgetTracker/documentation/swagger-ui/index.html
+The documentation is available at https://imastoridis.com/budgetTracker/documentation/index.html
 
 ## Testing the application
 You can test the application with these credentials
