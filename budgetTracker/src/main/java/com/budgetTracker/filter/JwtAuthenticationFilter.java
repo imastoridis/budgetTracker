@@ -42,6 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
+
+            // IF THE REQUEST IS FOR PROMETHEUS (BASIC AUTH), SKIP THE JWT CHECK
+            if (request.getHeader("Authorization") != null && request.getHeader("Authorization").startsWith("Basic ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {

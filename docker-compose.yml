@@ -108,9 +108,14 @@ services:
     environment:
       JAVA_OPTS: "-Xmx1024m -Xms512m"
       SPRING_PROFILES_ACTIVE: "docker"
+      # DB Connection
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      #Prometheus Metrics
+      SPRING_SECURITY_USER_NAME: ${PROMETHEUS_USER}
+      SPRING_SECURITY_USER_PASSWORD: ${PROMETHEUS_PASSWORD}
+      # Caching
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
@@ -125,7 +130,7 @@ services:
         condition: service_healthy
 
     networks:
-      backend_network :
+      backend_network:
         aliases:
           - backend
 
@@ -171,6 +176,33 @@ services:
       retries: 5
       start_period: 2s
 
+  # ---------------------------------------------
+  # Metrics
+  # ---------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks:
+      - backend_network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+    depends_on:
+      - prometheus
+    networks:
+      - backend_network
+
 networks:
   backend_network:
     driver: bridge
@@ -178,3 +210,5 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  prometheus_data:
+  grafana_data:

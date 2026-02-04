@@ -1,0 +1,10 @@
+# Only used for local dev
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'spring-boot-actuator'
+    metrics_path: '/actuator/prometheus'
+
+    static_configs:
+      - targets: ['budget-tracker-api-prod:8080']

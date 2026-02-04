@@ -1,18 +1,25 @@
 package com.budgetTracker.config;
 
 import com.budgetTracker.filter.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -50,11 +57,30 @@ public class SecurityConfig {
 
     /**
      * Exposes the AuthenticationManager bean, required for manual authentication in AuthController.
-     * This is the bean that was missing and caused the error.
      */
-    @Bean
+ /*   @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }*/
+    @Bean
+    @Primary
+    public AuthenticationManager authenticationManager(
+            InMemoryUserDetailsManager inMemoryUserDetailsManager,
+            @Qualifier("userServiceImpl") UserDetailsService databaseUserDetailsService, // Added @Qualifier
+            PasswordEncoder passwordEncoder) {
+
+        // 1. Provider for Prometheus (In-Memory)
+        DaoAuthenticationProvider inMemoryProvider = new DaoAuthenticationProvider();
+        inMemoryProvider.setUserDetailsService(inMemoryUserDetailsManager);
+        inMemoryProvider.setPasswordEncoder(passwordEncoder);
+
+        // 2. Provider for BudgetTracker Users (Database)
+        DaoAuthenticationProvider dbProvider = new DaoAuthenticationProvider();
+        dbProvider.setUserDetailsService(databaseUserDetailsService);
+        dbProvider.setPasswordEncoder(passwordEncoder);
+
+        // 3. Return a manager that chains both
+        return new ProviderManager(inMemoryProvider, dbProvider);
     }
 
     @Bean
@@ -92,17 +118,17 @@ public class SecurityConfig {
 
                         // PUBLIC ENDPOINTS: Allow access to all authentication paths
                         .requestMatchers("/api/auth/**").permitAll()
-
+                        .requestMatchers("/actuator/**").authenticated()
                         // All other requests MUST be authenticated (require a valid JWT)
                         .anyRequest().authenticated()
                 )
-
+                // Prometheus
+                .httpBasic(Customizer.withDefaults())
                 // Add the custom JWT filter before Spring Security's standard filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
     /**
      * CORS Configuration
@@ -124,4 +150,31 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    /**
+     * Prometheus Configuration
+     */
+    @Value("${spring.security.user.name}")
+    private String prometheusUsername;
+
+    @Value("${spring.security.user.password}")
+    private String prometheusPassword;
+
+    @Bean
+    public InMemoryUserDetailsManager inMemoryUserDetailsManager(PasswordEncoder passwordEncoder) {
+        UserDetails prometheusUser = User.withUsername(prometheusUsername)
+                .password(passwordEncoder.encode(prometheusPassword))
+                .build();
+        return new InMemoryUserDetailsManager(prometheusUser);
+    }
+/*
+    @Bean
+    public DaoAuthenticationProvider inMemoryAuthenticationProvider(InMemoryUserDetailsManager inMemoryUserDetailsManager, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(inMemoryUserDetailsManager);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }*/
+
+
 }
